@@ -84,6 +84,11 @@ const ChatViewVirtuoso = ({
       }
       if (oldListLength !== messageList.length) {
         setOldListLength(messageList.length);
+        virtuosoRef.current.scrollToIndex({
+          index: messageList.length - 1,
+          align,
+          behavior,
+        });
       }
     }
   }, [messageList]);

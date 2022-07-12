@@ -91,8 +91,6 @@ const ChatViewVirtuoso = ({
         });
       }
     }
-  }, [messageList]);
-  React.useEffect(() => {
     let timeout: NodeJS.Timeout;
     if (scrollToIndex && scrollToIndex >= 0) {
       console.log("SCROLL TO ", scrollToIndex);
@@ -105,7 +103,7 @@ const ChatViewVirtuoso = ({
       }, 300);
     }
     return () => clearTimeout(timeout);
-  }, [scrollToIndex]);
+  }, [messageList, scrollToIndex]);
 
   // console.log("FIRST", firstItemIndex);
 

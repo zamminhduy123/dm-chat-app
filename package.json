@@ -21,7 +21,7 @@
     "tsc": "tsc --project ./electron",
     "webpack:serve": "webpack serve --mode=development",
     "webpack:hostedServer": "webpack serve --mode=production",
-    "webpack:build": "webpack",
+    "webpack:build": "webpack --mode=production",
     "preelectron-pack": "npm run webpack:build",
     "electron:start": "cross-env NODE_ENV=development electron .",
     "electron:build": "cross-env NODE_ENV=production electron-builder",

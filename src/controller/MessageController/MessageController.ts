@@ -113,6 +113,10 @@ export default class MessageController
     }
   }
   async loadMoreMessageFromConversation(from: number) {
+    ConversationController.getInstance().select(
+      this._getState().conversation.selected,
+      ""
+    );
     try {
       // console.log("LOAD FROM", from);
       const data = await this._getMessageFromConversationUseCase.execute(

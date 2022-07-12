@@ -52,7 +52,7 @@ const MainHeader = ({
 
   const typingTimeout = React.useRef(setTimeout(async () => {}, 0));
 
-  const isMounted = React.useRef(false);
+  const isMounted = React.useRef(true);
 
   const search = async (value: string) => {
     const phoneReg = /(84|0[3|5|7|8|9])+([0-9]{8})\b/g;
@@ -109,6 +109,7 @@ const MainHeader = ({
 
   React.useEffect(() => {
     return () => {
+      console.log("HI");
       isMounted.current = false;
     };
   }, []);

@@ -82,23 +82,24 @@ const ChatViewVirtuoso = ({
       if (firstItemIndex !== Math.max(totalMessage - messageList.length, 0)) {
         setFirstItemIndex(Math.max(totalMessage - messageList.length, 0));
       }
-      if (oldListLength !== messageList.length)
+      if (oldListLength !== messageList.length) {
         setOldListLength(messageList.length);
-      virtuosoRef.current.scrollToIndex({
-        index: messageList.length - 1,
-        align,
-        behavior,
-      });
+      }
     }
   }, [messageList]);
   React.useEffect(() => {
-    if (scrollToIndex && +scrollToIndex >= 0) {
-      virtuosoRef.current.scrollToIndex({
-        index: scrollToIndex,
-        align,
-        behavior,
-      });
+    let timeout: NodeJS.Timeout;
+    if (scrollToIndex && scrollToIndex >= 0) {
+      console.log("SCROLL TO ", scrollToIndex);
+      setTimeout(() => {
+        timeout = virtuosoRef.current.scrollToIndex({
+          index: scrollToIndex,
+          align,
+          behavior: "smooth",
+        });
+      }, 500);
     }
+    return () => clearTimeout(timeout);
   }, [scrollToIndex]);
 
   // console.log("FIRST", firstItemIndex);
@@ -143,7 +144,6 @@ const ChatViewVirtuoso = ({
         data={messageList}
         firstItemIndex={firstItemIndex}
         initialTopMostItemIndex={messageList.length - 1}
-        totalCount={messageList.length}
         startReached={prependItems}
         atBottomStateChange={(bottom) => {
           setAtBottom(bottom);

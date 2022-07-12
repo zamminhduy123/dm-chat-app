@@ -234,7 +234,7 @@ const MainHeader = ({
                       ConversationController.getInstance().findConversationByUsername(
                         conversation.users[0].username
                       );
-                    // console.log("FIND", converationExisted);
+                    console.log("FIND", converationExisted);
                     if (converationExisted) {
                       ConversationController.getInstance().select(
                         converationExisted.id

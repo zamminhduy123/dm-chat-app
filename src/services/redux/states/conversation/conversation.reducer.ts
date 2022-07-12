@@ -18,7 +18,7 @@ const reset = (state = initialState, action: Action) => {
 };
 
 const setConversation = (state = initialState, action: Action) => {
-  // console.log(action.payload);
+  console.log(action.payload);
   return updateObject(state, action.payload);
 };
 

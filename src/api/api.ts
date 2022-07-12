@@ -7,12 +7,15 @@ import {
 import axios, { AxiosError } from "axios";
 
 const CHUNK_SIZE = 5 * 1024 * 1024;
+
+axios.defaults.timeout = 10000;
+
 export class ClientAPI {
   private origin: string;
   constructor() {
-    if (process.env.NODE_ENV === "development")
-      this.origin = "http://localhost:3001";
-    else this.origin = "https://za-chat-be.onrender.com";
+    // this.origin = "http://localhost:3001";
+    // if (process.env.REACT_APP_SERVER === "local")
+    this.origin = "https://za-chat-be.onrender.com";
   }
   async _handleUnauthorized() {
     //get new token from refresh token

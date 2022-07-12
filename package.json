@@ -19,9 +19,9 @@
   "scripts": {
     "lint": "eslint . --ext .js,.jsx",
     "tsc": "tsc --project ./electron",
-    "webpack:serve": "webpack serve --mode=development",
-    "webpack:hostedServer": "webpack serve --mode=production",
-    "webpack:build": "webpack --mode=production",
+    "webpack:serve": "webpack serve --env REACT_APP_SERVER=local",
+    "webpack:hostedServer": "webpack serve --env REACT_APP_SERVER=host",
+    "webpack:build": "webpack",
     "preelectron-pack": "npm run webpack:build",
     "electron:start": "cross-env NODE_ENV=development electron .",
     "electron:build": "cross-env NODE_ENV=production electron-builder",
@@ -114,7 +114,7 @@
     "ts-loader": "9.2.8",
     "typescript": "^4.7.4",
     "webpack": "5.70.0",
-    "webpack-cli": "^4.9.2",
+    "webpack-cli": "4.9.2",
     "webpack-dev-server": "4.7.4"
   }
 }

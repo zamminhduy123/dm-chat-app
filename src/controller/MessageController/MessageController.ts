@@ -114,7 +114,7 @@ export default class MessageController
   }
   async loadMoreMessageFromConversation(from: number) {
     try {
-      console.log("LOAD FROM", from);
+      // console.log("LOAD FROM", from);
       const data = await this._getMessageFromConversationUseCase.execute(
         this._getState().conversation.selected,
         from - 1
@@ -156,7 +156,7 @@ export default class MessageController
       let url = await this._getFileUrlUseCase.execute(
         file,
         (progress: number) => {
-          console.log(progress);
+          // console.log(progress);
           EventEmitter.emit(messageConstants.PROGRESS_UPLOAD, {
             progress,
             clientId,

@@ -56,25 +56,34 @@ const ChatViewVirtuoso = ({
   const [firstItemIndex, setFirstItemIndex] = React.useState(
     Math.max(totalMessage - oldListLength, 0)
   );
+
+  // console.log("FIRST", firstItemIndex, messageList, totalMessage);
   const [isLoadMore, setIsLoadMore] = React.useState(false);
 
-  const prependItems = () => {
-    if (totalMessage - oldListLength > 0 && hasNextPage && !isLoadMore) {
+  const prependItems = React.useCallback(() => {
+    console.log(isLoadMore, firstItemIndex);
+    if (firstItemIndex > 0 && !isLoadMore) {
       setIsLoadMore(true);
       loadNextPage();
     }
-  };
+  }, [firstItemIndex]);
 
   React.useEffect(() => {
     if (isLoadMore) {
       const usersToPrepend = Math.max(totalMessage - oldListLength, 0);
-      const nextFirstItemIndex = firstItemIndex - usersToPrepend;
+      const nextFirstItemIndex = Math.max(firstItemIndex - usersToPrepend, 0);
+
       console.log("PREPEND", usersToPrepend, nextFirstItemIndex);
+
       setFirstItemIndex(nextFirstItemIndex);
       setOldListLength(messageList.length);
       setIsLoadMore(false);
     } else {
-      setOldListLength(messageList.length);
+      if (firstItemIndex !== Math.max(totalMessage - messageList.length, 0)) {
+        setFirstItemIndex(Math.max(totalMessage - messageList.length, 0));
+      }
+      if (oldListLength !== messageList.length)
+        setOldListLength(messageList.length);
       virtuosoRef.current.scrollToIndex({
         index: messageList.length - 1,
         align,
@@ -83,7 +92,7 @@ const ChatViewVirtuoso = ({
     }
   }, [messageList]);
   React.useEffect(() => {
-    if (scrollToIndex) {
+    if (scrollToIndex && +scrollToIndex >= 0) {
       virtuosoRef.current.scrollToIndex({
         index: scrollToIndex,
         align,
@@ -92,7 +101,7 @@ const ChatViewVirtuoso = ({
     }
   }, [scrollToIndex]);
 
-  // console.log("FIRST", firstItemIndex, messageList.length, totalMessage);
+  // console.log("FIRST", firstItemIndex);
 
   // React.useEffect(() => {
   //   let index;
@@ -134,15 +143,19 @@ const ChatViewVirtuoso = ({
         data={messageList}
         firstItemIndex={firstItemIndex}
         initialTopMostItemIndex={messageList.length - 1}
-        overscan={{ main: 0, reverse: 300 }}
+        totalCount={messageList.length}
         startReached={prependItems}
         atBottomStateChange={(bottom) => {
           setAtBottom(bottom);
         }}
         itemContent={(realIndex, message) => {
-          // console.log("REAL", realIndex - firstItemIndex);
-          let index: number = realIndex - firstItemIndex;
-          // console.log(index);
+          let index = messageList.findIndex((m) => {
+            if (message.id && m.id) {
+              return message.id === m.id;
+            } else {
+              return message.clientId === m.clientId;
+            }
+          });
           let hasAvatar = false,
             hasTime = false,
             notSameDayBefore = false,

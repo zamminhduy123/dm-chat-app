@@ -87,7 +87,6 @@ var API = {
     files: files,
     window: _window,
     photo: photo,
-    IN_DESK_ENV: true,
 };
 module.exports = API;
 contextBridge.exposeInMainWorld("electronAPI", API);

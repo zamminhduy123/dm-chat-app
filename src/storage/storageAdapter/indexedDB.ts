@@ -240,11 +240,12 @@ export default class IndexedDBAdapter {
         data.forEach((d) => {
           let request = objectStore.add(d);
           request.onsuccess = () => {
-            // console.log(` added: ${request.result}`);
+            console.log(` added: ${request.result}`);
           };
 
           request.onerror = (err) => {
             console.error(`Error add `, err);
+            reject(err);
           };
         });
       } finally {

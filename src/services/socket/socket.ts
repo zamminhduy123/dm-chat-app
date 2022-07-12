@@ -19,8 +19,9 @@ class Socket {
 
   private createNewSocket() {
     let url;
-    if (process.env.NODE_ENV === "development") url = "http://localhost:3001";
-    else url = "https://za-chat-be.onrender.com";
+    // if (process.env.REACT_APP_SERVER === "local") url = "http://localhost:3001";
+    // else
+    url = "https://za-chat-be.onrender.com";
     this.socket = io(url, {
       autoConnect: false,
       withCredentials: true,

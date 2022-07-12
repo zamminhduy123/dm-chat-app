@@ -39,7 +39,7 @@ const updateSentMessage = (state = initialState, action: Action) => {
   const indexU = state.messages.findIndex(
     (m) => m.clientId === action.payload.clientId
   );
-  console.log(state.messages, indexU);
+  // console.log(state.messages, indexU);
   if (indexU >= 0) {
     if (state.messages[indexU].status === 2) {
       return state;

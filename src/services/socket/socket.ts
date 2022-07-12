@@ -149,6 +149,8 @@ class Socket {
     this._connectErrorCB = [];
     this._connectSuccessCB = [];
 
+    delete this.socket;
+
     console.log(this.socket);
   }
 }

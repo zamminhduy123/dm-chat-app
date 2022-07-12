@@ -52,30 +52,34 @@ const MainHeader = ({
 
   const typingTimeout = React.useRef(setTimeout(async () => {}, 0));
 
+  const isMounted = React.useRef(false);
+
   const search = async (value: string) => {
     const phoneReg = /(84|0[3|5|7|8|9])+([0-9]{8})\b/g;
     if (value[0] === "@") {
       value = value.slice(1);
-      if (value) {
+      if (value && isMounted.current) {
         const userList = await UserController.getInstance().find(value);
-        setUserList(userList.filter((el) => el.getUsername() !== user));
+        if (isMounted.current)
+          setUserList(userList.filter((el) => el.getUsername() !== user));
       } else {
         setUserList([]);
       }
     } else if (value.match(phoneReg)) {
       const userList = await UserController.getInstance().find(value);
-      setUserList(userList);
+      if (isMounted.current) setUserList(userList);
     } else {
-      setUserList([]);
+      if (isMounted.current) setUserList([]);
     }
 
     const messageList = await MessageController.getInstance().searchMessage(
       value
     );
     // console.log(list);
-
-    setMessageList(messageList);
-    setLoading(false);
+    if (isMounted.current) {
+      setMessageList(messageList);
+      setLoading(false);
+    }
   };
 
   const { user } = useAuthApp();
@@ -95,6 +99,19 @@ const MainHeader = ({
       typingTimeout.current = setTimeout(async () => {}, 500);
     }
   };
+
+  React.useEffect(() => {
+    if (searchContent == "" && isMounted.current) {
+      setUserList([]);
+      setMessageList([]);
+    }
+  }, [searchContent]);
+
+  React.useEffect(() => {
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
 
   const tempUserConversationList = () => {
     if (userList && userList.length) {

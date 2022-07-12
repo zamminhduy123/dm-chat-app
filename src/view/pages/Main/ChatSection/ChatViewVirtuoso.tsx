@@ -91,13 +91,13 @@ const ChatViewVirtuoso = ({
     let timeout: NodeJS.Timeout;
     if (scrollToIndex && scrollToIndex >= 0) {
       console.log("SCROLL TO ", scrollToIndex);
-      setTimeout(() => {
-        timeout = virtuosoRef.current.scrollToIndex({
+      timeout = setTimeout(() => {
+        virtuosoRef.current.scrollToIndex({
           index: scrollToIndex,
           align,
           behavior: "smooth",
         });
-      }, 500);
+      }, 300);
     }
     return () => clearTimeout(timeout);
   }, [scrollToIndex]);

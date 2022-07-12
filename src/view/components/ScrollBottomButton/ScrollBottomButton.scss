@@ -1,0 +1,21 @@
+@use '../../scss/theme';
+.scroll-bottom-button {
+    position: absolute;
+    z-index: 999;
+    width: 30px;
+    height: 30px;
+    position: absolute;
+
+    background: theme.$gradient-primary;
+    svg {
+        color: white;
+    }
+    border-radius: 50%;
+    box-shadow: theme.$box-regular;
+
+    transition: transform 0.4s ease-in-out;
+    cursor: pointer;
+    &:hover{
+        transform: scale(1.1);
+    }
+}

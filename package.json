@@ -1,0 +1,120 @@
+{
+  "name": "za-chat",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./build/main.js",
+  "build": {
+    "appId": "com.example.dm",
+    "productName": "DM",
+    "files": [
+      "!**/*",
+      "build/**/*",
+      "node_modules/**/*",
+      "package.json"
+    ],
+    "directories": {
+      "buildResources": "build"
+    }
+  },
+  "scripts": {
+    "lint": "eslint . --ext .js,.jsx",
+    "tsc": "tsc --project ./electron",
+    "webpack:serve": "webpack serve --mode=development",
+    "webpack:hostedServer": "webpack serve --mode=production",
+    "webpack:build": "webpack",
+    "preelectron-pack": "npm run webpack:build",
+    "electron:start": "cross-env NODE_ENV=development electron .",
+    "electron:build": "cross-env NODE_ENV=production electron-builder",
+    "start": "concurrently \"npm run webpack:hostedServer\" \"npm run electron:start\"",
+    "dev": "concurrently \"npm run webpack:serve\" \"npm run electron:start\"",
+    "build": "npm run tsc && npm run webpack:build && npm run electron:build"
+  },
+  "keywords": [],
+  "author": "Duy Nguyen",
+  "license": "ISC",
+  "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^6.1.1",
+    "@fortawesome/free-regular-svg-icons": "^6.1.1",
+    "@fortawesome/free-solid-svg-icons": "^6.1.1",
+    "@fortawesome/react-fontawesome": "^0.1.18",
+    "@privacyresearch/libsignal-protocol-typescript": "^0.0.15",
+    "@reduxjs/toolkit": "^1.8.1",
+    "@types/react-router-dom": "^5.3.3",
+    "axios": "^0.27.2",
+    "check-password-strength": "^2.0.5",
+    "fbemitter": "^3.0.0",
+    "i18next": "^21.8.5",
+    "libsignal-protocol": "^1.3.8",
+    "react": "^17.0.1",
+    "react-custom-scrollbars-2": "^4.5.0",
+    "react-dom": "^17.0.1",
+    "react-hook-form": "^7.31.2",
+    "react-i18next": "^11.16.9",
+    "react-icons": "^4.3.1",
+    "react-redux": "^8.0.2",
+    "react-router-dom": "^5.3.3",
+    "react-virtualized": "^9.8.0-rc.1",
+    "react-virtuoso": "^2.16.1",
+    "socket.io-client": "^4.5.1"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@babel/core": "7.17.8",
+    "@babel/node": "7.16.8",
+    "@babel/plugin-proposal-class-properties": "7.16.7",
+    "@babel/preset-env": "7.16.11",
+    "@babel/preset-react": "7.16.7",
+    "@babel/preset-typescript": "7.16.7",
+    "@types/fbemitter": "^2.0.32",
+    "@types/react": "17.0.41",
+    "@types/react-custom-scrollbars": "^4.0.10",
+    "@types/react-dom": "17.0.14",
+    "@types/react-redux": "^7.1.24",
+    "@types/react-virtualized": "^9.21.21",
+    "autoprefixer": "10.4.4",
+    "babel-core": "^6.26.3",
+    "babel-loader": "8.2.3",
+    "concurrently": "^7.2.1",
+    "cross-env": "^7.0.3",
+    "css-loader": "6.7.1",
+    "electron": "19.0.6",
+    "electron-builder": "^23.0.3",
+    "eslint": "^8.15.0",
+    "file-loader": "6.2.0",
+    "html-webpack-plugin": "5.5.0",
+    "image-webpack-loader": "8.1.0",
+    "lorem-ipsum": "^2.0.4",
+    "node-sass": "7.0.1",
+    "path": "0.12.7",
+    "postcss": "8.4.12",
+    "postcss-import": "^14.1.0",
+    "postcss-loader": "^6.2.1",
+    "postcss-preset-env": "^7.6.0",
+    "postcss-scss": "^4.0.4",
+    "sass": "^1.53.0",
+    "sass-loader": "12.6.0",
+    "style-loader": "3.3.1",
+    "ts-loader": "9.2.8",
+    "typescript": "^4.7.4",
+    "webpack": "5.70.0",
+    "webpack-cli": "4.9.2",
+    "webpack-dev-server": "4.7.4"
+  }
+}

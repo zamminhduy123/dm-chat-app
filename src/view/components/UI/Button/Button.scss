@@ -1,0 +1,164 @@
+@use '../../../scss/theme.scss';
+
+button  {
+  display: flex;
+  appearance: none;
+  -webkit-box-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  justify-content: center;
+  user-select: none;
+  position: relative;
+  white-space: nowrap;
+  vertical-align: middle;
+  outline: transparent solid 2px;
+  outline-offset: 2px;
+  line-height: 1.2;
+  border-radius: 10px;
+  font-weight: 600;
+  font-family: inherit;
+  transition: color 0.2s ease 0s;
+  transition: background-color 0.2s ease 0s;
+
+  border-radius: 4px;
+  border: 1px solid;
+  padding: 0 10px;
+  cursor: pointer;
+
+  &:disabled {
+    &:hover {
+      cursor: not-allowed;
+      opacity: 0.4;
+    }
+    opacity: 0.4;
+  }
+}
+
+%lightTextColor {
+  color: #fff;
+}
+%darkTextColor {
+  color: darken(#fff, 50%);
+}
+
+@mixin themeContained($color: DarkGray) {
+  background: $color;
+  box-shadow: 0 0 1px rgba(theme.$color-secondary-2, .25);
+  color: #fff;
+  border-color: $color;
+  &:hover {
+    @extend %lightTextColor;
+    background: darken($color, 10%);
+  }
+}
+
+
+@mixin themeOutlined($color: DarkGray) {
+  background: #fff;
+  box-shadow: 0 0 1px rgba(theme.$color-secondary-2, .25);
+  color: $color;
+  border-color: $color;
+  &:hover {
+    @extend %lightTextColor;
+    background: darken($color, 10%);
+  }
+}
+
+
+.outlined.info {
+  @include themeOutlined;
+}
+.outlined.warning {
+  @include themeOutlined($color: theme.$color-warning);
+}
+.outlined.danger {
+  @include themeOutlined($color: theme.$color-danger);
+}
+.outlined.success {
+  @include themeOutlined($color: theme.$color-success);
+}
+.outlined.primary {
+  @include themeOutlined($color: theme.$color-primary);
+}
+.outlined.secondary {
+  @include themeOutlined($color: theme.$color-secondary);
+}
+
+
+
+.contained.info {
+  @include themeContained;
+}
+.contained.warning {
+  @include themeContained($color: theme.$color-warning);
+}
+.contained.danger {
+  @include themeContained($color: theme.$color-danger);
+}
+.contained.success {
+  @include themeContained($color: theme.$color-success);
+}
+.contained.primary {
+  @include themeContained($color: theme.$color-primary);
+}
+.contained.gradient-primary {
+  background: theme.$color-primary;
+  box-shadow: 0 0 1px rgba(theme.$color-secondary-2, .25);
+  color: #fff;
+  border-color: theme.$gradient-primary;
+  transition: background-color 0.4s ease-in-out;
+  &:hover {
+    background: theme.$color-secondary
+  }
+}
+.contained.secondary {
+  @include themeContained($color: theme.$color-secondary);
+}
+
+@mixin themeText($color: DarkGray) {
+  background: none;
+  border: none;
+  color: theme.$color-neutral-500;
+  &:hover {
+    color: $color;
+  }
+}
+.text.warning {
+  @include themeText($color: theme.$color-warning);
+}
+.text.danger {
+  @include themeText($color: theme.$color-danger);
+}
+.text.success {
+  @include themeText($color: theme.$color-success);
+}
+.text.primary {
+  @include themeText($color: theme.$color-primary);
+}
+.text.secondary {
+  @include themeText($color: theme.$color-secondary);
+}
+
+
+
+
+.large {
+  width: 106px;
+  height: 48px;
+  font-size: 13px;
+}
+.medium {
+  width: 83px;
+  height: 36px;
+  font-size: 11px;
+}
+.small {
+  width: 69px;
+  height: 24px;
+  font-size: 9px;
+}
+.full {
+  width: 100%;
+  max-height: 100%;
+  padding: 10px 0px;
+}

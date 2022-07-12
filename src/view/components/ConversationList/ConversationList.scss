@@ -1,0 +1,105 @@
+@use '../../scss/theme.scss';
+
+/* Conversation Container */
+
+
+.conversation-list {
+    list-style-type: none;
+    padding: 0px 16px;
+    flex: 1;  /* <------------------- required     */
+    overflow-y: auto;  /* <---------- required */
+}
+.conversation-container {
+    height: 72px;
+    width: 100%;
+
+    padding: 0px 16px;
+
+    transition: 0.15s ease-in;
+    transition-property: box-shadow;
+    background-color: #fff;
+    border-radius: 4px;
+    margin: 10px 0px;
+    cursor: pointer;
+    box-shadow: 0 3px 20px rgb(0 0 0 / 4%)
+}
+
+.conversation-container:hover {
+    &:hover {
+        box-shadow: theme.$box-regular;
+    }
+}
+
+.conversation-container.selected {
+    background: theme.$gradient-primary;
+    span {
+        color: white !important;
+    }
+}
+
+.conversation-container > div {
+    width: inherit;
+    height: inherit;
+    
+    display: flex;
+    flex-direction: row;
+
+    align-items: center;
+}
+
+
+.conversation-body {
+    width: calc(100% - 56px);
+    text-align: left;
+    letter-spacing: normal; 
+    font-family: inherit;
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.conversation-body-main {
+    flex-grow: 1;
+    max-width: 218px;
+    height: fit-content;
+    justify-content: space-between;
+}
+
+.conversation-sender {
+    width: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    color: theme.$color-black;
+    display: flex;
+    height: fit-content;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.conversation-body-extra {
+    width: fit-content;
+    font-size: 12px;
+    font-weight: 400;
+    letter-spacing: normal;
+    white-space: nowrap;
+    color: theme.$color-neutral-500;
+}
+
+.conversation-body .conversation-content {
+    max-width: 200px;
+    display: flex;
+    font-size: 14px;
+    height: fit-content;
+    margin-top: 3px;
+    color: theme.$color-neutral-500;
+    span:first-child {
+        color: inherit;
+        width: fit-content;
+        white-space: nowrap;
+        margin-right: 4px;
+    }
+    span:nth-child(2) {
+        color: inherit;
+    }
+}

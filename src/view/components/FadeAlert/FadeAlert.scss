@@ -1,0 +1,15 @@
+.fade-alert-container {
+    color: white;
+    background-color: #000;
+    opacity: 0.7;
+
+    position: fixed;
+    z-index: 999;
+    inset: 0; /* inset sets all 4 values (top right bottom left) much like how we set padding, margin etc., */
+    width: fit-content;
+    height: fit-content;
+    
+  padding: 10px 20px;
+  border-radius: 4px;
+  margin: auto;
+}

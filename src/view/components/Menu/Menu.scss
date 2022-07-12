@@ -1,0 +1,43 @@
+@use '../../scss/theme';
+
+.menu {
+    display: block;
+    width: 156px;
+    padding: 8px 0px;
+    background-color: white;
+    box-shadow: 0 0 10px 0 theme.$box-popover;
+    border: 1px solid theme.$color-gray-300;
+    border-radius: 4px;
+}
+
+.menu-item {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+
+    padding: 0 16px;
+    height: 32px;
+    color: theme.$color-black;
+    font-size: 14px;
+    margin: 4px 0px;
+
+    &:hover {
+        cursor: pointer;
+        background-color: theme.$color-gray-400;
+    }
+}
+
+.menu-item > svg {
+    margin-right: 8px;
+
+    width: 18px;
+    height: 18px;
+}
+
+.menu-seperator {
+    height: 1px;
+    width: calc(100% - 32px);
+    position: relative;
+    margin: auto;
+    background-color: theme.$color-black;
+}

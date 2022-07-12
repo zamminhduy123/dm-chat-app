@@ -1,0 +1,124 @@
+/* Side bar */
+
+@use '../../scss/theme';
+
+.main-tab {
+    min-width: 64px;
+
+    border-right: 1px solid #FAFAFA;
+    background-color: white;
+    position: relative;
+
+    display: flex;
+    flex-direction: column;
+}
+
+.top-tab {
+    display: flex;
+    width: inherit;
+    height: fit-content;
+    margin-top: 20px;
+
+
+    flex-direction: column;
+    justify-content: center;
+}
+
+.bot-tab {
+    width: inherit;
+    height: fit-content;
+    justify-self: flex-end;
+    align-self: flex-end;
+    margin-bottom: 10px;
+}
+
+.nav-list {
+    width: 100%;
+    height: fit-content;
+
+    display: flex;
+    flex-direction: column;
+}
+
+.nav-item {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.logo {
+    width: 64px;
+    height: fit-content;
+    padding-top: 16px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.logo> div{
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
+}
+
+.logo > img {
+    width: 48px;
+    height: 48px;
+}
+
+.side-bar-btn {
+    width: 64px;
+    height: fit-content;
+    margin: 12px 0px;
+    display: flex;
+    color: white;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+
+    cursor: pointer;
+
+    &:hover {
+        .selector {
+            opacity: 1;
+        }
+        svg {
+            color: theme.$color-primary;
+            opacity: 1;
+        }
+    }
+}
+.side-bar-btn .selector {
+    transition: opacity 0.4s ease-in-out;
+    position: absolute;
+    left:0;
+    width: 3px;
+    height: 40px;
+    z-index: 999;
+    background: theme.$gradient-primary;
+    opacity: 0;
+    border-radius: 0px 4px 4px 0px;
+}
+.selector.selected {
+    opacity : 1;
+}
+.side-bar-btn-icon {
+    width: 40px;
+    height: 40px;
+    transition: background-color 0.3s ease-in-out;
+    border-radius: 10px;
+
+
+    svg {
+        margin: auto;
+        height: 18px;
+        width: auto;
+        transition: opacity 0.4s ease-out;
+        color:  theme.$color-primary;
+        opacity: 0.4;
+    }
+}
+.side-bar-btn-icon.selected {
+        svg {
+            opacity: 1;
+        }
+}

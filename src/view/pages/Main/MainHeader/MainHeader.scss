@@ -1,0 +1,32 @@
+
+@use '../../../scss/theme';
+
+.conversation-tab-search {
+    display: flex;
+    align-items: center;
+    overflow: visible;
+    justify-content: space-around;
+    min-height: 64px;
+    width: calc(100% - 32px);
+    margin: 0px 16px;
+    flex: 0 0 64px;
+}
+
+.search-info {    
+    font-size: 11px;
+    font-style: italic;
+    flex : 0;
+}
+
+.list-title {
+    margin: 16px 16px 0px 16px;
+    font-size: small;
+    flex: 0;
+}
+
+.list-container {
+    flex: 1;
+    display: flex;
+  	flex-direction: column;
+    overflow-y: scroll;
+}

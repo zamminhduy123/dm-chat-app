@@ -1,0 +1,61 @@
+@use '../../../scss/theme.scss';
+.new-group-container {
+    width: 320px;
+    flex-direction: column;
+
+    p {
+        margin-top: 8px;
+        font-family: inherit;
+        justify-self: flex-start;
+        color: theme.$color-primary;
+    }
+
+    h2 {
+        margin-bottom: 4px;
+    }
+}
+
+.new-group-name {
+    outline: none;
+    display: block;
+    background: white;
+    width: 100%;
+    border: none;
+    box-sizing: border-box;
+    padding: 10px 0px;
+    color: black;
+    font-weight: 500;
+    line-height: inherit;
+    transition: border 0.3s ease;
+    border-bottom: 2px solid theme.$color-neutral-700;
+    margin: 8px 0px;
+    &:hover,
+    &:focus {
+    border: none;
+      color: theme.$color-black;
+      border-bottom: 2px solid theme.$color-primary;
+    }
+}
+
+.seperator {
+    border-bottom: 1px solid theme.$color-neutral-700;
+}
+
+.new-group-member-list, .new-group-search-list{
+    width: 100%;
+    display: block;
+    padding: 8px;
+    list-style-type: none;
+
+    li {
+        color: theme.$color-neutral-700;
+        display: flex;
+        width: 100%;
+    }
+}
+
+.new-group-search-list{
+    li {
+        cursor: pointer;
+    }
+}

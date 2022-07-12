@@ -1,0 +1,104 @@
+@use '../../../scss/theme';
+
+@mixin themeContained($color: DarkGray) {
+    background: $color;
+    box-shadow: 0 0 1px rgba($color, .25);
+    color: #fff;
+    border-color: $color;
+}
+
+#toast.info {
+    @include themeContained;
+}
+
+#toast.warning {
+    @include themeContained($color: theme.$color-warning);
+}
+
+#toast.danger {
+    @include themeContained($color: theme.$color-danger);
+}
+
+#toast.success {
+    @include themeContained($color: theme.$color-success);
+}
+
+#toast.primary {
+    @include themeContained($color: theme.$color-primary);
+}
+
+#toast.secondary {
+    @include themeContained($color: theme.$color-secondary);
+}
+
+.toast-container {
+    position: fixed;
+    right: 10px;
+    bottom: 10px;
+
+    display: flex;
+    flex-direction: column-reverse;
+    
+}
+
+#toast {
+    visibility: hidden;
+    width: 200px;
+    height: 64px;
+    padding: 8px 12px;
+    background-color: #333;
+    color: #fff;
+    border-radius: 4px;
+
+    position: fixed;
+    z-index: 9999;
+    white-space: nowrap;
+
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+.toast-img{
+    margin-right: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    float: left;
+    box-sizing: border-box;
+    color: #fff;
+    svg {
+        color: white;
+        width: 24px;
+        height: 24px;
+    }
+}
+.toast-title {
+    text-transform: capitalize;
+    font-weight: 600;
+    font-size: 14px;
+    text-align: left;
+}
+.toast-message {
+    font-weight: 500;
+    font-size: 11px;
+    text-align: left;
+}
+
+@-webkit-keyframes slide {
+    0%{right: -200px;}
+    100% { right: 0; }
+}
+
+@keyframes slide {
+    0%{right: -200px;}
+    100% { right: 0; }
+}
+
+#toast.show {
+    position: absolute;
+
+    -webkit-animation: slide 0.5s forwards;
+    animation: slide 0.5s forwards;
+}
+

@@ -1,0 +1,63 @@
+
+.avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.avatar.extra-large {
+    width: 70px;
+    height: 70px;
+    img {
+        width: 68px;
+        height: 68px;
+        object-fit: cover;
+    }
+}
+.avatar.large {
+    width: 52px;
+    height: 52px;
+    img {
+        width: 48px;
+        height: 48px;
+        object-fit: cover;
+    }
+}
+.avatar.small {
+    width: 36px;
+    height: 36px;
+    img {
+        width: 32px;
+        height: 32px;
+        object-fit: cover;
+    }
+}
+.avatar.extra-small {
+    width: 23px;
+    height: 23px;
+    img {
+        width: 30px;
+        height: 30px;
+        object-fit: cover;
+    }
+}
+.avatar .notify {
+    background: linear-gradient(45deg,#fd267a 20%,#ff6036 20%);
+}
+
+.left {
+    margin-right: 8px;
+}
+
+.right {
+    margin-left: 8px;
+}
+
+.avatar .in-chat{
+    width: 24px;
+    height: 24px;
+}
+
+.rounded {
+    border-radius: 50%;
+    background-color: white;
+}

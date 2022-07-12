@@ -1,0 +1,13 @@
+
+  @use '../../scss/theme.scss';
+.form-change-language {
+    font-size: x-small;
+    width: fit-content;
+    text-align: center;
+    margin: 0px 4px;
+    cursor: pointer;
+  }
+  .form-change-language.selected { 
+    text-decoration: underline;
+    color: theme.$color-primary;
+  }

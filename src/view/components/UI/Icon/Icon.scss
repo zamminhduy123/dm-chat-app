@@ -1,0 +1,39 @@
+@use '../../../scss/theme';
+
+
+.icon-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+
+    border-radius: 4px;
+    padding: 10px;
+
+    transition: background-color 0.4s ease-in-out;
+
+    &:hover{
+        background-color: theme.$color-gray-300;
+        cursor: pointer;
+    }
+
+    .icon-large {
+        width: 25px;
+        height: 25px;
+    }
+    .icon-medium {
+        width: 20px;
+        height: 20px;
+    }
+    .icon-small {
+        width: 15px;
+        height: 15px;
+    }
+}
+
+.icon-container.rounded {
+    border-radius: 50%;
+}
+.icon-container.selected {
+    background-color: white;
+}

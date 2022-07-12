@@ -1,0 +1,59 @@
+@use '../../scss/theme';
+.error-reload {
+	width: fit-content;
+	height: 210px;
+	text-align: center;
+	overflow: hidden;
+	animation: show-modal .7s ease-in-out;
+	padding: 8px;
+    
+	&.hide {
+		animation: hide-modal .6s ease-in-out both;
+	}
+
+    svg {
+        margin-top: 8px;
+        height: 60px;
+        color: theme.$color-danger;
+    }
+	
+	.title {
+		display: block;
+		font-size: 18px;
+		line-height: 24px;
+		font-weight: 600;
+        color: theme.$color-danger;
+	}
+	
+	p {
+		margin: 10px 0px;
+		padding: 0 30px;
+	}	
+}
+
+@keyframes show-modal {
+	0% {
+		transform: scale(0);
+	}
+	60% {
+		transform: scale(1.1);
+	}
+	80% {
+		transform: scale(.95);
+	}
+	100% {
+		transform: scale(1);
+	}
+}
+
+@keyframes hide-modal {
+	0% {
+		transform: scale(1);
+	}
+	20% {
+		transform: scale(1.1);
+	}
+	100% {
+		transform: scale(0);
+	}
+}

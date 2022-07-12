@@ -1,0 +1,51 @@
+@use '../../scss/theme.scss';
+.modal {
+  position: fixed;
+  inset: 0; /* inset sets all 4 values (top right bottom left) much like how we set padding, margin etc., */
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease-in-out;
+  overflow: hidden;
+  z-index: 999;
+  padding: 40px 20px 20px;
+  border-radius: 10px;
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+}
+
+.modal-container {
+  
+  padding: 16px;
+  border-radius: 4px;
+  width: fit-content;
+  height: fit-content;
+  flex-direction: column;
+  animation: scale-up .4s ease-in-out;
+}
+
+@keyframes  scale-up {
+  0% {
+    transform: scale(0);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.modal-title {
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+  display: flex;
+}
+
+.normal {
+  background-color: white;
+}
+
+.dark {
+  background-color: #000;
+  opacity: 0.7;
+}

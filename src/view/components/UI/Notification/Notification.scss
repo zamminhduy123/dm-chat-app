@@ -1,0 +1,110 @@
+@use '../../../scss/theme';
+
+@mixin applyColor($color: theme.$color-primary) {
+  color: $color;
+  border-color: $color;
+}
+
+.notification-container {
+  width: 100%;
+  height: fit-content;
+  display: flex;
+  justify-items: center;
+  align-items: center;
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+.notification-container>div {
+  display: flex;
+  flex-direction: row;
+  justify-items: center;
+  align-items: center;
+  height: fit-content;
+}
+
+.vertical {
+  min-height: 70px;
+  display: flex;
+  flex-direction: column !important;
+  justify-content: space-around;
+  margin-bottom: 10px;
+
+  color: inherit;
+}
+
+.notification-icon {
+  height: auto;
+  width: fit-content;
+  display: flex;
+  justify-content: center;
+  margin-right: 4px;
+}
+
+.notification-icon>svg {
+  width: 20px;
+  height: auto;
+}
+
+.notification-border { 
+  border: 1px solid;
+}
+
+
+.notification-message {
+  width: fit-content;
+  height: fit-content;
+  font-size: small;
+  color: inherit;
+}
+
+.white {
+  color: white !important;
+}
+
+@mixin themeContained($color: DarkGray) {
+  background-color: $color !important;
+  box-shadow: 0 0 1px rgba($color, .25) !important;
+  color: #fff !important;
+  border-color: $color !important;
+}
+
+.contained-info {
+  @include themeContained;
+}
+
+.contained-warning {
+  @include themeContained($color: theme.$color-warning);
+}
+
+.contained-error {
+  @include themeContained($color: theme.$color-danger);
+}
+
+.contained-success {
+  @include themeContained($color: theme.$color-success);
+}
+
+.contained-primary {
+  @include themeContained($color: theme.$color-primary);
+}
+
+.contained-secondary {
+  @include themeContained($color: theme.$color-secondary);
+}
+
+.notification-success {
+  @include applyColor(theme.$color-success);
+}
+
+.notification-error {
+  @include applyColor(theme.$color-danger);
+}
+
+.notification-loading {
+  @include applyColor();
+}
+
+.notification-warning {
+  @include applyColor(theme.$color-warning);
+}

@@ -1,0 +1,94 @@
+@use '../../scss/theme';
+
+#welcome-onboard{
+    color: theme.$color-neutral-300;
+    background: white;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    width: 100%;
+    height: 100%;
+    overflow: hidden;        
+    font-family: inherit;                                         
+}
+
+.welcome-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background-color: white;
+    
+    font-family: inherit;  
+}
+
+.welcome-header {
+    align-self: center;
+    justify-self: center;
+    width: 415px;
+    margin-bottom: 10px;
+    text-align: center;
+    
+    font-family: inherit;  
+}
+
+.welcome-header-title {
+    margin-bottom: 20px;
+
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    span {
+        font-size: 22px;
+        font-family: inherit;   
+    } 
+}
+
+.welcome-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    color: var(--neutral-base);
+        
+    .welcome-image {
+        width: 100%;
+        height: 300px;
+        display: flex;
+        justify-content: center;
+
+        img {
+            transform: scale(1.7);
+            object-fit: contain;
+        }
+    }
+
+    .title {
+        justify-self: center;
+        display: block;
+        line-height: normal;
+        font-weight: 600;
+        font-size: 18px;
+        letter-spacing: normal;
+        margin: 20px 0px;
+        color: theme.$color-primary;
+        text-align: center;
+        width: 100%;
+        font-family: inherit;   
+    }
+    .subtitle  {
+        padding: 0px 20px;
+        display: block;
+        justify-self: center;
+        line-height: normal;
+        font-weight: 400;
+        text-align: left;
+        font-size: 14px;
+        letter-spacing: normal;
+        text-align: center;
+        font-family: inherit;   
+    }
+}
+

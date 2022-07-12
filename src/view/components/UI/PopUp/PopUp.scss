@@ -1,0 +1,32 @@
+@use '../../../scss/theme';
+
+#popup
+{
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  
+  display: inline-block;
+  transition: all 0.4s ease-in-out;
+  z-index: 999;
+}
+
+#popup.right
+{
+    transform: translateX(100%);
+}
+
+#popup.left
+{
+    transform: translateX(-100%);
+}
+
+#popup.top
+{
+    transform: translateY(-100%);
+}
+
+#popup.bottom
+{
+    transform: translateY(-100%);
+}

@@ -1,0 +1,137 @@
+@use '../../../scss/theme.scss';
+@use 'sass:math';
+@import url(https://fonts.googleapis.com/css?family=Lato:700);
+
+
+$bg-color: white;
+$default-size: 1em;
+$label-font-size: math.div($default-size, 4);
+$label-font-size-redo: $default-size * 4;
+
+
+@mixin size($width, $height) {
+    height: $height;
+    width: $width;
+}
+
+@mixin draw-progress($progress, $color) {
+    .pie {
+        
+        .half-circle {
+            border-color: $color;
+        }
+
+        .left-side {
+            transform: rotate($progress * 3.6deg);
+        }
+
+        @if $progress <=50 {
+            .right-side { 
+                display: none;
+            }
+        }
+
+        @else {
+            clip: rect(auto, auto, auto, auto);
+
+            .right-side {
+                transform: rotate(180deg);
+            }
+        }
+    }
+}
+
+.set-size {
+    font-size: 2.5em;
+}
+
+.charts-container {
+    &:after {
+        clear: both;
+        content: '';
+        display: table;
+    }
+}
+
+.pie-wrapper {
+    @include size($default-size, $default-size);
+    float: left;
+    position: relative;
+
+    &:nth-child(3n + 1) {
+        clear: both;
+    }
+
+    .pie {
+        @include size(100%, 100%);
+        clip: rect(0, $default-size, $default-size, math.div($default-size, 2));
+        left: 0;
+        position: absolute;
+        top: 0;
+
+        .half-circle {
+            @include size(100%, 100%);
+            border: (math.div($default-size, 10)) solid #3498db;
+            border-radius: 50%;
+            clip: rect(0, math.div($default-size, 2), $default-size, 0);
+            left: 0;
+            position: absolute;
+            top: 0;
+        }
+    }
+
+    .label {
+        background: $bg-color;
+        border-radius: 50%;
+        bottom: math.div($label-font-size-redo , 10);
+        color: theme.$color-primary;
+        cursor: default;
+        display: block;
+        font-family: inherit;
+        font-size: $label-font-size;
+        left: math.div($label-font-size-redo , 10);
+        line-height: $label-font-size-redo * .70;
+        position: absolute;
+        right: math.div($label-font-size-redo , 10);
+        text-align: center;
+        top: math.div($label-font-size-redo , 10);
+
+        .smaller {
+            color: theme.$color-primary;
+            font-size: .45em;
+            padding-bottom: 20px;
+            vertical-align: super;
+        }
+    }
+
+    .label>svg {
+        position: relative;
+        width: 20px;
+        height: 20px;
+        margin: auto;
+        top: math.div($label-font-size-redo , 10);
+        color: theme.$color-success;
+    }
+
+    .shadow {
+        @include size(100%, 100%);
+        border: math.div($default-size , 10) solid #bdc3c7;
+        border-radius: 50%;
+    }
+
+    &.style-2 {
+        .label {
+            background: none;
+            color: #7f8c8d;
+
+            .smaller {
+                color: #bdc3c7;
+            }
+        }
+    }
+    @for $i from 1 through 100 {
+        &.progress-#{$i} {
+            @include draw-progress($i, theme.$color-success-light);
+        }
+    }
+}

@@ -1,0 +1,8 @@
+.backdrop {
+    z-index: 998;
+    background: #000;
+    opacity: 0.3;
+
+    inset: 0; /* inset sets all 4 values (top right bottom left) much like how we set padding, margin etc., */
+    position: fixed;
+  }

@@ -1,0 +1,34 @@
+@use '../../scss/theme.scss';
+
+.group-avatar-container {
+    position: relative;
+    border-radius: 50%;
+    width: 52px;
+    height: 52px;
+    margin-right: 8px;
+
+    flex-wrap: wrap;
+}
+
+#first-avatar-expand {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+#last-avatar-number {
+    background-color: theme.$color-neutral-700;
+    width: 50%;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    font-size: small;
+    font-weight: 600;
+}
+
+
+.avatar-wrapper {
+
+}

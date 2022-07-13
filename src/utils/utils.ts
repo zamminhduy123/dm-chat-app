@@ -52,7 +52,7 @@ export class Fibonacci {
   public static getFibo = (index: number) => {
     if (index >= this.fibo.length) {
       for (let i = this.fibo.length - 1; i <= index; i++) {
-        this.fibo.push(this.fibo[i - 1] + this.fibo[i - 2]);
+        this.fibo.push(this.fibo[i] + this.fibo[i - 1]);
       }
     }
     return this.fibo[index];

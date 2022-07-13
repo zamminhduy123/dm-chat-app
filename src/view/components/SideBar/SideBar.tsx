@@ -4,6 +4,7 @@ import {
   faUserGroup as cb2,
   faGear as h,
   faUser,
+  faCircleHalfStroke,
 } from "@fortawesome/free-solid-svg-icons";
 import React from "react";
 
@@ -20,6 +21,8 @@ import engImg from "../../../assets/eng.png";
 import useTranslation from "../../adapter/translation.adapter";
 import eventEmitter from "../../../utils/event-emitter";
 import { userConstants } from "../../action";
+import { useTheme } from "../../adapter/useTheme";
+import { capitalizeFirstLetter } from "../../../utils/utils";
 
 interface SideBarProps {
   curPage: Page;
@@ -34,12 +37,21 @@ const SideBar: React.FC<SideBarProps> = ({
   const [showModal, setShowModal] = React.useState(false);
   const { t, lang, changeLang } = useTranslation();
 
+  const { theme, toggleTheme } = useTheme();
+
   const MenuItems: MenuItem[] = [
     {
       icon: <FontAwesomeIcon icon={faUser} />,
       text: "Account",
       onClick: () => {
         eventEmitter.emit(userConstants.DISPLAY_USER, user);
+      },
+    },
+    {
+      icon: <FontAwesomeIcon icon={faCircleHalfStroke} />,
+      text: capitalizeFirstLetter(theme === "light" ? "dark" : "light"),
+      onClick: () => {
+        toggleTheme();
       },
     },
     {

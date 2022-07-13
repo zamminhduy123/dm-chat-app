@@ -1,4 +1,4 @@
-@use '../../scss/theme.scss';
+@import '../../scss/theme.scss';
 
 .user-info-container {
     padding: 16px;
@@ -15,6 +15,7 @@
 
 
         p {
+            color: var(--textThemeColor1);
             margin-top: 8px;
             font-family: inherit;
         }
@@ -29,7 +30,7 @@
             justify-content: center;
             align-items: center;
 
-            color: theme.$color-danger;
+            color: $color-danger;
             text-transform: capitalize;
         }
 
@@ -41,9 +42,10 @@
 
     .title {
         margin-bottom: 8px;
-        color: theme.$color-primary;
+        color: $color-primary;
     }
     p {
+        color: var(--textThemeColor1);
         margin-bottom: 4px;
         font-size: small;
     }

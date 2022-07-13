@@ -15,7 +15,7 @@ export class ClientAPI {
   constructor() {
     // this.origin = "http://localhost:3001";
     // if (process.env.REACT_APP_SERVER === "local")
-    this.origin = "https://za-chat-be.onrender.com";
+    this.origin = process.env.REACT_APP_API_URL || "http://localhost:3001";
   }
   async _handleUnauthorized() {
     //get new token from refresh token
@@ -184,6 +184,16 @@ export class ClientAPI {
     } else {
       return this._chunkUpload(file, onProgress);
     }
+  }
+
+  async getUserPublicKey(username: string) {
+    const url = this._createUrl(`key/${username}`);
+    return this._get<string>(url);
+  }
+
+  async postUserPublicKey(username: string, pKey: string) {
+    const url = this._createUrl(`key/${username}`);
+    return this._put<string>(url, pKey);
   }
 
   // changePassword(

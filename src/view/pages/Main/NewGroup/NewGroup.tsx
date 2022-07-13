@@ -75,7 +75,7 @@ const NewGroup = ({ onClose }: NewGroupProps) => {
         totalMessage: 0,
         lastMessage: null,
       };
-      console.log(newGroupConversation);
+      // console.log(newGroupConversation);
       try {
         await ConversationController.getInstance().addNewGroupConversation(
           newGroupConversation

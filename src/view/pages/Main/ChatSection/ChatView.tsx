@@ -15,7 +15,7 @@ import {
   WindowScroller,
 } from "react-virtualized";
 import Spinner from "../../../components/UI/Spinner/Spinner";
-import Scrollbars from "react-custom-scrollbars-2";
+// import Scrollbars from "react-custom-scrollbars-2";
 import { is } from "immer/dist/internal";
 
 interface ChatViewProps {
@@ -59,7 +59,7 @@ const ChatView: React.FC<ChatViewProps> = ({
 
   const oldListHeight = React.useRef(0);
   const [listHeight, setListHeight] = React.useState(0);
-  const scrollRef = React.useRef<Scrollbars | null>(null);
+  // const scrollRef = React.useRef<Scrollbars | null>(null);
 
   //MAIN LIST REF
   const listRef = React.useRef<List | null>(null);
@@ -391,7 +391,7 @@ const ChatView: React.FC<ChatViewProps> = ({
                   bottom="30px"
                   right="40px"
                   onClick={() => {
-                    scrollRef.current?.scrollToBottom();
+                    // scrollRef.current?.scrollToBottom();
                     // listRef.current?.scrollToPosition(listHeight.current);
                     listRef.current!.scrollToRow(rowCount - 1);
                     setScrollAppear(false);

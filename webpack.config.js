@@ -1,7 +1,9 @@
 const path = require("path");
+const webpack = require("webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 module.exports = (env) => {
+  console.log("ENV", env);
   return {
     entry: {
       home: [
@@ -72,6 +74,10 @@ module.exports = (env) => {
         template: path.join(__dirname, "public/photoView", "photo-view.html"),
         filename: "photo-view.html",
         chunks: ["photoView"],
+      }),
+      // add the plugin to your plugins array
+      new webpack.DefinePlugin({
+        "process.env.REACT_APP_API_URL": JSON.stringify(env.API_URL),
       }),
     ],
   };

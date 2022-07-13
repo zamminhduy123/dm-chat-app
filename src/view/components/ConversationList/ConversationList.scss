@@ -1,5 +1,5 @@
 @use '../../scss/theme.scss';
-
+@import '../../scss//theme.scss';
 /* Conversation Container */
 
 
@@ -16,8 +16,8 @@
     padding: 0px 16px;
 
     transition: 0.15s ease-in;
-    transition-property: box-shadow;
-    background-color: #fff;
+    transition-property: transform;
+    background-color: var(--bgThemeColorAccent);
     border-radius: 4px;
     margin: 10px 0px;
     cursor: pointer;
@@ -26,7 +26,7 @@
 
 .conversation-container:hover {
     &:hover {
-        box-shadow: theme.$box-regular;
+        transform: scale(1.03);
     }
 }
 
@@ -70,7 +70,7 @@
     width: inherit;
     font-size: 14px;
     font-weight: 600;
-    color: theme.$color-black;
+    color: var(--textThemeColor1);
     display: flex;
     height: fit-content;
     align-items: center;
@@ -92,7 +92,7 @@
     font-size: 14px;
     height: fit-content;
     margin-top: 3px;
-    color: theme.$color-neutral-500;
+    color: var(--textThemeColor2);
     span:first-child {
         color: inherit;
         width: fit-content;

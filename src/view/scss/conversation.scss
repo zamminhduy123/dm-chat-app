@@ -1,6 +1,5 @@
 @use '../scss/theme';
 
-
 .conversation-tab-container {
     flex: 1;  /* <------------------- required     */
     min-height: 0;  /* <------------- required !!! */
@@ -9,6 +8,7 @@
 }
 
 .conversation-tab-header .filter {
+    color: var(--textThemeColor1);
     border: none;
     width: 100%;
     cursor: pointer;
@@ -17,9 +17,8 @@
 
 .conversation-tab-header {
     flex: 0;
-    color: black;
+    color: var(--textThemeColor1);
     padding: 10px 16px;
     display: flex;
     justify-content: space-between;
-
 }

@@ -161,7 +161,9 @@ const Message: React.FC<MessageProps> = (props: MessageProps) => {
               </span>
             ) : null}
             {props.hasTime && +props.message.status !== 0
-              ? `${time.value || "1"} ${time.type}`
+              ? time.value
+                ? `${time.value} ${time.type}`
+                : ""
               : ""}
           </span>
         ) : null}

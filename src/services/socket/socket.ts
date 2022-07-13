@@ -21,7 +21,8 @@ class Socket {
     let url;
     // if (process.env.REACT_APP_SERVER === "local") url = "http://localhost:3001";
     // else
-    url = "https://za-chat-be.onrender.com";
+
+    url = process.env.REACT_APP_API_URL || "localhost:3001";
     this.socket = io(url, {
       autoConnect: false,
       withCredentials: true,
@@ -122,6 +123,7 @@ class Socket {
         this.socket.connect();
         this._retryAttemp++;
       }, Fibonacci.getFibo(this._retryAttemp) * 1000);
+      // console.log(Fibonacci.getFibo(this._retryAttemp) * 1000);
     } else {
       //exceed max
       if (this._reconnectFail) this._reconnectFail();

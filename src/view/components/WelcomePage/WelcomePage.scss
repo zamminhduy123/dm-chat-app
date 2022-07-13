@@ -1,8 +1,10 @@
 @use '../../scss/theme';
 
+@import '../../scss/theme';
+
 #welcome-onboard{
-    color: theme.$color-neutral-300;
-    background: white;
+    color: var(--textThemeColor1);
+    background: var(--bgThemeColor2);;
 
     display: flex;
     justify-content: center;
@@ -18,7 +20,7 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    background-color: white;
+    background-color: var(--bgThemeColor2);
     
     font-family: inherit;  
 }
@@ -51,7 +53,7 @@
     justify-content: center;
     align-items: center;
 
-    color: var(--neutral-base);
+    color: var(--textThemeColor1);
         
     .welcome-image {
         width: 100%;

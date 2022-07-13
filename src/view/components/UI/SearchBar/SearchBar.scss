@@ -1,31 +1,35 @@
-@use '../../../scss/theme';
+@import '../../../scss/theme';
 
 .search-bar {
     max-width: 100%;
     display: flex;
     flex-direction: row;
-    background-color: theme.$color-gray-400;
-    border: 1px solid theme.$color-gray-400;
+    background-color: var(--bgThemeColorAccent);
+    border: 1px solid var(--bgThemeColorAccent);
+    color: var(--textThemeColor1);;
 
     border-radius: 4px;
     transition: all 0.4s ease-in-out;
+
     &:hover{
         cursor: text;
-        background-color: white;
-        border: 1px solid theme.$color-primary;
+        background-color: var(--bgThemeColorPrimary);;
+        border: 1px solid $color-primary;
     }
 }
 
 .focus {
-    background-color: white;
-    border: 1px solid theme.$color-primary;
+    background-color: var(--bgThemeColorPrimary);
+    border: 1px solid $color-primary;
 }
 
 .search-bar-icon {
     width: 24px;
     transition: color 0.4s ease-in-out;
-    color: theme.$color-neutral-500;
     cursor: pointer;
+    svg{
+        color: var(--textThemeColor1)
+    }
 
     margin: 0px 5px;
     background-color: transparent;
@@ -37,14 +41,14 @@
 #cancel-button {
     transition: color 0.4s ease-in-out;
     &:hover {
-        color: theme.$color-primary;
+        color: $color-primary;
     }
 }
 
 #contact-search {
     transition: color 0.4s ease-in-out;
     &:hover {
-        color: theme.$color-primary;
+        color: $color-primary;
     }
 }
 
@@ -54,6 +58,7 @@
     height: 32px;
     line-height: 30px;
     background-color: inherit;
+    color: inherit;
     border: none;
     line-height: normal;
     font-weight: 400;

@@ -107,37 +107,6 @@ const ChatViewVirtuoso = ({
 
   // console.log("FIRST", firstItemIndex);
 
-  // React.useEffect(() => {
-  //   let index;
-  //   if (activeConversation.current !== messageList[0].conversation_id) {
-  //     index = messageList.length - 1;
-  //     activeConversation.current = messageList[0].conversation_id;
-  //   } else {
-  //     if (isLoadMore.current) {
-  //       index = messageList.length - 1 - lastIndex.current;
-  //       isLoadMore.current = false;
-  //     } else {
-  //       index = messageList.length - 1;
-  //     }
-  //   }
-  //   virtuosoRef.current.scrollToIndex({
-  //     index: index,
-  //     align,
-  //     behavior,
-  //   });
-  //   lastIndex.current = messageList.length - 1;
-  // }, [messageList]);
-  // React.useEffect(() => {
-  //   virtuosoRef.current.scrollToIndex({
-  //     index: messageList.length - 1,
-  //     align,
-  //     behavior,
-  //   });
-  //   return () => {
-  //     console.log("VIRTOUSO UNMOUNT");
-  //   };
-  // }, []);
-
   return (
     <div className="chat-view-container">
       <Virtuoso

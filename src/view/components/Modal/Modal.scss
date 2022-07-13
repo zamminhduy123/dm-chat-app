@@ -1,4 +1,5 @@
-@use '../../scss/theme.scss';
+@import '../../scss/theme.scss';
+
 .modal {
   position: fixed;
   inset: 0; /* inset sets all 4 values (top right bottom left) much like how we set padding, margin etc., */
@@ -42,7 +43,7 @@
 }
 
 .normal {
-  background-color: white;
+  background-color: var(--bgThemeColorPrimary);
 }
 
 .dark {

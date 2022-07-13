@@ -1,4 +1,5 @@
-@use '../../../scss/theme.scss';
+@import '../../../scss/theme';
+
 .new-group-container {
     width: 320px;
     flex-direction: column;
@@ -7,38 +8,39 @@
         margin-top: 8px;
         font-family: inherit;
         justify-self: flex-start;
-        color: theme.$color-primary;
+        color: $color-primary;
     }
 
     h2 {
         margin-bottom: 4px;
     }
+    background-color: var(--bgThemeColorPrimary);
 }
 
 .new-group-name {
     outline: none;
     display: block;
-    background: white;
+    background-color: var(--bgThemeColorSecondary);
     width: 100%;
     border: none;
     box-sizing: border-box;
     padding: 10px 0px;
-    color: black;
+    color: var(--textThemeColor1);
     font-weight: 500;
     line-height: inherit;
     transition: border 0.3s ease;
-    border-bottom: 2px solid theme.$color-neutral-700;
+    border-bottom: 2px solid $color-neutral-700;
     margin: 8px 0px;
     &:hover,
     &:focus {
     border: none;
-      color: theme.$color-black;
-      border-bottom: 2px solid theme.$color-primary;
+      color: var(--textThemeColor1);
+      border-bottom: 2px solid $color-primary;
     }
 }
 
 .seperator {
-    border-bottom: 1px solid theme.$color-neutral-700;
+    border-bottom: 1px solid $color-neutral-700;
 }
 
 .new-group-member-list, .new-group-search-list{
@@ -48,7 +50,7 @@
     list-style-type: none;
 
     li {
-        color: theme.$color-neutral-700;
+        color: $color-neutral-700;
         display: flex;
         width: 100%;
     }

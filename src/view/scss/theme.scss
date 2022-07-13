@@ -15,6 +15,7 @@ $gradient-primary: linear-gradient(45deg,#fd267a,#ff6036);
 $color-black: #273151;
 $color-black-500: rgb(0,0,0,0.5);
 
+$color-gray-200: #eeeeee;
 $color-gray-300: #e1e4ea;
 $color-gray-400: #e8eaef;
 
@@ -26,5 +27,43 @@ $color-neutral-700: #e2e8f0;
 $box-popover: rgb(0,0,0,0.18);
 $box-regular: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
 
+$themes: (
+  bgThemeColorPrimary: (
+    darkTheme: rgb(35, 42, 59),
+    lightTheme: white,
+  ),
+  bgThemeColorSecondary: (
+    darkTheme: #283043,
+    lightTheme: #f5f9ff,
+  ),
+  bgThemeColorAccent: (
+    darkTheme: rgb(49, 58, 85),
+    lightTheme: white,
+  ),
+  textThemeColor1: (
+    darkTheme: #FFF,
+    lightTheme: $color-black,
+  ),
+  textThemeColor2: (
+    darkTheme: rgb(230, 230, 230),
+    lightTheme: $color-neutral-500,
+  ),
+);
 
+@mixin styles($mode) {
+  @each $key, $map in $themes {
+    @each $prop, $color in $map {
+      @if $prop == $mode {
+        --#{$key}: #{$color};
+      }
+    }
+  }
+}
 
+.dark-mode {
+  @include styles("darkTheme");
+}
+
+.light-mode {
+  @include styles("lightTheme");
+}

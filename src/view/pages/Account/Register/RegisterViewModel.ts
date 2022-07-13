@@ -69,6 +69,7 @@ export const RegisterViewModel = () => {
         setTimeout(() => {
           history.push("/login");
         }, 500);
+        UserController.getInstance().checkKeyExist(data.username);
       })
       .catch((err: any) => {
         console.log("Register Error", err);

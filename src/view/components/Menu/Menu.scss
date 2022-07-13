@@ -1,12 +1,12 @@
-@use '../../scss/theme';
+@import '../../scss/theme';
 
 .menu {
     display: block;
     width: 156px;
     padding: 8px 0px;
-    background-color: white;
-    box-shadow: 0 0 10px 0 theme.$box-popover;
-    border: 1px solid theme.$color-gray-300;
+    background-color: var(--bgThemeColorPrimary);
+    box-shadow: 0 0 10px 0 $box-popover;
+    border: 1px solid var(--bgThemeColorAccent);
     border-radius: 4px;
 }
 
@@ -17,21 +17,24 @@
 
     padding: 0 16px;
     height: 32px;
-    color: theme.$color-black;
+    color: var(--textThemeColor1);
     font-size: 14px;
     margin: 4px 0px;
 
     &:hover {
         cursor: pointer;
-        background-color: theme.$color-gray-400;
+        background-color: darken($color-neutral-700,30);
     }
 }
 
-.menu-item > svg {
+.menu-item > div {
     margin-right: 8px;
-
     width: 18px;
     height: 18px;
+    svg{
+        
+    color: var(--textThemeColor1);
+    }
 }
 
 .menu-seperator {
@@ -39,5 +42,5 @@
     width: calc(100% - 32px);
     position: relative;
     margin: auto;
-    background-color: theme.$color-black;
+    background-color: $color-black;
 }

@@ -1,12 +1,11 @@
 /* Side bar */
-
-@use '../../scss/theme';
+@import '../../scss/theme';
 
 .main-tab {
     min-width: 64px;
 
-    border-right: 1px solid #FAFAFA;
-    background-color: white;
+    border-right: 1px solid var(--bgThemeColorPrimary);
+    background-color: var(--bgThemeColorPrimary);;
     position: relative;
 
     display: flex;
@@ -82,7 +81,7 @@
             opacity: 1;
         }
         svg {
-            color: theme.$color-primary;
+            color: $color-primary;
             opacity: 1;
         }
     }
@@ -94,7 +93,7 @@
     width: 3px;
     height: 40px;
     z-index: 999;
-    background: theme.$gradient-primary;
+    background: $gradient-primary;
     opacity: 0;
     border-radius: 0px 4px 4px 0px;
 }
@@ -113,7 +112,7 @@
         height: 18px;
         width: auto;
         transition: opacity 0.4s ease-out;
-        color:  theme.$color-primary;
+        color:  $color-primary;
         opacity: 0.4;
     }
 }

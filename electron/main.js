@@ -3,6 +3,7 @@ const path = require("path");
 const { download } = require("./download");
 
 const isDev = process.env.NODE_ENV === "development";
+console.log(isDev);
 const port = 3000;
 const selfHost = `http://localhost:${port}`;
 

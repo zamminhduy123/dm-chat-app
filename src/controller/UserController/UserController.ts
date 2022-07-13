@@ -20,6 +20,7 @@ import StorageController from "../StorageController/StorageController";
 import ConversationController from "../ConversationController/ConversationController";
 import MessageController from "../MessageController/MessageController";
 import { LocalStorage } from "../../storage";
+import { CheckKeyExist } from "../../usecases/user/checkKeyExist";
 
 export default class UserController
   extends BaseController
@@ -33,6 +34,7 @@ export default class UserController
   private _registerUseCase: Register;
   private _authenticateUseCase: Authenticate;
   private _findUseCase: Find;
+  private _checkKeyExistUseCase: CheckKeyExist;
 
   constructor() {
     super();
@@ -42,6 +44,7 @@ export default class UserController
     this._registerUseCase = new Register(this._userRepo);
     this._authenticateUseCase = new Authenticate(this._userRepo);
     this._findUseCase = new Find(this._userRepo);
+    this._checkKeyExistUseCase = new CheckKeyExist(this._userRepo);
   }
   static destroy() {
     this._instance = null;
@@ -63,7 +66,16 @@ export default class UserController
     SocketController.getInstance().init();
     StorageController.getInstance().connect();
     LocalStorage.getInstance().setUser(username);
+    this.checkKeyExist(username);
   }
+
+  checkKeyExist = async (username: string) => {
+    try {
+      await this._checkKeyExistUseCase.execute(username);
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   authenticate = async () => {
     try {

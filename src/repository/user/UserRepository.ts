@@ -2,8 +2,15 @@ import { User, Credential, UserEntity } from "../../entities";
 import { IUserRepository } from "./IUserRepository";
 import Fetcher from "../../api";
 import { RegisterData } from "../../entities/type/RegisterData";
+import KeyDataSource from "../../dataSource/key";
 
 export default class UserRepository implements IUserRepository {
+  private _keyDataSource: KeyDataSource;
+
+  constructor() {
+    this._keyDataSource = new KeyDataSource();
+  }
+
   async find(searchContent: string): Promise<User[]> {
     return new Promise<User[]>((resolve, reject) => {
       Fetcher.findUser(searchContent)
@@ -85,6 +92,18 @@ export default class UserRepository implements IUserRepository {
         .catch((error) => {
           reject(error);
         });
+    });
+  }
+  async checkKeyExist(username: string): Promise<any> {
+    this._keyDataSource.setUsername(username);
+
+    return new Promise<any>(async (resolve, reject) => {
+      try {
+        await this._keyDataSource.getMyPrivateKey();
+        resolve(1);
+      } catch (err) {
+        reject(err);
+      }
     });
   }
 }

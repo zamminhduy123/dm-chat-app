@@ -1,50 +1,32 @@
-import {
-  KeyHelper,
-  SignedPublicPreKeyType,
-  SignalProtocolAddress,
-  SessionBuilder,
-  PreKeyType,
-  SessionCipher,
-  MessageType,
-} from "@privacyresearch/libsignal-protocol-typescript";
+import { getDiffieHellman } from "diffie-hellman";
+import { Key } from "../entities/type/Key";
 
-const storeSomewhereSafe = () => {};
+class KeyHelper {
+  private getDiffieHellman: any;
+  private DH: any;
+  constructor() {
+    this.getDiffieHellman = require("diffie-hellman").getDiffieHellman;
+    this.DH = this.getDiffieHellman("modp15");
+  }
 
-// const createID = async (name: string, store: SignalProtocolStore) => {
-//   const registrationId = KeyHelper.generateRegistrationId();
-//   // Store registrationId somewhere durable and safe... Or do this.
-//   storeSomewhereSafe(store)(`registrationID`, registrationId);
+  private static _instance: KeyHelper | null = null;
+  public static getInstance = () => {
+    if (!this._instance) this._instance = new KeyHelper();
+    return this._instance;
+  };
 
-//   const identityKeyPair = await KeyHelper.generateIdentityKeyPair();
-//   // Store identityKeyPair somewhere durable and safe... Or do this.
-//   storeSomewhereSafe(store)("identityKey", identityKeyPair);
+  createKeyPair = (): Key => {
+    this.DH.generateKeys();
 
-//   const baseKeyId = Math.floor(10000 * Math.random());
-//   const preKey = await KeyHelper.generatePreKey(baseKeyId);
-//   store.storePreKey(`${baseKeyId}`, preKey.keyPair);
+    return {
+      privateKey: this.DH.getPrivateKey("hex"),
+      publicKey: this.DH.getPublicKey("hex"),
+    };
+  };
 
-//   const signedPreKeyId = Math.floor(10000 * Math.random());
-//   const signedPreKey = await KeyHelper.generateSignedPreKey(
-//     identityKeyPair,
-//     signedPreKeyId
-//   );
-//   store.storeSignedPreKey(signedPreKeyId, signedPreKey.keyPair);
-//   const publicSignedPreKey: SignedPublicPreKeyType = {
-//     keyId: signedPreKeyId,
-//     publicKey: signedPreKey.keyPair.pubKey,
-//     signature: signedPreKey.signature,
-//   };
-
-//   // Now we register this with the server so all users can see them
-//   const publicPreKey: PreKeyType = {
-//     keyId: preKey.keyId,
-//     publicKey: preKey.keyPair.pubKey,
-//   };
-
-//   return {
-//     registrationId,
-//     identityPubKey: identityKeyPair.pubKey,
-//     signedPreKey: publicSignedPreKey,
-//     oneTimePreKeys: [publicPreKey],
-//   }
-// };
+  calculateSharedKey = async (myPrivateKey: string, theirPublicKey: string) => {
+    this.DH.setPrivateKey(myPrivateKey, "hex");
+    return this.DH.computeSecret(theirPublicKey, "hex", "hex");
+  };
+}
+export default KeyHelper;

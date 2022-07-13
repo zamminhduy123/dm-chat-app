@@ -1,12 +1,15 @@
 import IndexedDBAdapter, { IObjectStore, IIndex } from "./indexedDB";
 
 const dbName = "ZaDB",
-  version = 1;
+  version = 2;
 
 export const storeNames = {
   conversation: "conversation",
   message: "message",
   pending: "pending_message",
+  encrypt_prekey: "encrypt_prekey",
+  encrypt_session: "encrypt_session",
+  encrypt_sharedKey: "encrypt_sharedKey",
 };
 
 export const indexName = {
@@ -65,6 +68,13 @@ const stores: IObjectStore[] = [
     name: storeNames.pending,
     option: {
       keyPath: "clientMsgId",
+    },
+    indexes: [],
+  },
+  {
+    name: storeNames.encrypt_sharedKey,
+    option: {
+      keyPath: "identifier",
     },
     indexes: [],
   },

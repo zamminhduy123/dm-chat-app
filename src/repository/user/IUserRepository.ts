@@ -7,4 +7,5 @@ export interface IUserRepository {
   authenticate(): Promise<User>;
   register(userData: RegisterData): Promise<any>;
   find(content: string): Promise<User[]>;
+  checkKeyExist(username: string): Promise<any>;
 }

@@ -29,9 +29,11 @@ const loadMoreMessages = (state = initialState, action: Action) => {
 
 const addMessage = (state = initialState, action: Action) => {
   const messageList = state.messages;
+
   const newMessageList = [...messageList, { ...action.payload }];
+  console.log(newMessageList);
   return updateObject(state, {
-    messages: newMessageList,
+    messages: [...newMessageList],
   });
 };
 
@@ -39,10 +41,10 @@ const updateSentMessage = (state = initialState, action: Action) => {
   const indexU = state.messages.findIndex(
     (m) => m.clientId === action.payload.clientId
   );
-  // console.log(state.messages, indexU);
+
   if (indexU >= 0) {
     if (state.messages[indexU].status === 2) {
-      return state;
+      action.payload.status = 2;
     }
 
     const updatedMessage = {
@@ -67,22 +69,16 @@ const updateSentMessage = (state = initialState, action: Action) => {
 };
 
 const updateMessage = (state = initialState, action: Action) => {
-  const indexU = state.messages.findIndex((m) => m.id === action.payload.id);
-  // console.log(state.messages, action.payload, indexU);
-  if (indexU >= 0) {
-    if (state.messages[indexU].status === 2) {
-      return state;
+  const indexU = state.messages.findIndex((m) => {
+    if (m.id && action.payload.id) {
+      return m.id === action.payload.id;
+    } else {
+      return m.clientId === action.payload.clientId;
     }
+  });
+  console.log(action.payload, indexU);
+  if (indexU >= 0) {
     const updatedMessage = {
-      content:
-        typeof state.messages[indexU].content === "string"
-          ? state.messages[indexU].content
-          : {
-              ...(state.messages[indexU].content as FileEntity),
-              ...action.payload.content,
-            },
-      id: action.payload.id,
-      create_at: action.payload.create_at,
       status: action.payload.status,
     };
     const newList = [...state.messages];
@@ -91,7 +87,7 @@ const updateMessage = (state = initialState, action: Action) => {
       messages: newList,
     });
   } else {
-    return updateSentMessage(state, action);
+    return state;
   }
 };
 

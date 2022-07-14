@@ -79,18 +79,18 @@ const ChatViewVirtuoso = ({
       setOldListLength(messageList.length);
       setIsLoadMore(false);
     } else {
-      if (firstItemIndex !== Math.max(totalMessage - messageList.length, 0)) {
-        setFirstItemIndex(Math.max(totalMessage - messageList.length, 0));
-      }
-      if (oldListLength !== messageList.length) {
-        setOldListLength(messageList.length);
-        virtuosoRef.current.scrollToIndex({
-          index: messageList.length - 1,
-          align,
-          behavior,
-        });
-      }
+      setFirstItemIndex(Math.max(totalMessage - messageList.length, 0));
+
+      setOldListLength(messageList.length);
+      virtuosoRef.current.scrollToIndex({
+        index: messageList.length - 1,
+        align,
+        behavior,
+      });
     }
+  }, [messageList]);
+
+  React.useEffect(() => {
     let timeout: NodeJS.Timeout;
     if (scrollToIndex && scrollToIndex >= 0) {
       console.log("SCROLL TO ", scrollToIndex);
@@ -103,9 +103,9 @@ const ChatViewVirtuoso = ({
       }, 300);
     }
     return () => clearTimeout(timeout);
-  }, [messageList, scrollToIndex]);
+  }, [scrollToIndex]);
 
-  // console.log("FIRST", firstItemIndex);
+  // console.log("FIRST", firstItemIndex, messageList);
 
   return (
     <div className="chat-view-container">
@@ -115,7 +115,7 @@ const ChatViewVirtuoso = ({
         style={{ height: "100%" }}
         data={messageList}
         firstItemIndex={firstItemIndex}
-        initialTopMostItemIndex={messageList.length - 1}
+        initialTopMostItemIndex={14}
         startReached={prependItems}
         atBottomStateChange={(bottom) => {
           setAtBottom(bottom);
@@ -128,6 +128,7 @@ const ChatViewVirtuoso = ({
               return message.clientId === m.clientId;
             }
           });
+
           let hasAvatar = false,
             hasTime = false,
             notSameDayBefore = false,
@@ -169,25 +170,23 @@ const ChatViewVirtuoso = ({
             }
           }
           return (
-            <>
+            <div key={message.id || message.clientId}>
               {index === 0 || notSameDayBefore ? (
-                <TimeDivider
-                  date={new Date(messageList[index].create_at || 0)}
-                />
+                <TimeDivider date={new Date(message.create_at || 0)} />
               ) : null}
               <Message
                 conversationMember={conversationMember}
-                message={messageList[index]}
+                message={message}
                 hasAvatar={hasAvatar || notSameDayBefore}
                 hasTime={hasTime || notSameDayAfter}
                 resend={
-                  +messageList[index].status === MessageStatus.ERROR
+                  +message.status === MessageStatus.ERROR
                     ? resendMessageHandler
                     : void 0
                 }
                 hasStatus={index === messageList.length - 1}
               />
-            </>
+            </div>
           );
         }}
       />

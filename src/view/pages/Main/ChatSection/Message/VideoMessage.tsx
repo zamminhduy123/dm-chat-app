@@ -4,7 +4,7 @@ import { FileEntity, MessageEntity } from "../../../../../entities";
 
 interface ImageMessageProps {
   message: MessageEntity;
-  onLoad: any;
+  onLoad?: any;
 }
 
 const VideoMessage = ({ message, onLoad }: ImageMessageProps) => {

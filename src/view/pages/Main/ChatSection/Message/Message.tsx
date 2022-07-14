@@ -30,8 +30,6 @@ interface MessageProps {
   resend?: Function;
   hasStatus: Boolean;
   conversationMember: UserEntity[];
-
-  imageMeasure?: any;
 }
 
 const Message: React.FC<MessageProps> = (props: MessageProps) => {
@@ -41,7 +39,6 @@ const Message: React.FC<MessageProps> = (props: MessageProps) => {
     new Date(props.message.create_at || new Date()).getTime()
   );
   const flexDir = left ? "row" : "row-reverse";
-
   let content: React.ReactNode;
   // console.log(props.message.type);
   if (+props.message.type === MessageEnum.text) {
@@ -57,20 +54,10 @@ const Message: React.FC<MessageProps> = (props: MessageProps) => {
     // console.log(props.message.content);
     if (typeof props.message.content !== "string") {
       if (+props.message.type === MessageEnum.image) {
-        content = (
-          <ImageMessage
-            onLoad={props.imageMeasure ? props.imageMeasure : void 0}
-            message={props.message}
-          />
-        );
+        content = <ImageMessage message={props.message} />;
       }
       if (+props.message.type === MessageEnum.video) {
-        content = (
-          <VideoMessage
-            onLoad={props.imageMeasure ? props.imageMeasure : void 0}
-            message={props.message}
-          />
-        );
+        content = <VideoMessage message={props.message} />;
       }
 
       if (+props.message.type === MessageEnum.file) {
@@ -160,8 +147,10 @@ const Message: React.FC<MessageProps> = (props: MessageProps) => {
                 <div style={{ flexGrow: "1", minWidth: "5px" }}></div>
               </span>
             ) : null}
-            {props.hasTime && +props.message.status !== 0
-              ? time.value
+            {props.hasTime || props.hasStatus
+              ? left
+                ? `${time.value} ${time.type}`
+                : time.value
                 ? `${time.value} ${time.type}`
                 : ""
               : ""}

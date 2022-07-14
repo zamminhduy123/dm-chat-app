@@ -75,8 +75,7 @@ const ChatSection: React.FC<ChatSectionProps> = ({
   const users = conversation.users;
 
   //infinity scroll handler
-  const { messages, hasMore } = useMessage();
-  const messageList = messages;
+  const { messages : messageList, hasMore } = useMessage();
   const messageLoading = React.useRef(false);
   const loadMoreMessage = async () => {
     if (messageList.length && !messageLoading.current) {

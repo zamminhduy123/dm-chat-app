@@ -181,6 +181,7 @@ export default class MessageController
           console.log(err);
         });
     } else {
+      console.log("HI");
       this._updateMessageUseCase
         .execute(updatedMessage)
         .then((data) => {

@@ -4,7 +4,7 @@ import { FileEntity, MessageEntity } from "../../../../../entities";
 
 interface ImageMessageProps {
   message: MessageEntity;
-  onLoad: any;
+  onLoad?: any;
 }
 
 const ImageMessage = ({ message, onLoad }: ImageMessageProps) => {
@@ -25,7 +25,6 @@ const ImageMessage = ({ message, onLoad }: ImageMessageProps) => {
           borderRadius: "4px",
           cursor: "pointer",
         }}
-        onLoad={onLoad}
         onClick={() => {
           if (message) window.electronAPI.photo.viewPhoto(message);
         }}

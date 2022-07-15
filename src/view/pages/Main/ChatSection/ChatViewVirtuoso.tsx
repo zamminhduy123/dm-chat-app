@@ -70,7 +70,7 @@ const ChatViewVirtuoso = ({
 
   React.useEffect(() => {
     if (isLoadMore) {
-      const usersToPrepend = Math.max(totalMessage - oldListLength, 0);
+      const usersToPrepend = Math.min(totalMessage - oldListLength, 15);
       const nextFirstItemIndex = Math.max(firstItemIndex - usersToPrepend, 0);
 
       console.log("PREPEND", usersToPrepend, nextFirstItemIndex);
@@ -105,13 +105,12 @@ const ChatViewVirtuoso = ({
     return () => clearTimeout(timeout);
   }, [scrollToIndex]);
 
-  // console.log("FIRST", firstItemIndex, messageList);
+  console.log("FIRST", firstItemIndex, messageList.length, totalMessage);
 
   return (
-    <div className="chat-view-container">
+    <div className="chat-view-container" key={messageList[0].conversation_id}>
       <Virtuoso
         ref={virtuosoRef}
-        key={messageList[0].conversation_id}
         style={{ height: "100%" }}
         data={messageList}
         firstItemIndex={firstItemIndex}
@@ -170,7 +169,7 @@ const ChatViewVirtuoso = ({
             }
           }
           return (
-            <div key={message.id || message.clientId}>
+            <div key={message.clientId || message.id}>
               {index === 0 || notSameDayBefore ? (
                 <TimeDivider date={new Date(message.create_at || 0)} />
               ) : null}

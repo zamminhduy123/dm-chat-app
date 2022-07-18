@@ -1,0 +1,20 @@
+{
+  "nested": {
+    "messagepackage": {
+      "nested": {
+        "ExtraMetaMessage": {
+          "fields": {
+            "device_key": {
+              "type": "string",
+              "id": 1
+            },
+            "message": {
+              "type": "string",
+              "id": 2
+            }
+          }
+        }
+      }
+    }
+  }
+}

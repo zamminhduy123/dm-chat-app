@@ -77,6 +77,18 @@ var photo = {
         });
     },
 };
+var notification = {
+    newNotification: function (title, message) { return __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            return [2 /*return*/, ipcRenderer.send("new-noti", {
+                    payload: {
+                        title: title,
+                        message: message,
+                    },
+                })];
+        });
+    }); },
+};
 var _window = {
     minimize: function () { return ipcRenderer.send("window/minimize"); },
     hide: function () { return ipcRenderer.send("window/hide"); },
@@ -87,6 +99,8 @@ var API = {
     files: files,
     window: _window,
     photo: photo,
+    IN_DESK_ENV: true,
+    notification: notification,
 };
 module.exports = API;
 contextBridge.exposeInMainWorld("electronAPI", API);

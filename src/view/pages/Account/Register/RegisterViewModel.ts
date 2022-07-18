@@ -75,7 +75,7 @@ export const RegisterViewModel = () => {
         console.log("Register Error", err);
         setNotification({
           type: "error",
-          message: t(err.message),
+          message: t(err),
         });
       });
   };

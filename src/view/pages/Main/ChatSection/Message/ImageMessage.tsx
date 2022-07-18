@@ -1,6 +1,8 @@
 import React, { useMemo } from "react";
 import noImageUrl from "../../../../../assets/no-image.png";
 import { FileEntity, MessageEntity } from "../../../../../entities";
+import ImageViewer from "../../../../components/ImageViewer/ImageViewer";
+import NewWindow from "../../../../components/NewWindow/NewWindow";
 
 interface ImageMessageProps {
   message: MessageEntity;
@@ -10,6 +12,7 @@ interface ImageMessageProps {
 const ImageMessage = ({ message, onLoad }: ImageMessageProps) => {
   const messageContent = message.content as FileEntity;
   const src = messageContent.content;
+  const [openImageViewer, setOpenImageViewer] = React.useState(false);
   return (
     <div
       style={{
@@ -26,7 +29,12 @@ const ImageMessage = ({ message, onLoad }: ImageMessageProps) => {
           cursor: "pointer",
         }}
         onClick={() => {
-          if (message) window.electronAPI.photo.viewPhoto(message);
+          if (message) {
+            if (window.electronAPI) window.electronAPI.photo.viewPhoto(message);
+            else {
+              setOpenImageViewer(true);
+            }
+          }
         }}
         src={src}
         onError={({ currentTarget }) => {
@@ -34,6 +42,11 @@ const ImageMessage = ({ message, onLoad }: ImageMessageProps) => {
           currentTarget.src = noImageUrl;
         }}
       />
+      {openImageViewer ? (
+        <NewWindow close={() => setOpenImageViewer(false)}>
+          <img width={"100%"} height="100%" src={src} />
+        </NewWindow>
+      ) : null}
     </div>
   );
 };

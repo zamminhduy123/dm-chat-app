@@ -48,6 +48,7 @@ function createPhotoView(imageMessage) {
   photoView.on("closed", () => {
     photoView = null;
   });
+
   if (!isDev) photoView.setMenu(null);
 }
 
@@ -74,7 +75,7 @@ function createHomeWindow() {
       preload: path.join(__dirname, "preload.js"),
     },
   });
-  if (!isDev) homeWindow.setMenu(null);
+  // if (!isDev) homeWindow.setMenu(null);
   ipcMain.on("download", async (event, { payload }) => {
     console.log("PAYLOAD", payload);
     // await homeWindow.webContents.downloadURL(payload.fileUrl);

@@ -35,12 +35,14 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var _a = require("electron"), app = _a.app, BrowserWindow = _a.BrowserWindow, ipcMain = _a.ipcMain, dialog = _a.dialog;
+var _a = require("electron"), app = _a.app, BrowserWindow = _a.BrowserWindow, ipcMain = _a.ipcMain, dialog = _a.dialog, Notification = _a.Notification;
 var path = require("path");
 var download = require("./download").download;
 var isDev = process.env.NODE_ENV === "development";
+console.log(isDev);
 var port = 3000;
 var selfHost = "http://localhost:".concat(port);
+var currentNotification;
 var homeWindow, photoView;
 function createPhotoView(imageMessage) {
     // Create the browser window.
@@ -67,6 +69,19 @@ function createPhotoView(imageMessage) {
     photoView.on("closed", function () {
         photoView = null;
     });
+    if (!isDev)
+        photoView.setMenu(null);
+}
+function showNotification(title, body) {
+    if (currentNotification) {
+        currentNotification.close();
+        currentNotification = new Notification({ title: title, body: body });
+        currentNotification.show();
+    }
+    else {
+        currentNotification = new Notification({ title: title, body: body });
+        currentNotification.show();
+    }
 }
 function createHomeWindow() {
     var _this = this;
@@ -82,43 +97,42 @@ function createHomeWindow() {
             preload: path.join(__dirname, "preload.js"),
         },
     });
+    // if (!isDev) homeWindow.setMenu(null);
     ipcMain.on("download", function (event, _a) {
         var payload = _a.payload;
         return __awaiter(_this, void 0, void 0, function () {
             var defaultPath, defaultFilename, customUrl, filePath, directory, onProgress, onComplete;
             return __generator(this, function (_b) {
-                switch (_b.label) {
-                    case 0:
-                        console.log("PAYLOAD", payload);
-                        defaultPath = app.getPath(payload.directory ? payload.directory : "documents");
-                        defaultFilename = payload.name
-                            ? payload.name
-                            : payload.fileUrl.split("?")[0].split("/").pop();
-                        customUrl = dialog.showSaveDialogSync({
-                            defaultPath: "".concat(defaultPath, "/").concat(defaultFilename),
+                console.log("PAYLOAD", payload);
+                defaultPath = app.getPath(payload.directory ? payload.directory : "documents");
+                defaultFilename = payload.name
+                    ? payload.name
+                    : payload.fileUrl.split("?")[0].split("/").pop();
+                customUrl = dialog.showSaveDialogSync({
+                    defaultPath: "".concat(defaultPath, "/").concat(defaultFilename),
+                });
+                if (customUrl) {
+                    filePath = customUrl.split("/"), directory = filePath.join("/");
+                    onProgress = function (progress) {
+                        homeWindow.webContents.send("download-progress", {
+                            progress: progress,
+                            id: payload.id,
                         });
-                        if (!customUrl) return [3 /*break*/, 2];
-                        filePath = customUrl.split("/"), directory = filePath.join("/");
-                        onProgress = function (progress) {
-                            homeWindow.webContents.send("download-progress", {
-                                progress: progress,
-                                id: payload.id,
-                            });
-                            homeWindow.setProgressBar(progress);
-                        };
-                        onComplete = function (item) {
-                            homeWindow.webContents.send("download-complete", {
-                                item: item,
-                                id: payload.id,
-                            });
-                            homeWindow.setProgressBar(0, payload.id);
-                        };
-                        return [4 /*yield*/, download(payload.fileUrl, directory, onComplete, onProgress)];
-                    case 1:
-                        _b.sent();
-                        return [3 /*break*/, 2];
-                    case 2: return [2 /*return*/];
+                        homeWindow.setProgressBar(progress);
+                    };
+                    onComplete = function (item) {
+                        homeWindow.webContents.send("download-complete", {
+                            item: item,
+                            id: payload.id,
+                        });
+                        homeWindow.setProgressBar(0, payload.id);
+                    };
+                    download(payload.fileUrl, directory, onComplete, onProgress);
                 }
+                else {
+                    /**download cancel */
+                }
+                return [2 /*return*/];
             });
         });
     });
@@ -127,6 +141,15 @@ function createHomeWindow() {
         return __awaiter(_this, void 0, void 0, function () {
             return __generator(this, function (_b) {
                 createPhotoView(payload.imageMessage);
+                return [2 /*return*/];
+            });
+        });
+    });
+    ipcMain.on("new-noti", function (event, _a) {
+        var payload = _a.payload;
+        return __awaiter(_this, void 0, void 0, function () {
+            return __generator(this, function (_b) {
+                showNotification(payload.title, payload.message);
                 return [2 /*return*/];
             });
         });

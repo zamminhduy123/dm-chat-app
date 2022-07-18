@@ -1,6 +1,8 @@
 const path = require("path");
 const webpack = require("webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const CopyPlugin = require("copy-webpack-plugin");
+const JsonMinimizerPlugin = require("json-minimizer-webpack-plugin");
 
 module.exports = (env) => {
   console.log("ENV", env);
@@ -61,6 +63,9 @@ module.exports = (env) => {
           test: /\.(jpg|jpeg|png|gif|mp3|svg|eot|woff|woff2|ttf)$/i,
           use: ["file-loader"],
         },
+        {
+          test: /\.json$/i,
+        },
       ],
     },
     plugins: [
@@ -79,6 +84,18 @@ module.exports = (env) => {
       new webpack.DefinePlugin({
         "process.env.REACT_APP_API_URL": JSON.stringify(env.API_URL),
       }),
+      new CopyPlugin({
+        patterns: [
+          {
+            from: "./src/assets/message.json",
+            to: "./message.json",
+          },
+        ],
+      }),
     ],
+    optimization: {
+      minimize: true,
+      minimizer: [new JsonMinimizerPlugin()],
+    },
   };
 };

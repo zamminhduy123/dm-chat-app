@@ -28,7 +28,9 @@ export const standardConversationArray = (ObjArray: any[]): Conversation[] => {
               lastMessage.type,
               lastMessage.content,
               lastMessage.create_at,
-              lastMessage.conversation_id
+              lastMessage.conversation_id,
+              lastMessage.status,
+              lastMessage.to
             )
           : lastMessage,
         conversation.totalMessage

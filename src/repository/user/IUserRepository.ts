@@ -8,4 +8,9 @@ export interface IUserRepository {
   register(userData: RegisterData): Promise<any>;
   find(content: string): Promise<User[]>;
   checkKeyExist(username: string): Promise<any>;
+  saveUserPKey(
+    username: string,
+    pubKey: string,
+    deviceKey: string
+  ): Promise<any>;
 }

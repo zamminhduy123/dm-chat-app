@@ -36,6 +36,9 @@ export default class LocalStorage {
   getLastMessageId() {
     return this._lastMessageId;
   }
+  getDeviceKey() {
+    return this._myKey + "-device";
+  }
   getPrivateKey() {
     return this._myKey + "-private";
   }

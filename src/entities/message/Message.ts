@@ -8,6 +8,7 @@ class Message {
   private create_at: number;
   private conversationId: string;
   private status: MessageStatus;
+  private to: string;
 
   constructor(
     id: string,
@@ -16,7 +17,8 @@ class Message {
     content: string,
     create_at: number,
     conversationId: string,
-    status = MessageStatus.SENDING
+    status = MessageStatus.SENDING,
+    to: string
   ) {
     this.id = id;
     this.sender = sender;
@@ -25,9 +27,13 @@ class Message {
     this.create_at = create_at;
     this.status = status;
     this.conversationId = conversationId;
+    this.to = to;
   }
   getId(): string {
     return this.id;
+  }
+  getTo(): string {
+    return this.to;
   }
   getStatus(): MessageStatus {
     return this.status;

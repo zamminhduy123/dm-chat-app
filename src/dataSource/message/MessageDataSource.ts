@@ -1,6 +1,7 @@
 import { MessageEntity, MessageEnum } from "../../entities";
 import Fetcher from "../../api";
 import {
+  ConversationStorage,
   messageEntityToPendingStorage,
   messageEntityToStorage,
   MessageStorage,
@@ -10,15 +11,19 @@ import {
 import { Socket } from "../../services/socket";
 import { messageConstants } from "../../view/action";
 import { LocalStorage } from "../../storage";
-import { mapTypeMessage } from "../../utils/utils";
+import { mapMessageStatus, mapTypeMessage } from "../../utils/utils";
 import SearchStorage from "../../storage/search.storage";
 import { sMessageEntity } from "../../storage/storageEntity";
 import messageToKeywords from "../../utils/messageToKeywords";
+import KeyDataSource from "../key";
+import MessageExtraMeta from "../../utils/MessageExtraMeta/MessageExtraMeta";
+import KeyHelper, { arrayBufferToString } from "../../utils/keyHelper";
 
 export interface IMessageDataSourceInterface {
   getByConversationId(
     conversationId: string,
-    from: number
+    from: number,
+    to?: number
   ): Promise<MessageEntity[]>;
   add(newData: MessageEntity): Promise<any>;
   update(updated: MessageEntity, key?: string): Promise<any>;
@@ -32,9 +37,11 @@ export interface IMessageDataSourceInterface {
 export default class MessageDataSource implements IMessageDataSourceInterface {
   private _msgStorage: MessageStorage;
   private _searchStorage: SearchStorage;
+  private _conversationStorage: ConversationStorage;
 
   constructor(username: string) {
     this._msgStorage = new MessageStorage();
+    this._conversationStorage = new ConversationStorage();
     this._searchStorage = new SearchStorage();
   }
   resendPendingMessage(): Promise<any> {
@@ -56,6 +63,7 @@ export default class MessageDataSource implements IMessageDataSourceInterface {
     });
   }
   add(newData: MessageEntity) {
+    console.log("ADD MESSAGE DS", newData);
     //get last message from storage
     return new Promise<any>(async (resolve, reject) => {
       try {
@@ -113,15 +121,53 @@ export default class MessageDataSource implements IMessageDataSourceInterface {
           //update to db
           console.log("fetch with last message id", data);
 
-          try {
-            await this._msgStorage.upsert(
-              data.map((msg: any) => {
-                if (+msg.type !== MessageEnum.text) {
-                  msg.content = JSON.parse(msg.content);
+          const dbData = [];
+
+          for (const message of data) {
+            let messageExtra = new MessageExtraMeta();
+            //get message meta data
+            if (!(`${message.to}` === `g${message.conversation_id}`)) {
+              if (+message.type === MessageEnum.text) {
+                await messageExtra.deserialize(message.content);
+              } else {
+                console.log("MESSAGE", message.content);
+                message.content = JSON.parse(message.content);
+                console.log("MESSAGE", message.content.content);
+                await messageExtra.deserialize(message.content.content);
+              }
+              console.log(
+                "MESSAGE EXTRA",
+                messageExtra.getDeviceKey(),
+                messageExtra.getMessage()
+              );
+              try {
+                const conversation = await this._conversationStorage.get(
+                  message.conversation_id
+                );
+                let decryptedMessage = "Could not decrypt message";
+                try {
+                  decryptedMessage =
+                    await KeyDataSource.getInstance().decryptMessage(
+                      conversation.users.map((u) => u.username),
+                      message.sender,
+                      messageExtra.getMessage(),
+                      messageExtra.getDeviceKey()
+                    );
+                } catch (err) {
+                  console.log("DECRYPT ERR", err);
                 }
-                return messageEntityToStorage(msg);
-              })
-            );
+                if (typeof message.content === "string") {
+                  message.content = decryptedMessage;
+                } else {
+                  message.content.content = decryptedMessage;
+                }
+              } catch (err) {}
+              console.log(dbData);
+            }
+            dbData.push(messageEntityToStorage(message));
+          }
+          try {
+            await this._msgStorage.upsert(dbData);
             //announce to server that client receive the mesage
             data.forEach((msg: any) => {
               Socket.getInstance().emit<MessageEntity>(
@@ -140,11 +186,12 @@ export default class MessageDataSource implements IMessageDataSourceInterface {
 
   getByConversationId = async (
     conversationId: string,
-    from: number
+    from: number,
+    to?: number
   ): Promise<MessageEntity[]> => {
     return new Promise<MessageEntity[]>((resolve, reject) => {
       this._msgStorage
-        .getFromConversation(conversationId, from)
+        .getFromConversation(conversationId, from, to)
         .then((data) => {
           resolve(data.map((el) => messageStorageToEntity(el)));
         })
@@ -157,20 +204,25 @@ export default class MessageDataSource implements IMessageDataSourceInterface {
       try {
         let result: MessageEntity[] = [];
 
+        let messageIds = new Set<string>();
+
         const kws = messageToKeywords(kw);
         await Promise.all(
           kws.map(async (kw) => {
             const data = await this._searchStorage.getDataByKeyword(kw);
-            await Promise.all(
-              data.map(async (d) => {
-                try {
-                  const message = await this._msgStorage.get(d.msgId);
-                  result = [...result, messageStorageToEntity(message)];
-                } catch (err) {
-                  console.log("ERR SEARCHING IMAGE", err);
-                }
-              })
-            );
+            data.forEach((d) => messageIds.add(d.msgId));
+          })
+        );
+        console.log(messageIds);
+
+        await Promise.all(
+          Array.from(messageIds).map(async (id: string) => {
+            try {
+              const message = await this._msgStorage.get(id);
+              result.push(messageStorageToEntity(message));
+            } catch (err) {
+              console.log("ERR SEARCHING IMAGE", err);
+            }
           })
         );
 

@@ -12,4 +12,7 @@ export const userConstants = {
   LOGOUT_FAIL: "USERS_LOGOUT_FAL",
 
   DISPLAY_USER: "DISPLAY_USER",
+
+  NEW_KEY: "NEW_KEY",
+  CREATE_NEW_KEY: "CREATE_NEW_KEY",
 };

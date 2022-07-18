@@ -27,6 +27,8 @@ import EventEmitter from "../../utils/event-emitter";
 import { messageConstants } from "../../view/action";
 import { standardConversationArray } from "../../repository/conversation/helpers";
 import { standardMessageArray } from "../../repository/message/helpers";
+import { EncryptMessage } from "../../usecases/message/encryptMessage";
+import { DecryptMessage } from "../../usecases/message/decryptMessage";
 
 export default class MessageController
   extends BaseController
@@ -42,8 +44,12 @@ export default class MessageController
   private _resendPendingMessageUseCase: ResendPendingMessage;
   private _getFileUrlUseCase: GetFileUrl;
   private _searchMessageByKeywordUseCase: SearchMessageByKeyword;
+  private _encryptMessageUseCase: EncryptMessage;
+  private _decryptMessageUseCase: DecryptMessage;
 
   private syncAttemp = 0;
+
+  private _messageQueue: MessageEntity[];
   constructor() {
     super();
     this._messageRepo = new MessageRepository(this._getState().auth.user);
@@ -60,6 +66,10 @@ export default class MessageController
     this._resendPendingMessageUseCase = new ResendPendingMessage(
       this._messageRepo
     );
+    this._encryptMessageUseCase = new EncryptMessage(this._messageRepo);
+    this._decryptMessageUseCase = new DecryptMessage(this._messageRepo);
+
+    this._messageQueue = [];
   }
 
   syncMessage() {
@@ -82,31 +92,31 @@ export default class MessageController
   }
   async getMesssageFromConversation() {
     try {
-      const atMsgId = this._getState().conversation.atMsgId;
+      if (this._getState().message.selected) {
+        this.loadToMessage(this._getState().message.selected);
+      } else {
+        const data = await this._getMessageFromConversationUseCase.execute(
+          this._getState().conversation.selected,
+          Date.now()
+        );
 
-      const data = await this._getMessageFromConversationUseCase.execute(
-        this._getState().conversation.selected,
-        Date.now()
-      );
-
-      const messages = Helper.conversationModelToEntity(data);
-      this._dispatch(setMessage(messages));
+        const messages = Helper.conversationModelToEntity(data);
+        this._dispatch(setMessage(messages));
+      }
     } catch (err) {
       //if user's network still good but axios network error -> server down -> logout
       console.log(err);
     }
   }
-  async loadUntilReachId(currentMessage: MessageEntity) {
+  async loadToMessage(currentMessage: MessageEntity) {
     try {
-      const atMsgId = this._getState().conversation.atMsgId;
-      if (currentMessage.id! > atMsgId) {
-        await this.loadMoreMessageFromConversation(
-          new Date(+currentMessage.create_at).getTime()
-        );
-      }
-      if (this._getState().message.messages[0].id > atMsgId) {
-        await this.loadUntilReachId(this._getState().message.messages[0]);
-      }
+      const data = await this._getMessageFromConversationUseCase.execute(
+        this._getState().conversation.selected,
+        Date.now(),
+        currentMessage.create_at
+      );
+      this._dispatch(setMessage(Helper.conversationModelToEntity(data)));
+      await this.loadMoreMessageFromConversation(data[0].getCreateAt());
     } catch (err) {
       //if user's network still good but axios network error -> server down -> logout
       console.log(err);
@@ -130,22 +140,64 @@ export default class MessageController
       console.log(err);
     }
   }
-  sendMessage = async (message: MessageEntity) => {
+
+  enqueueMessage = async (message: MessageEntity) => {
     try {
-      //don't have conversation_id
-      this._addMessageUseCase.execute(message);
+      message = await this.encryptMessage(message);
     } catch (err) {
-      console.log(err);
+      console.log("MESSAGE ENCRYPT FAIL", err);
+      throw new Error("MESSAGE ENCRYPT FAIL");
+    }
+    this._messageQueue.push(message);
+    if (this._messageQueue.length === 1) this.sendMessage();
+  };
+
+  private _sending = false;
+
+  sendMessage = async () => {
+    if (!this._sending) {
+      let nextMessage = this._messageQueue.shift();
+      if (nextMessage) {
+        this._sending = true;
+        try {
+          console.log("SEND", nextMessage);
+          this._addMessageUseCase.execute(nextMessage);
+        } catch (err) {
+          console.log(err);
+          nextMessage.status = 4;
+          this.updateMessage(nextMessage, true);
+          this._sending = false;
+        }
+      }
     }
   };
 
-  createTempMessage = (newMessage: NewMessage, to?: string[]) => {
+  getConversationFromMessage = async (conversationId: string) => {
     try {
-      const newMessageEntity = Helper.newMessageToMessageEntity(
-        newMessage,
-        to ? to : []
-      );
+      //get conver from state manager
+      const conver =
+        ConversationController.getInstance().findConversation(conversationId);
+      if (conver) return conver;
+      else {
+        //get conver from source
+      }
+    } catch (err) {
+      return null;
+    }
+  };
+
+  createTempMessage = (newMessage: NewMessage, to: string[]) => {
+    try {
+      let newMessageEntity;
+      if (to.length > 1)
+        newMessageEntity = Helper.newMessageToMessageEntity(
+          newMessage,
+          "g" + newMessage.conversation_id
+        );
+      else
+        newMessageEntity = Helper.newMessageToMessageEntity(newMessage, to[0]);
       this._dispatch(addMessage(newMessageEntity));
+      console.log(newMessageEntity);
       return newMessageEntity;
     } catch (err) {
       throw err;
@@ -168,8 +220,14 @@ export default class MessageController
       throw err;
     }
   };
-  updateMessage = (updatedMessage: MessageEntity, sentUpdate = false) => {
+  updateMessage = async (updatedMessage: MessageEntity, sentUpdate = false) => {
+    console.log("UPDATE MESSAGE", updatedMessage, sentUpdate);
+    updatedMessage = await this.decryptMessage(updatedMessage);
+
     if (sentUpdate) {
+      //trigger queue to continue send message
+      this._sending = false;
+      this.sendMessage();
       this._addMessageUseCase
         .execute(updatedMessage)
         .then((data) => {
@@ -193,11 +251,68 @@ export default class MessageController
     }
   };
 
+  encryptMessage = async (message: MessageEntity) => {
+    console.log("=================ENCRYPTING===================");
+    console.log("MESSAGE TO ENCRYTP", message);
+    try {
+      if (!message.to) {
+        throw new Error("No message receiver (to)");
+      }
+      let isGroup = `${message.to}` === `g${message.conversation_id}`;
+      console.log(
+        "isGROUP",
+        isGroup,
+        `${message.to}`,
+        `g${message.conversation_id}`
+      );
+      //encryptmessage
+      if (!isGroup) {
+        await this._encryptMessageUseCase.execute(message);
+      }
+      return message;
+    } catch (err) {
+      console.log(err);
+    }
+    console.log("=================ENCRYPTING===================");
+    return message;
+  };
+
+  decryptMessage = async (message: MessageEntity) => {
+    // console.log(message);
+    try {
+      console.log("=============== START DECRYPT ========================");
+      let isGroup = `${message.to}` === `g${message.conversation_id}`;
+      console.log("MESSAGE TO DECRYPT", message.content, isGroup);
+
+      //encryptmessage
+      if (!isGroup) {
+        message = await this._decryptMessageUseCase.execute(
+          message,
+          this._getState().auth.user
+        );
+      }
+      console.log("AFTER DECRYPT", message.content);
+      console.log("================ END DECRYPT ========================");
+
+      return message;
+    } catch (err) {
+      // if (typeof message.content === "string") {
+      //   message.content = "Could not decrypt this message";
+      // } else {
+      //   message.content.content = "Could not decrypt this message";
+      // }
+      // console.log("DECRYPT Error", err);
+      return message;
+    }
+  };
+
   resendMessage = (message: MessageEntity) => {
     // this._addMessageUseCase.execute(message);
   };
 
-  receiveMessage = (message: MessageEntity) => {
+  receiveMessage = async (message: MessageEntity) => {
+    console.log("RECEIVE MESSAGE", message);
+    message = await this.decryptMessage(message);
     // console.log(message, this._getState().conversation.selected);
     if (message.conversation_id === this._getState().conversation.selected) {
       this._dispatch(addMessage(message));

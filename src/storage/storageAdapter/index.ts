@@ -1,7 +1,7 @@
 import IndexedDBAdapter, { IObjectStore, IIndex } from "./indexedDB";
 
 const dbName = "ZaDB",
-  version = 2;
+  version = 1;
 
 export const storeNames = {
   conversation: "conversation",
@@ -74,7 +74,7 @@ const stores: IObjectStore[] = [
   {
     name: storeNames.encrypt_sharedKey,
     option: {
-      keyPath: "identifier",
+      keyPath: ["identifier", "deviceKey"],
     },
     indexes: [],
   },

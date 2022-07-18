@@ -10,7 +10,7 @@ import { Action } from "../../type";
 const initialState: IConversation = {
   conversations: [],
   selected: "",
-  atMsgId: "",
+  atMsg: null,
 };
 
 const reset = (state = initialState, action: Action) => {
@@ -18,12 +18,12 @@ const reset = (state = initialState, action: Action) => {
 };
 
 const setConversation = (state = initialState, action: Action) => {
-  console.log(action.payload);
+  // console.log(action.payload);
   return updateObject(state, action.payload);
 };
 
 const addConversation = (state = initialState, action: Action) => {
-  const newConversationList = [...state.conversations, action.payload];
+  const newConversationList = [action.payload, ...state.conversations];
 
   return updateObject(state, {
     conversations: newConversationList,

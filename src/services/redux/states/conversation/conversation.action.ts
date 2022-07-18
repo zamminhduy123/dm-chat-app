@@ -1,15 +1,11 @@
-import { ConversationEntity } from "../../../../entities";
+import { ConversationEntity, MessageEntity } from "../../../../entities";
 import { conversationConstants } from "../../../../view/action";
 
-export const selectConversation = (
-  conversation_id: string,
-  atMsgId?: string
-) => {
+export const selectConversation = (conversation_id: string) => {
   return {
     type: conversationConstants.SELECT_CONVERSATION,
     payload: {
       selected: conversation_id,
-      atMsgId: atMsgId || "",
     },
   };
 };

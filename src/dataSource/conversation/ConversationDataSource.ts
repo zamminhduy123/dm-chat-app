@@ -1,10 +1,13 @@
-import { ConversationEntity } from "../../entities";
+import { ConversationEntity, MessageEnum } from "../../entities";
 import { ConversationStorage } from "../../storage";
 import {
   conversationToStorageEntity,
   conversationStorageToEntity,
 } from "../../storage/storageHelper";
 import Fetcher from "../../api";
+import KeyHelper, { arrayBufferToString } from "../../utils/keyHelper";
+import KeyDataSource from "../key";
+import MessageExtraMeta from "../../utils/MessageExtraMeta/MessageExtraMeta";
 
 export interface IConversationDataSource {
   get(): Promise<ConversationEntity[]>;
@@ -25,10 +28,51 @@ export default class ConversationDataSource implements IConversationDataSource {
       let serverData: ConversationEntity[];
       try {
         serverData = await Fetcher.getConversation(username);
+
         if (serverData) {
-          await this._convStorage.update(
-            serverData.map((conv) => conversationToStorageEntity(conv))
-          );
+          for (const conver of serverData) {
+            const data = conversationToStorageEntity(conver);
+            const currentData = await this._convStorage.get(data.id);
+            if (currentData.lastMessageId !== data.lastMessageId) {
+              //try decrypt
+              if (conver.users.length === 2 && conver.lastMessage) {
+                if (+conver.lastMessage.type === MessageEnum.text) {
+                  try {
+                    let messageExtra = await new MessageExtraMeta().deserialize(
+                      conver.lastMessage.content as string
+                    );
+
+                    console.log(
+                      "Other user ",
+                      conver.users.filter((u) => u.username !== username)[0]
+                        .username
+                    );
+                    const sharedKey =
+                      await KeyDataSource.getInstance().getSharedKey(
+                        conver.users.filter((u) => u.username !== username)[0]
+                          .username,
+                        conver.lastMessage.sender !== username
+                          ? messageExtra.getDeviceKey()
+                          : undefined
+                      );
+                    console.log("SHARE", sharedKey);
+                    data.lastMessageContent =
+                      await KeyHelper.getInstance().decrypt(
+                        sharedKey,
+                        messageExtra.getMessage()
+                      );
+                    console.log(
+                      "conv.lastMessage.content",
+                      conver.lastMessage.content
+                    );
+                  } catch (err) {
+                    console.log("SYNC CONVERSATION ERR", err);
+                  }
+                }
+              }
+              await this._convStorage.update([data]);
+            }
+          }
         }
 
         resolve(true);

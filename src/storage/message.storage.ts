@@ -72,19 +72,21 @@ export default class MessageStorage implements IMessageStorage {
   }
   getFromConversation(
     conversation_id: string,
-    from: number
+    from: number,
+    to?: number
   ): Promise<sMessageEntity[]> {
     return new Promise<sMessageEntity[]>(async (resolve, reject) => {
       try {
         const data = await db.getManyWithIndex<sMessageEntity[]>(
           storeNames.message,
           indexName.conversationId_sendTime,
-          [conversation_id, 0],
+          [conversation_id, to ? to - 1 : 0],
           [conversation_id, from],
           "prev",
           true,
-          15
+          to ? undefined : 15
         );
+        // console.log("STORAGE MESSAGE:", data, to);
         resolve(data);
       } catch (err) {
         reject(err);

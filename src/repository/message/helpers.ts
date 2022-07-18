@@ -16,7 +16,8 @@ export const standardMessageArray = (ObjArray: any[]): Message[] => {
         content,
         message.create_at,
         message.conversation_id,
-        message.status
+        message.status,
+        message.to
       )
     );
   }

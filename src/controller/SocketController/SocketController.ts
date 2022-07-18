@@ -8,7 +8,11 @@ import {
 import { Typing } from "../../entities/type";
 import { Socket } from "../../services/socket";
 import { ConversationEntity, MessageEntity, MessageEnum } from "../../entities";
-import { conversationConstants, messageConstants } from "../../view/action";
+import {
+  conversationConstants,
+  messageConstants,
+  userConstants,
+} from "../../view/action";
 import { updateLastMessage } from "../../services/redux/states/conversation/conversation.action";
 import ConversationController from "../ConversationController/ConversationController";
 import db from "../../storage/storageAdapter";
@@ -16,6 +20,7 @@ import MessageController from "../MessageController/MessageController";
 import UserController from "../UserController/UserController";
 import { parseContent } from "./helper";
 import { TypingData } from "../../entities/type/TypingData";
+import { NewKey } from "../../entities/type/NewKey";
 
 export default class SocketController extends BaseController {
   private static _instance: SocketController | null = null;
@@ -59,6 +64,7 @@ export default class SocketController extends BaseController {
     this.messageSent();
     this.typingRegister();
     this.errorListener();
+    this.receiveNewKey();
 
     console.log("RESYNC");
 
@@ -143,11 +149,30 @@ export default class SocketController extends BaseController {
     );
     Socket.getInstance().registerListener<ConversationEntity>(
       conversationConstants.CONVERSATION_CHANGE,
-      (data) => {
+      async (data) => {
         const existed = ConversationController.getInstance().findConversation(
           data.id
         );
         parseContent(data.lastMessage);
+        if (
+          data.lastMessage &&
+          data.users.length === 2 &&
+          +data.lastMessage.type === MessageEnum.text
+        )
+          data.lastMessage =
+            (await MessageController.getInstance().decryptMessage(
+              data.lastMessage
+            )) || null;
+        //emit new notification for window
+        if (
+          window.electronAPI &&
+          this._getState().auth.user !== data.lastMessage?.sender
+        )
+          window.electronAPI.notification.newNotification(
+            data.users.filter((u) => u.username === data.lastMessage?.sender)[0]
+              .name || "New message",
+            data.lastMessage?.content
+          );
         if (!existed) {
           ConversationController.getInstance().addNewConversation(data);
         } else {
@@ -164,10 +189,27 @@ export default class SocketController extends BaseController {
     Socket.getInstance().registerListener<MessageEntity>(
       messageConstants.RECEIVE_MESSAGE,
       (data) => {
+        // console.log("RECEIVED", data, data.content);
         parseContent(data);
+        // console.log("RECEIVED", data, data.content);
         MessageController.getInstance().receiveMessage(data);
 
         this.messageReceived(data);
+      }
+    );
+  };
+
+  receiveNewKey = () => {
+    Socket.getInstance().removeRegisteredListener(userConstants.NEW_KEY);
+    Socket.getInstance().registerListener<NewKey>(
+      userConstants.NEW_KEY,
+      (data) => {
+        console.log("NEW KEY", data);
+        UserController.getInstance().saveUserPKey(
+          data.username,
+          data.publicKey,
+          data.deviceKey
+        );
       }
     );
   };

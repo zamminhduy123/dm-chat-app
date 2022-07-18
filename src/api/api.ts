@@ -8,8 +8,6 @@ import axios, { AxiosError } from "axios";
 
 const CHUNK_SIZE = 5 * 1024 * 1024;
 
-axios.defaults.timeout = 10000;
-
 export class ClientAPI {
   private origin: string;
   constructor() {
@@ -58,6 +56,7 @@ export class ClientAPI {
     contentType = "application/json"
   ): Promise<T> {
     return new Promise<any>(async (resolve, reject) => {
+      // console.log({ ...(data ? { data: data } : null) });
       const requestOptions = {
         method: type,
         url: url,
@@ -67,6 +66,7 @@ export class ClientAPI {
         withCredentials: true,
         ...(data ? { data: data } : null),
       };
+      // console.log(requestOptions);
       axios(requestOptions)
         .then((response) => {
           resolve(response.data);
@@ -186,14 +186,20 @@ export class ClientAPI {
     }
   }
 
-  async getUserPublicKey(username: string) {
-    const url = this._createUrl(`key/${username}`);
-    return this._get<string>(url);
+  async getUserPublicKey(username: string, deviceKey?: string) {
+    let query = "";
+    if (deviceKey) {
+      const encodedDeviceKey = encodeURIComponent(deviceKey);
+      query = `?deviceKey=${encodedDeviceKey}`;
+    }
+    const url = this._createUrl(`key/${username}${query}`);
+    console.log("ENCODE URI", url);
+    return this._get<any>(url);
   }
 
-  async postUserPublicKey(username: string, pKey: string) {
+  async postUserPublicKey(username: string, pKey: string, deviceKey: string) {
     const url = this._createUrl(`key/${username}`);
-    return this._put<string>(url, pKey);
+    return this._post<string>(url, { publicKey: pKey, deviceKey });
   }
 
   // changePassword(

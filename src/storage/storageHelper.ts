@@ -32,6 +32,7 @@ export const conversationToStorageEntity = (
         name: user.name,
       };
     }),
+    to: conversation.lastMessage?.to || "",
     isGroup: conversation.users.length > 2,
     unreadMessage: 0,
     lastMessageId: conversation.lastMessage?.id || "",
@@ -74,6 +75,7 @@ export const conversationStorageToEntity = (
       status: conversation.lastMessageStatus,
       type: conversation.lastMessageType,
       create_at: conversation.lastMessageTime,
+      to: conversation.to,
     },
     totalMessage: conversation.totalMessage,
   };
@@ -98,7 +100,7 @@ export const messageEntityToPendingStorage = (
     status: message.status,
     content: message.content,
     conversation_id: message.conversation_id || "",
-    to: message.to || [],
+    to: message.to || "",
   };
 };
 
@@ -123,6 +125,7 @@ export const messageEntityToStorage = (
     status: message.status,
     content: message.content,
     conversation_id: message.conversation_id || "",
+    to: message.to,
   };
 };
 

@@ -1,0 +1,19 @@
+.new-key-alert-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    max-width: 500px;
+    a {
+        margin-top: 4px;
+        font-size: 11px;
+        text-decoration: underline;
+    }
+    span  {
+        margin-top: 4px;
+    }
+    p{
+        font-size: small;
+    }
+}

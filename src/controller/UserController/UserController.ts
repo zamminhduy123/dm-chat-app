@@ -21,6 +21,8 @@ import ConversationController from "../ConversationController/ConversationContro
 import MessageController from "../MessageController/MessageController";
 import { LocalStorage } from "../../storage";
 import { CheckKeyExist } from "../../usecases/user/checkKeyExist";
+import { SaveUserPKey } from "../../usecases/user/saveUserPKey";
+import eventEmitter from "../../utils/event-emitter";
 
 export default class UserController
   extends BaseController
@@ -35,6 +37,7 @@ export default class UserController
   private _authenticateUseCase: Authenticate;
   private _findUseCase: Find;
   private _checkKeyExistUseCase: CheckKeyExist;
+  private _saveUserPKey: SaveUserPKey;
 
   constructor() {
     super();
@@ -45,6 +48,7 @@ export default class UserController
     this._authenticateUseCase = new Authenticate(this._userRepo);
     this._findUseCase = new Find(this._userRepo);
     this._checkKeyExistUseCase = new CheckKeyExist(this._userRepo);
+    this._saveUserPKey = new SaveUserPKey(this._userRepo);
   }
   static destroy() {
     this._instance = null;
@@ -66,14 +70,25 @@ export default class UserController
     SocketController.getInstance().init();
     StorageController.getInstance().connect();
     LocalStorage.getInstance().setUser(username);
-    this.checkKeyExist(username);
   }
 
   checkKeyExist = async (username: string) => {
     try {
       await this._checkKeyExistUseCase.execute(username);
     } catch (err) {
-      console.error(err);
+      console.error("CHECK KEY ERROR: ", err);
+    }
+  };
+
+  saveUserPKey = async (
+    username: string,
+    pubKey: string,
+    deviceKey: string
+  ) => {
+    try {
+      await this._saveUserPKey.execute(username, pubKey, deviceKey);
+    } catch (err) {
+      console.error("SAVE NEW KEY ERROR: ", err);
     }
   };
 

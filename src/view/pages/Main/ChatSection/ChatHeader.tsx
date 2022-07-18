@@ -12,12 +12,15 @@ import GroupAvatar from "../../../components/GroupAvatar/GroupAvatar";
 import { getRemainingTime } from "../../../../utils/utils";
 import useTranslation from "../../../adapter/translation.adapter";
 import { chatInSameTime } from "../../../../utils/chatInSameTime";
+import eventEmitter from "../../../../utils/event-emitter";
+import { userConstants } from "../../../action";
 
 interface ChatHeaderProps {
   avatars: string[];
   name: string;
   lastMessageSendingTime: number;
   userNumber: number;
+  info: string;
 }
 
 const ChatHeader: React.FC<ChatHeaderProps> = ({
@@ -25,6 +28,7 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
   name,
   userNumber,
   lastMessageSendingTime,
+  info,
 }: ChatHeaderProps) => {
   const { t } = useTranslation();
   let extraInfo;
@@ -60,7 +64,7 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
       </div>
 
       <div className="chat-header-right">
-        <div className="chat-header-right-icon">
+        {/* <div className="chat-header-right-icon">
           <Icon icon={faUserPlus} />
         </div>
         <div className="chat-header-right-icon">
@@ -68,10 +72,17 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
         </div>
         <div className="chat-header-right-icon">
           <Icon icon={faVideo} />
-        </div>
-        <div className="chat-header-right-icon">
-          <Icon icon={faCircleInfo} />
-        </div>
+        </div> */}
+        {userNumber === 2 ? (
+          <div
+            className="chat-header-right-icon"
+            onClick={() => {
+              eventEmitter.emit(userConstants.DISPLAY_USER, info);
+            }}
+          >
+            <Icon icon={faCircleInfo} />
+          </div>
+        ) : null}
       </div>
     </div>
   );

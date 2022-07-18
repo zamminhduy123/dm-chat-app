@@ -35,6 +35,7 @@ export const conversationModelToEntity = (
             content: lastMessage.getContent(),
             create_at: lastMessage.getCreateAt(),
             status: lastMessage.getStatus(),
+            to: lastMessage.getTo(),
           }
         : null,
       totalMessage: conversation.getTotalMessage(),

@@ -16,7 +16,7 @@ export default class SearchStorage implements ISearchStorage {
           indexName.keyword,
           [lastCharacterBefore(keyword)],
           [lastCharacterAfter(keyword)],
-          "nextunique",
+          "next",
           false,
           100
         );

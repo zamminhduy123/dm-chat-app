@@ -15,4 +15,5 @@ export type sConversationEntity = {
   lastMessageTime: number;
   lastMessageSender: string;
   totalMessage: number;
+  to: string;
 };

@@ -1,0 +1,151 @@
+/**
+ * placeholder-loading v0.6.0
+ * Author: Zalog (https://www.zalog.ro/)
+ * License: MIT
+ **/
+ .loading-list-container {
+    height: fit-content;
+    width: 100%;
+
+    background-color: transparent;
+    border-radius: 4px;
+    margin: 10px 0px;
+    cursor: pointer;
+}
+
+@-webkit-keyframes ph-animation {
+    0% {
+        opacity: 0.2;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0.2;
+    }
+  }
+  
+  @keyframes ph-animation {
+    0% {
+        opacity: 0.2;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0.2;
+    }
+  }
+ .ph-item {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    overflow: hidden;
+    direction: ltr;
+    margin-top: 16px;
+
+    animation: ph-animation 2s ease-in-out infinite;
+  }
+  .ph-item > * {
+    display: flex;
+    flex: 1 1 auto;
+    flex-flow: column;
+  }
+
+  .ph-item.reverse {
+
+    flex-direction: row-reverse;    
+  }
+
+
+
+  .ph-row {
+    display: flex;
+    flex-wrap: wrap;
+    animation: ph-animation 2s ease-in-out infinite;
+  }
+  .ph-row div {
+    height: 14px;
+    border-radius: 10px;
+    margin-top: 7.5px;
+    background-color: #ced4da;
+  }
+  .ph-row .big, .ph-row.big div {
+    height: 64px;
+  }
+  .ph-row .empty {
+    background-color: rgba(255, 255, 255, 0);
+  }
+
+  .ph-row-small {
+    flex: 0 0 32px;
+  }
+  
+  .ph-col-2 {
+    flex: 0 0 16.6666666667%;
+  }
+  
+  .ph-col-4 {
+    flex: 0 0 33.3333333333%;
+  }
+  
+  .ph-col-6 {
+    flex: 0 0 50%;
+  }
+  
+  .ph-col-8 {
+    flex: 0 0 66.6666666667%;
+  }
+  
+  .ph-col-10 {
+    flex: 0 0 83.3333333333%;
+  }
+  
+  .ph-col-12 {
+    flex: 0 0 100%;
+  }
+  
+  [class*=ph-col] {
+    direction: ltr;
+  }
+  [class*=ph-col] > * + .ph-row {
+    margin-top: 0;
+  }
+  [class*=ph-col] > * + * {
+    margin-top: 7.5px;
+  }
+  
+  .ph-avatar {
+    position: relative;
+    width: 100%;
+    min-width: 48px;
+    overflow: hidden;
+    background-color: #ced4da;
+    border-radius: 50%;
+  }
+  .ph-avatar::before {
+    display: block;
+    padding-top: 100%;
+    content: " ";
+  }
+
+  .ph-avatar-small {
+    position: relative;
+    width: 32px;
+    height: 32px;
+    overflow: hidden;
+    background-color: #ced4da;
+    border-radius: 50%;
+  }
+  .ph-avatar-small::before {
+    display: block;
+    padding-top: 100%;
+    content: " ";
+  }
+  
+  .ph-picture {
+    width: 100%;
+    height: 120px;
+    background-color: #ced4da;
+  }
+  

@@ -154,6 +154,7 @@ export default class IndexedDBAdapter {
       try {
         conn = await this.openDB();
         const range = this.getBound(lower, upper);
+        // console.log("RANGE", range);
         const request = conn
           .transaction(storeName)
           .objectStore(storeName)
@@ -238,13 +239,13 @@ export default class IndexedDBAdapter {
         };
         var objectStore = transaction.objectStore(storeName);
         data.forEach((d) => {
-          let request = objectStore.add(d);
+          let request = objectStore.put(d);
           request.onsuccess = () => {
             console.log(` added: ${request.result}`);
           };
 
           request.onerror = (err) => {
-            console.error(`Error add `, err);
+            console.error(`Error add `, err, d);
             reject(err);
           };
         });
@@ -287,6 +288,7 @@ export default class IndexedDBAdapter {
     });
   };
   update = <T>(storeName: string, datas: T[]): Promise<any> => {
+    // console.log(datas);
     return new Promise<any>(async (resolve, reject) => {
       let conn;
       try {
@@ -332,6 +334,8 @@ export default class IndexedDBAdapter {
       let conn;
       try {
         conn = await this.openDB();
+
+        // console.log("GET", storeName, key);
 
         let request = conn
           .transaction(storeName)

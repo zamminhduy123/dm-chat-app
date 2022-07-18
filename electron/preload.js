@@ -32,6 +32,16 @@ const photo = {
     }),
 };
 
+const notification = {
+  newNotification: async (title, message) =>
+    ipcRenderer.send("new-noti", {
+      payload: {
+        title,
+        message,
+      },
+    }),
+};
+
 const _window = {
   minimize: () => ipcRenderer.send("window/minimize"),
   hide: () => ipcRenderer.send("window/hide"),
@@ -44,6 +54,7 @@ const API = {
   window: _window,
   photo: photo,
   IN_DESK_ENV: true,
+  notification: notification,
 };
 module.exports = API;
 

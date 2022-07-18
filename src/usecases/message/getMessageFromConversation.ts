@@ -5,7 +5,11 @@ import {
 } from "../../repository/message";
 
 export interface GetMessageFromConversationUseCase {
-  execute: (conversationId: string, from: number) => Promise<Message[]>;
+  execute: (
+    conversationId: string,
+    from: number,
+    to?: number
+  ) => Promise<Message[]>;
 }
 
 export class GetMessageFromConversation
@@ -17,7 +21,11 @@ export class GetMessageFromConversation
     this.msgRepo = msgRepo;
   }
 
-  async execute(conversationId: string, from: number): Promise<Message[]> {
-    return this.msgRepo.getMessageByConversationId(conversationId, from);
+  async execute(
+    conversationId: string,
+    from: number,
+    to?: number
+  ): Promise<Message[]> {
+    return this.msgRepo.getMessageByConversationId(conversationId, from, to);
   }
 }

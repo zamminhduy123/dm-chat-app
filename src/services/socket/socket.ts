@@ -22,7 +22,7 @@ class Socket {
     // if (process.env.REACT_APP_SERVER === "local") url = "http://localhost:3001";
     // else
 
-    url = process.env.REACT_APP_API_URL || "localhost:3001";
+    url = process.env.REACT_APP_API_URL || "http://localhost:3001";
     this.socket = io(url, {
       autoConnect: false,
       withCredentials: true,
@@ -150,6 +150,8 @@ class Socket {
 
     this._connectErrorCB = [];
     this._connectSuccessCB = [];
+
+    clearInterval(this.pingInterval);
 
     delete this.socket;
 

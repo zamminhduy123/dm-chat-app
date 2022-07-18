@@ -1,5 +1,5 @@
 import React from "react";
-import { ConversationEntity } from "../../../entities";
+import { ConversationEntity, MessageEnum } from "../../../entities";
 import Avatar from "../Avatar/Avatar";
 import {
   capitalizeFirstLetter,
@@ -73,11 +73,13 @@ const ConversationItem: React.FC<ConversationProps> = ({
                 style={{ display: "block", maxWidth: "70%" }}
               >
                 {conversation.lastMessage && conversation.lastMessage.content
-                  ? t(
-                      capitalizeFirstLetter(
-                        conversation.lastMessage.content as string
+                  ? +conversation.lastMessage.type !== MessageEnum.text
+                    ? t(
+                        capitalizeFirstLetter(
+                          conversation.lastMessage.content as string
+                        )
                       )
-                    )
+                    : (conversation.lastMessage.content as string)
                   : conversation.id
                   ? t("No message yet")
                   : null}

@@ -9,6 +9,14 @@ export const setMessage = (messageList: MessageEntity[]) => {
     },
   };
 };
+export const selectMessage = (message?: MessageEntity) => {
+  return {
+    type: messageConstants.SELECT_MESSAGE,
+    payload: {
+      selected: message,
+    },
+  };
+};
 
 export const loadMoreMessages = (messageList: MessageEntity[]) => {
   return {
@@ -20,7 +28,7 @@ export const loadMoreMessages = (messageList: MessageEntity[]) => {
 };
 
 export const addMessage = (newMessage: MessageEntity) => {
-  console.log("ADD", newMessage);
+  // console.log("ADD", newMessage);
   return {
     type: messageConstants.ADD_MESSAGE,
     payload: newMessage,

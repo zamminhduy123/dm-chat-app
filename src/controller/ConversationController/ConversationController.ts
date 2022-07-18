@@ -1,4 +1,8 @@
-import { Conversation, ConversationEntity } from "../../entities";
+import {
+  Conversation,
+  ConversationEntity,
+  MessageEntity,
+} from "../../entities";
 import { IConversationController } from "./IConversationController";
 import { GetConversation } from "../../usecases/conversation";
 import ConversationRepository from "../../repository/conversation/ConversationRepository";
@@ -16,6 +20,7 @@ import { AddConversation } from "../../usecases/conversation/addConversation";
 import { SyncConversation } from "../../usecases/conversation/syncConversation";
 import { UpdateConversation } from "../../usecases/conversation/updateConversation";
 import { AddGroupConversation } from "../../usecases/conversation/addGroupConversation";
+import { selectMessage } from "../../services/redux/states/message/message.action";
 
 class ConversationController
   extends BaseController
@@ -80,15 +85,16 @@ class ConversationController
     });
   }
 
-  select(conversation_id: string, atMsgId?: string) {
+  select(conversation_id: string, atMsg?: MessageEntity) {
     const existed = this.findConversation(conversation_id);
     if (existed) {
-      this._dispatch(selectConversation(conversation_id, atMsgId));
+      this._dispatch(selectConversation(conversation_id));
+      this._dispatch(selectMessage(atMsg));
     } else {
       this._dispatch(selectConversation(""));
     }
   }
-  findConversation(conversation_id: string) {
+  findConversation(conversation_id: string): ConversationEntity | undefined {
     const existed = this._getState().conversation.conversations.find(
       (conv: ConversationEntity) => conv.id === conversation_id
     );

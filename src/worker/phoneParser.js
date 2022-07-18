@@ -34,8 +34,9 @@ function phoneParser(longText) {
 
       if (tempNumber.length === 10) {
         if (tempNumber.match(phoneReg)) {
+          // console.log("number ", i, j, longText[i], longText[j]);
           longText =
-            longText.slice(0, i - 1 < 0 ? 0 : i - 1) +
+            longText.slice(0, i) +
             `<span class="user-phone">${tempNumber}</span>` +
             longText.slice(j);
         }

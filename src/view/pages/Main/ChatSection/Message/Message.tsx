@@ -30,6 +30,7 @@ interface MessageProps {
   resend?: Function;
   hasStatus: Boolean;
   conversationMember: UserEntity[];
+  isHighlighted?: Boolean;
 }
 
 const Message: React.FC<MessageProps> = (props: MessageProps) => {
@@ -47,6 +48,7 @@ const Message: React.FC<MessageProps> = (props: MessageProps) => {
         <TextMessage
           messageId={props.message.id || props.message.clientId!}
           content={props.message.content}
+          isHighlighted={props.isHighlighted}
         />
       );
     }
@@ -106,6 +108,8 @@ const Message: React.FC<MessageProps> = (props: MessageProps) => {
           background: `${
             +props.message.type === MessageEnum.image
               ? "transparent"
+              : props.isHighlighted
+              ? "#5EBA7D"
               : !left
               ? "white"
               : "linear-gradient(45deg,#fd267a,#ff6036)"
@@ -115,9 +119,7 @@ const Message: React.FC<MessageProps> = (props: MessageProps) => {
           padding: +props.message.type !== MessageEnum.image ? "12px" : "0px",
           boxShadow:
             +props.message.type === MessageEnum.text
-              ? left
-                ? "0 1px 0 0 var(--color-primary)"
-                : "0 1px 0 0 rgba(0,0,0,0.18)"
+              ? "0 1px 0 0 rgba(0,0,0,0.18)"
               : "",
           borderRadius: "10px",
           color: `${!left ? "#001a33" : "white"}`,
@@ -149,7 +151,9 @@ const Message: React.FC<MessageProps> = (props: MessageProps) => {
             ) : null}
             {props.hasTime || props.hasStatus
               ? left
-                ? `${time.value} ${time.type}`
+                ? time.value
+                  ? `${time.value} ${time.type}`
+                  : t("Just sent")
                 : time.value
                 ? `${time.value} ${time.type}`
                 : ""

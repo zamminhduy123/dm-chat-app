@@ -3,14 +3,9 @@ import { IUserRepository } from "./IUserRepository";
 import Fetcher from "../../api";
 import { RegisterData } from "../../entities/type/RegisterData";
 import KeyDataSource from "../../dataSource/key";
+import { LocalStorage } from "../../storage";
 
 export default class UserRepository implements IUserRepository {
-  private _keyDataSource: KeyDataSource;
-
-  constructor() {
-    this._keyDataSource = new KeyDataSource();
-  }
-
   async find(searchContent: string): Promise<User[]> {
     return new Promise<User[]>((resolve, reject) => {
       Fetcher.findUser(searchContent)
@@ -84,6 +79,7 @@ export default class UserRepository implements IUserRepository {
     });
   }
   async logout(): Promise<any> {
+    KeyDataSource.getInstance().setUsername("");
     return new Promise<any>((resolve, reject) => {
       Fetcher.logout()
         .then((response) => {
@@ -95,11 +91,29 @@ export default class UserRepository implements IUserRepository {
     });
   }
   async checkKeyExist(username: string): Promise<any> {
-    this._keyDataSource.setUsername(username);
+    KeyDataSource.getInstance().setUsername(username);
 
     return new Promise<any>(async (resolve, reject) => {
       try {
-        await this._keyDataSource.getMyPrivateKey();
+        await KeyDataSource.getInstance().getMyPrivateKey();
+        resolve(1);
+      } catch (err) {
+        reject(err);
+      }
+    });
+  }
+  async saveUserPKey(
+    username: string,
+    pubKey: string,
+    deviceKey: string
+  ): Promise<any> {
+    return new Promise<any>(async (resolve, reject) => {
+      try {
+        await KeyDataSource.getInstance().saveNewSharedKey(
+          username,
+          pubKey,
+          deviceKey
+        );
         resolve(1);
       } catch (err) {
         reject(err);

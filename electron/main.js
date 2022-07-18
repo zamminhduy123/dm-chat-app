@@ -1,4 +1,10 @@
-const { app, BrowserWindow, ipcMain, dialog } = require("electron");
+const {
+  app,
+  BrowserWindow,
+  ipcMain,
+  dialog,
+  Notification,
+} = require("electron");
 const path = require("path");
 const { download } = require("./download");
 
@@ -6,6 +12,8 @@ const isDev = process.env.NODE_ENV === "development";
 console.log(isDev);
 const port = 3000;
 const selfHost = `http://localhost:${port}`;
+
+let currentNotification;
 
 let homeWindow, photoView;
 
@@ -40,6 +48,18 @@ function createPhotoView(imageMessage) {
   photoView.on("closed", () => {
     photoView = null;
   });
+  if (!isDev) photoView.setMenu(null);
+}
+
+function showNotification(title, body) {
+  if (currentNotification) {
+    currentNotification.close();
+    currentNotification = new Notification({ title: title, body: body });
+    currentNotification.show();
+  } else {
+    currentNotification = new Notification({ title: title, body: body });
+    currentNotification.show();
+  }
 }
 function createHomeWindow() {
   // Create the browser window.
@@ -54,6 +74,7 @@ function createHomeWindow() {
       preload: path.join(__dirname, "preload.js"),
     },
   });
+  if (!isDev) homeWindow.setMenu(null);
   ipcMain.on("download", async (event, { payload }) => {
     console.log("PAYLOAD", payload);
     // await homeWindow.webContents.downloadURL(payload.fileUrl);
@@ -84,14 +105,17 @@ function createHomeWindow() {
         });
         homeWindow.setProgressBar(0, payload.id);
       };
-      await download(payload.fileUrl, directory, onComplete, onProgress);
+      download(payload.fileUrl, directory, onComplete, onProgress);
     } else {
       /**download cancel */
     }
   });
-
   ipcMain.on("view-photo", async (event, { payload }) => {
     createPhotoView(payload.imageMessage);
+  });
+
+  ipcMain.on("new-noti", async (event, { payload }) => {
+    showNotification(payload.title, payload.message);
   });
 
   homeWindow.loadURL(

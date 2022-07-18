@@ -20,7 +20,7 @@ const WelcomePage = (props: WelcomePageProps) => {
           </div>
           <span style={{ fontFamily: "inherit", fontSize: "14px" }}>
             {t(
-              "Explore the best features to support your work and allow you to chat with your friends and family. All are optimized for your computer!"
+              "The messaging app uses end-to-end encryption for maximum message security"
             )}
           </span>
         </div>
@@ -29,11 +29,12 @@ const WelcomePage = (props: WelcomePageProps) => {
             <img src={welcomeURL} />
           </div>
           <div className="welcome-body-title">
-            <span className="title">{t("Messages more, work less")}</span>
+            <span className="title">
+              {t("All messages in secret chats use end-to-end encryption")}
+            </span>
             <span className="subtitle">
-              {t("Use")} <strong>{t("Quick message")}</strong>
               {t(
-                "to save common messages & respond faster in any conversations"
+                "Only you and the recipient can read those messages — nobody else can decipher them, including us here at DM"
               )}
               .
             </span>

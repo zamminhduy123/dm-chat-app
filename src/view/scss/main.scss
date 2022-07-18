@@ -1,4 +1,3 @@
-@use '../scss/theme';
 @import "../scss/theme";
 
 .flex-container {
@@ -39,7 +38,7 @@
     width: 20px;
     height: auto;
     transition: color 0.4s ease-in-out;
-    color: theme.$color-primary;
+    color: $color-primary;
 }
 
 /* Chat Section */
@@ -59,8 +58,8 @@
     justify-content: center;
     align-items: center;
 
-    background-color: theme.$color-danger;
-    box-shadow: theme.$box-regular;
+    background-color: $color-danger;
+    box-shadow: $box-regular;
     color: white;
     text-align: center;
 
@@ -77,9 +76,9 @@
     background-color:  var(--bgThemeColorPrimary);
     border-radius: 4px;
     transition: box-shadow 0.4s ease-in-out;
-
+    box-shadow: $box-regular;
     &:hover {
-        box-shadow: theme.$box-regular;
+        box-shadow: $box-regular;
     }
 
     margin: 8px 16px 0px 16px;
@@ -118,7 +117,7 @@
 .custom-scrollbar {
     .track-vertical {
         width: 4px;
-        color: theme.$color-primary
+        color: $color-primary
     }
     &::-webkit-scrollbar {
         display: none;
@@ -188,7 +187,7 @@
 }
 
 .chat-header-right {
-    width: 150px;
+    width: fit-content;
     display: flex;
     align-items: center;
 }
@@ -224,7 +223,7 @@
     div {
         padding: 4px 10px;
         width: fit-content;
-        background-color: theme.$color-danger;
+        background-color: $color-danger;
         color: white;
         margin-right: 4px;
         border-radius: 4px 4px 0px 0px;
@@ -241,15 +240,17 @@
     height: fit-content;
 
     border-radius: 4px;
-    transition: box-shadow 0.4s ease-in-out;
+    transition: border 0.2s ease-in-out;
+    border: 2px solid var(--bgThemeColorPrimary);
 
     &:hover {
-        box-shadow: theme.$box-regular;
+        /*box-shadow: $box-regular;*/
+        border: 2px solid $color-primary;
     }
 }
 
 .chat-input-container:focus-within {
-    box-shadow: theme.$box-regular;
+    border: 2px solid $color-primary;
 }
 
 #input_line_0 {
@@ -269,7 +270,7 @@
     div {
         display: inline;
         font-size: small;
-        color: theme.$color-secondary;
+        color: $color-secondary;
 
         div {
             margin-left: 11px;
@@ -278,7 +279,7 @@
 
         span {
             font-size: smaller;
-            color: theme.$color-neutral-500;
+            color: $color-neutral-500;
         }
     }
 
@@ -334,7 +335,7 @@
         content: attr(data-text);
         cursor: text;
         background: none;
-        color: theme.$color-neutral-500;
+        color: $color-neutral-500;
         display: block;
         position: absolute;
         padding-top: 2px;
@@ -371,6 +372,13 @@
     justify-content: center;
 
     align-self: flex-end;
+}
+
+.learn-more {
+    text-decoration: underline;
+    color: $color-primary;
+    font-size: small;
+    cursor: pointer;
 }
 
 

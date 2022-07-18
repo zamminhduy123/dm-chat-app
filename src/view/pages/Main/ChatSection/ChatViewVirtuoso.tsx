@@ -2,6 +2,7 @@ import React from "react";
 import { Virtuoso } from "react-virtuoso";
 import { MessageEntity, MessageStatus, UserEntity } from "../../../../entities";
 import { chatInSameTime } from "../../../../utils/chatInSameTime";
+import LoadingMessage from "../../../components/LoadingSkeleton/LoadingMessage";
 import ScrollBottomButton from "../../../components/ScrollBottomButton/ScrollBottomButton";
 import TimeDivider from "../../../components/TimeDivider/TimeDivider";
 import Message from "./Message";
@@ -49,7 +50,7 @@ const ChatViewVirtuoso = ({
 
   //   const [scrollTo, setScrollTo] = React.useState(messageList.length - 1);
   const lastIndex = React.useRef(messageList.length - 1);
-  const [align, setAlign] = React.useState("start");
+  const [align, setAlign] = React.useState("center");
   const [behavior, setBehavior] = React.useState("auto");
 
   const [oldListLength, setOldListLength] = React.useState(messageList.length);
@@ -61,10 +62,12 @@ const ChatViewVirtuoso = ({
   const [isLoadMore, setIsLoadMore] = React.useState(false);
 
   const prependItems = React.useCallback(() => {
-    console.log(isLoadMore, firstItemIndex);
+    // console.log(isLoadMore, firstItemIndex);
     if (firstItemIndex > 0 && !isLoadMore) {
       setIsLoadMore(true);
-      loadNextPage();
+      setTimeout(() => {
+        loadNextPage();
+      }, 500);
     }
   }, [firstItemIndex]);
 
@@ -90,22 +93,29 @@ const ChatViewVirtuoso = ({
     }
   }, [messageList]);
 
+  console.log(
+    "FIRST",
+    firstItemIndex,
+    messageList.length,
+    totalMessage,
+    scrollToIndex
+  );
+
   React.useEffect(() => {
     let timeout: NodeJS.Timeout;
-    if (scrollToIndex && scrollToIndex >= 0) {
-      console.log("SCROLL TO ", scrollToIndex);
+    console.log("SCROLL TO ", scrollToIndex);
+    if (scrollToIndex !== undefined && scrollToIndex >= 0) {
       timeout = setTimeout(() => {
         virtuosoRef.current.scrollToIndex({
           index: scrollToIndex,
           align,
-          behavior: "smooth",
+          behavior: "auto",
         });
       }, 300);
+    } else {
     }
     return () => clearTimeout(timeout);
   }, [scrollToIndex]);
-
-  console.log("FIRST", firstItemIndex, messageList.length, totalMessage);
 
   return (
     <div className="chat-view-container" key={messageList[0].conversation_id}>
@@ -170,6 +180,7 @@ const ChatViewVirtuoso = ({
           }
           return (
             <div key={message.clientId || message.id}>
+              {index === 0 && firstItemIndex != 0 ? <LoadingMessage /> : null}
               {index === 0 || notSameDayBefore ? (
                 <TimeDivider date={new Date(message.create_at || 0)} />
               ) : null}
@@ -184,6 +195,7 @@ const ChatViewVirtuoso = ({
                     : void 0
                 }
                 hasStatus={index === messageList.length - 1}
+                isHighlighted={index === scrollToIndex}
               />
             </div>
           );

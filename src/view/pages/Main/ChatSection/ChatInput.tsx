@@ -43,7 +43,7 @@ const ChatInput: React.FC<ChatInputProps> = ({
   const imageInput = React.useRef<HTMLInputElement>(null);
   const fileInput = React.useRef<HTMLInputElement>(null);
 
-  const { sendMessage } = MessageController.getInstance();
+  const { enqueueMessage } = MessageController.getInstance();
 
   const otherUsers = receiver.filter((el) => el.username !== sender);
   // console.log("RERENDER CHAT INPUT");
@@ -99,7 +99,7 @@ const ChatInput: React.FC<ChatInputProps> = ({
               content: url,
             },
           };
-          sendMessage(fileMessage);
+          enqueueMessage(fileMessage);
         } catch (err: any) {
           console.log("ERRRRRRRRRRRRR", err);
           tempMessage.status = 4;
@@ -108,7 +108,7 @@ const ChatInput: React.FC<ChatInputProps> = ({
           MessageController.getInstance().updateMessage(tempMessage, true);
         }
       } else {
-        sendMessage(tempMessage);
+        enqueueMessage(tempMessage);
       }
     }
   };

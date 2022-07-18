@@ -26,11 +26,13 @@ import {
   UserController,
 } from "../../../controller";
 import NewGroup from "./NewGroup/NewGroup";
-import UserInfo from "../../components/UserInfo/UserInfo";
+import UserInfo from "../../components/Info/UserInfo";
 import eventEmitter from "../../../utils/event-emitter";
 import { userConstants } from "../../action";
 import { useConversation } from "../../adapter/useConversation";
 import FadeAlert from "../../components/FadeAlert/FadeAlert";
+import NewKeyAlert from "../../components/NewKeyAlert/NewKeyAlert";
+import { LocalStorage } from "../../../storage";
 
 export interface MainProps {}
 
@@ -43,7 +45,7 @@ const Main = (props: MainProps) => {
   const [activeConversation, setActiveConversation] =
     React.useState<ConversationEntity>();
 
-  const { selected, atMsgId } = useCurrentConversation();
+  const { selected } = useCurrentConversation();
   const activeConversationId = selected;
   // console.log("activeConversationId", activeConversationId);
 
@@ -91,8 +93,10 @@ const Main = (props: MainProps) => {
   const [userDisplayInfo, setUserDisplayInfo] =
     React.useState<UserEntity | null>(null);
   const [fadeAlert, setFadeAlert] = React.useState("");
+
+  const [newKeyAlert, setNewKeyAlert] = React.useState(false);
   React.useEffect(() => {
-    const listener = eventEmitter.addListener(
+    const displayUserListener = eventEmitter.addListener(
       userConstants.DISPLAY_USER,
       (info: string) => {
         if (info === user || info === phone) {
@@ -124,18 +128,37 @@ const Main = (props: MainProps) => {
               }
             });
         }
-        return () => {
-          listener.remove();
-        };
       }
     );
+
+    const newKeyCreatedListener = eventEmitter.addListener(
+      userConstants.CREATE_NEW_KEY,
+      () => {
+        setNewKeyAlert(true);
+      }
+    );
+
+    UserController.getInstance().checkKeyExist(user);
+    LocalStorage.getInstance()
+      .getLocalStorage()
+      .then((local) => {
+        if (!local.getItem("login")) {
+          setNewKeyAlert(true);
+          local.setItem("login", "1");
+        }
+      });
+
+    return () => {
+      displayUserListener.remove();
+      newKeyCreatedListener.remove();
+    };
   }, []);
   React.useEffect(() => {
     let timeout: NodeJS.Timeout;
     if (fadeAlert) {
       timeout = setTimeout(() => {
         setFadeAlert("");
-      }, 2000);
+      }, 1000);
     }
     return () => clearTimeout(timeout);
   }, [fadeAlert]);
@@ -162,6 +185,16 @@ const Main = (props: MainProps) => {
       {fadeAlert ? <FadeAlert message={t(fadeAlert)} /> : null}
       <Modal isOpen={modalOpen} hasBackdrop handleClose={() => {}}>
         <ErrorReload message={t("Socket connection error") + "!"} />
+      </Modal>
+      <Modal
+        title={t("New key generated")}
+        isOpen={newKeyAlert}
+        hasBackdrop
+        handleClose={() => {
+          setNewKeyAlert(false);
+        }}
+      >
+        <NewKeyAlert />
       </Modal>
 
       <div className="flex-container">
@@ -212,10 +245,7 @@ const Main = (props: MainProps) => {
         </nav>
         <div className="chat-view">
           {activeConversation ? (
-            <ChatSection
-              conversation={activeConversation}
-              scrollToMsgId={atMsgId}
-            />
+            <ChatSection conversation={activeConversation} />
           ) : (
             <WelcomePage />
           )}

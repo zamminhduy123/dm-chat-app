@@ -25,12 +25,10 @@ import ChatViewVirtuoso from "./ChatViewVirtuoso";
 
 interface ChatSectionProps {
   conversation: ConversationEntity;
-  scrollToMsgId?: number;
 }
 
 const ChatSection: React.FC<ChatSectionProps> = ({
   conversation,
-  scrollToMsgId,
 }: ChatSectionProps) => {
   // console.log("ACTIVE", conversation);
 
@@ -75,7 +73,7 @@ const ChatSection: React.FC<ChatSectionProps> = ({
   const users = conversation.users;
 
   //infinity scroll handler
-  const { messages : messageList, hasMore } = useMessage();
+  const { messages: messageList, hasMore, selected } = useMessage();
   const messageLoading = React.useRef(false);
   const loadMoreMessage = async () => {
     if (messageList.length && !messageLoading.current) {
@@ -96,10 +94,13 @@ const ChatSection: React.FC<ChatSectionProps> = ({
   }, [messageList]);
 
   React.useEffect(() => {
-    // console.log(scrollToMsgId, messageList[0]);
-    if (scrollToMsgId && messageList.length)
-      MessageController.getInstance().loadUntilReachId(messageList[0]);
-  }, [scrollToMsgId, messageList.length]);
+    console.log(selected);
+    if (selected) {
+      if (messageList.findIndex((m) => m.id === selected.id) <= 0) {
+        MessageController.getInstance().loadToMessage(selected);
+      }
+    }
+  }, [selected]);
 
   return (
     <main className="chat-section-container">
@@ -111,6 +112,7 @@ const ChatSection: React.FC<ChatSectionProps> = ({
               ? +conversation.lastMessage.create_at
               : Date.now()
           }
+          info={users.filter((u) => u.username !== user)[0].phone}
           avatars={
             users.length <= 2
               ? users.filter((u) => u.username !== user).map((u) => u.avatar)
@@ -135,9 +137,11 @@ const ChatSection: React.FC<ChatSectionProps> = ({
               isNextPageLoading={false}
               loadNextPage={loadMoreMessage}
               totalMessage={+conversation.totalMessage}
-              scrollToIndex={messageList.findIndex(
-                (m) => m.id === scrollToMsgId
-              )}
+              scrollToIndex={
+                selected
+                  ? messageList.findIndex((m) => m.id === selected.id)
+                  : undefined
+              }
             />
           ) : null}
         </div>

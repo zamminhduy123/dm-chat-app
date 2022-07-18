@@ -3,12 +3,25 @@ import { Message, MessageEntity } from "../../entities";
 import { IMessageRepository } from "./IMessageRepository";
 import * as Helper from "./helpers";
 import MessageDataSource from "../../dataSource/message/MessageDataSource";
+import KeyDataSource from "../../dataSource/key";
 
 export default class MessageRepository implements IMessageRepository {
   messageDataSrc: IMessageDataSourceInterface;
-
   constructor(username: string) {
     this.messageDataSrc = new MessageDataSource(username);
+  }
+  getSharedKey(identifier: string, deviceKey?: string): Promise<string> {
+    return new Promise<string>(async (resolve, reject) => {
+      try {
+        const key = await KeyDataSource.getInstance().getSharedKey(
+          identifier,
+          deviceKey
+        );
+        resolve(key);
+      } catch (err) {
+        reject(err);
+      }
+    });
   }
   getFileUrl(file: File, onProgress?: Function): Promise<string> {
     return new Promise<string>((resolve, reject) => {
@@ -40,12 +53,13 @@ export default class MessageRepository implements IMessageRepository {
   }
   getMessageByConversationId(
     conversation_id: string,
-    from: number
+    from: number,
+    to?: number
   ): Promise<Message[]> {
     //get from storage
     return new Promise<Message[]>((resolve, reject) => {
       this.messageDataSrc
-        .getByConversationId(conversation_id, from)
+        .getByConversationId(conversation_id, from, to)
         .then((data) => {
           //console.log("DataSrc", data);
           resolve(Helper.standardMessageArray(data));

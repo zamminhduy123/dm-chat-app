@@ -7,5 +7,5 @@ export type sPendingMesage = {
   status: number;
   content: string | FileEntity;
   conversation_id?: string;
-  to?: string[];
+  to: string;
 };

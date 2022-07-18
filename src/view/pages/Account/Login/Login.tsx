@@ -108,7 +108,7 @@ const Login: React.FunctionComponent = (props: any) => {
         <div className="form-footer">
           <h4>{t("New to")} DM?&nbsp;</h4>
           <Link to="/register">
-            <span className="register">{t("Register")}</span>
+            <h4 className="register">{t("Register")}</h4>
           </Link>
         </div>
         <LanguageChange />

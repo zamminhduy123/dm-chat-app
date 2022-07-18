@@ -1,7 +1,7 @@
-import { ConversationEntity } from "../../../entities";
+import { ConversationEntity, MessageEntity } from "../../../entities";
 
 export interface IConversation {
   conversations: ConversationEntity[];
   selected: string;
-  atMsgId: string;
+  atMsg: MessageEntity | null;
 }

@@ -64,11 +64,11 @@ export const RegisterViewModel = () => {
       .then(() => {
         setNotification({
           type: "success",
-          message: t("Register Successfully"),
+          message: t("Please login to generate secret key"),
         });
         setTimeout(() => {
           history.push("/login");
-        }, 500);
+        }, 2000);
         UserController.getInstance().checkKeyExist(data.username);
       })
       .catch((err: any) => {

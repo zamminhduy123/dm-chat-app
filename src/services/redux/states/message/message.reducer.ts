@@ -7,9 +7,10 @@ import { Action } from "../../type";
 const initialState: IMessage = {
   messages: [],
   hasMore: true,
+  selected: undefined,
 };
 const setMessages = (state = initialState, action: Action) => {
-  return updateObject(state, action.payload);
+  return updateObject(state, { ...action.payload });
 };
 
 const loadMoreMessages = (state = initialState, action: Action) => {
@@ -31,9 +32,10 @@ const addMessage = (state = initialState, action: Action) => {
   const messageList = state.messages;
 
   const newMessageList = [...messageList, { ...action.payload }];
-  console.log(newMessageList);
+  // console.log(newMessageList);
   return updateObject(state, {
     messages: [...newMessageList],
+    selected: undefined,
   });
 };
 
@@ -76,7 +78,7 @@ const updateMessage = (state = initialState, action: Action) => {
       return m.clientId === action.payload.clientId;
     }
   });
-  console.log(action.payload, indexU);
+  // console.log(action.payload, indexU);
   if (indexU >= 0) {
     const updatedMessage = {
       status: action.payload.status,
@@ -91,6 +93,11 @@ const updateMessage = (state = initialState, action: Action) => {
   }
 };
 
+const selectMessage = (state = initialState, action: Action) => {
+  return updateObject(state, {
+    selected: action.payload.selected,
+  });
+};
 const reset = (state = initialState, action: Action) => {
   return { ...initialState };
 };
@@ -101,6 +108,8 @@ const reducer = (state = initialState, action: Action) => {
       return setMessages(state, action);
     case messageConstants.ADD_MESSAGE:
       return addMessage(state, action);
+    case messageConstants.SELECT_MESSAGE:
+      return selectMessage(state, action);
     case messageConstants.LOAD_MORE:
       return loadMoreMessages(state, action);
     case messageConstants.UPDATE_MESSAGE_WITH_CLIENTID:

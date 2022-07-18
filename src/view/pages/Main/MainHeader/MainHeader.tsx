@@ -17,7 +17,7 @@ import {
 import useTranslation from "../../../adapter/translation.adapter";
 import Empty from "../../../components/Empty/Empty";
 import ConversationList from "../../../components/ConversationList/ConversationList";
-import LoadingList from "../../../components/LoadingList/LoadingList";
+import LoadingList from "../../../components/LoadingSkeleton/LoadingList";
 import { getConversationById } from "../../../adapter/conversation.adapter";
 import Icon from "../../../components/UI/Icon/Icon";
 import { faUsersRectangle } from "@fortawesome/free-solid-svg-icons";
@@ -148,6 +148,7 @@ const MainHeader = ({
           id: msg.getId(),
           content: msg.getContent(),
           sender: msg.getSender(),
+          create_at: msg.getCreateAt(),
         };
         return conversation;
       });
@@ -230,7 +231,7 @@ const MainHeader = ({
       </div>
       {searchBarActive ? (
         <p className="search-info" style={{ margin: "0px 16px" }}>
-          {"*" + t("Search by") + " " + t("Phone") + ", " + "@username"}
+          {"*" + t("Search user by") + " " + t("Phone") + ", " + "@username"}
         </p>
       ) : null}
       {searchBarActive ? (
@@ -273,7 +274,7 @@ const MainHeader = ({
                   onItemClick={(conversation) => {
                     ConversationController.getInstance().select(
                       conversation.id,
-                      conversation.lastMessage!.id
+                      conversation.lastMessage!
                     );
                   }}
                 />

@@ -27,7 +27,7 @@ export type MessageEntity = {
   content: string | FileEntity;
   create_at: number;
   clientId?: string;
-  to?: string[];
+  to: string;
   conversation_id?: string;
   status: MessageStatus;
 };

@@ -17,6 +17,7 @@ export const conversationModelToEntity = (
       create_at: message.getCreateAt(),
       status: message.getStatus(),
       conversation_id: message.getConversationId(),
+      to: message.getTo(),
     });
   }
   return result;
@@ -24,7 +25,7 @@ export const conversationModelToEntity = (
 
 export const newMessageToMessageEntity = (
   newMessage: NewMessage,
-  to: string[] = []
+  to: string
 ): MessageEntity => {
   return {
     sender: newMessage.sender,

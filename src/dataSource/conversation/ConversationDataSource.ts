@@ -33,7 +33,10 @@ export default class ConversationDataSource implements IConversationDataSource {
           for (const conver of serverData) {
             const data = conversationToStorageEntity(conver);
             const currentData = await this._convStorage.get(data.id);
-            if (currentData.lastMessageId !== data.lastMessageId) {
+            if (
+              !currentData ||
+              currentData.lastMessageId !== data.lastMessageId
+            ) {
               //try decrypt
               if (conver.users.length === 2 && conver.lastMessage) {
                 if (+conver.lastMessage.type === MessageEnum.text) {

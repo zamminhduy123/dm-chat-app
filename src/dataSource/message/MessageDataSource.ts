@@ -144,22 +144,26 @@ export default class MessageDataSource implements IMessageDataSourceInterface {
                 const conversation = await this._conversationStorage.get(
                   message.conversation_id
                 );
-                let decryptedMessage = "Could not decrypt message";
-                try {
-                  decryptedMessage =
-                    await KeyDataSource.getInstance().decryptMessage(
-                      conversation.users.map((u) => u.username),
-                      message.sender,
-                      messageExtra.getMessage(),
-                      messageExtra.getDeviceKey()
-                    );
-                } catch (err) {
-                  console.log("DECRYPT ERR", err);
-                }
-                if (typeof message.content === "string") {
-                  message.content = decryptedMessage;
+                if (conversation) {
+                  let decryptedMessage = "Could not decrypt message";
+                  try {
+                    decryptedMessage =
+                      await KeyDataSource.getInstance().decryptMessage(
+                        conversation.users.map((u) => u.username),
+                        message.sender,
+                        messageExtra.getMessage(),
+                        messageExtra.getDeviceKey()
+                      );
+                  } catch (err) {
+                    console.log("DECRYPT ERR", err);
+                  }
+                  if (typeof message.content === "string") {
+                    message.content = decryptedMessage;
+                  } else {
+                    message.content.content = decryptedMessage;
+                  }
                 } else {
-                  message.content.content = decryptedMessage;
+                  //TODO: fetch the conversation
                 }
               } catch (err) {}
               console.log(dbData);

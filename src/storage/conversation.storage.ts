@@ -5,21 +5,23 @@ interface IConversationStorage {
   getMany: () => Promise<sConversationEntity[]>;
   upsert: (newConversation: sConversationEntity) => Promise<any>;
   update: (updatedConversation: sConversationEntity[]) => Promise<any>;
-  get: (conversationId: string) => Promise<sConversationEntity>;
+  get: (conversationId: string) => Promise<sConversationEntity | undefined>;
 }
 export default class ConversationStorage implements IConversationStorage {
-  get(conversationId: string): Promise<sConversationEntity> {
-    return new Promise<any>(async (resolve, reject) => {
-      try {
-        const data = await db.get<sConversationEntity>(
-          storeNames.conversation,
-          conversationId
-        );
-        resolve(data);
-      } catch (err) {
-        reject(err);
+  get(conversationId: string): Promise<sConversationEntity | undefined> {
+    return new Promise<sConversationEntity | undefined>(
+      async (resolve, reject) => {
+        try {
+          const data = await db.get<sConversationEntity | undefined>(
+            storeNames.conversation,
+            conversationId
+          );
+          resolve(data);
+        } catch (err) {
+          reject(err);
+        }
       }
-    });
+    );
   }
   upsert(newConversation: sConversationEntity) {
     return new Promise<any>(async (resolve, reject) => {

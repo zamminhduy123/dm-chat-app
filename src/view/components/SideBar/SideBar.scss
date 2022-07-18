@@ -3,9 +3,13 @@
 
 .main-tab {
     min-width: 64px;
+    z-index: 25;
 
     border-right: 1px solid var(--bgThemeColorPrimary);
     background-color: var(--bgThemeColorPrimary);;
+    box-shadow: $box-regular;
+    // border-right: 1px solid $gradient-primary;
+    // background-color: $gradient-primary;
     position: relative;
 
     display: flex;

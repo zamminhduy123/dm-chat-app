@@ -4,6 +4,7 @@
 
 
 .conversation-list {
+    scrollbar-gutter: stable;
     list-style-type: none;
     padding: 0px 16px;
     flex: 1;  /* <------------------- required     */

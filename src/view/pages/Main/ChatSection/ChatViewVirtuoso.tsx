@@ -197,6 +197,9 @@ const ChatViewVirtuoso = ({
                 hasStatus={index === messageList.length - 1}
                 isHighlighted={index === scrollToIndex}
               />
+              {index === messageList.length - 1 && (
+                <div style={{ height: "10px" }}></div>
+              )}
             </div>
           );
         }}

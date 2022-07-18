@@ -40,6 +40,10 @@ $themes: (
     darkTheme: rgb(49, 58, 85),
     lightTheme: white,
   ),
+  bgThemeMiddleColor: (
+    darkTheme: rgb(49, 58, 85),
+    lightTheme: #dbe8fc
+  ),
   textThemeColor1: (
     darkTheme: #FFF,
     lightTheme: $color-black,

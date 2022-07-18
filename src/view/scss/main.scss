@@ -16,8 +16,9 @@
 .middle-tab {
     padding-top: 4px;
     width: 346px;
-    border-right: 1px solid var(--bgThemeColorAccent);
     z-index: 5;
+
+    border-right: 1px solid var(--bgThemeMiddleColor);
     background-color: var(--bgThemeColorSecondary);
 
     display: flex;
@@ -47,6 +48,7 @@
     flex: 1;
     display: flex;
     flex-direction: column;
+    
 
     height: 100%;
     overflow-y: hidden;
@@ -71,7 +73,10 @@
 
 .chat-section-header {
     flex: 0 0 68px;
+    
+    margin: 0px 10px;
     display: flex;
+    justify-content: center;
     align-items: center;
     background-color:  var(--bgThemeColorPrimary);
     border-radius: 4px;
@@ -81,7 +86,6 @@
         box-shadow: $box-regular;
     }
 
-    margin: 8px 16px 0px 16px;
 }
 
 #message-view {
@@ -90,21 +94,22 @@
     width: 100%;
     display: flex;
     flex-direction: column;
+
+    scrollbar-gutter: stable;
 }
 
 .chat-section-chat-view-container {
+
     height: calc(100% - 64px);
     display: flex;
     flex-direction: column;
     position: relative;
+
+    padding: 0px 10px;
 }
 
 .chat-view-container {
     flex: 1 1 auto;
-    padding: 0px 10px;
-    padding-block-end: 10px;
-    padding-block-start: 10px;
-
 }
 
 .virtual-list {
@@ -127,7 +132,7 @@
 .chat-section-chat-input-container {
     flex: 0 0 60px;
     height: fit-content;
-    margin: 0px 16px 16px 16px;
+    
 }
 
 .user-phone {
@@ -177,7 +182,7 @@
 }
 
 .chat-header-left-status {
-    font-size: 14px;
+    font-size: 11px;
     display: flex;
     height: fit-content;
     width: fit-content;
@@ -206,6 +211,7 @@
 /* Chat Input */
 
 .chat-input-alert {
+    margin: 0px 10px;
     display: flex;
     justify-content: space-between;
 }
@@ -239,9 +245,11 @@
 
     height: fit-content;
 
-    border-radius: 4px;
     transition: border 0.2s ease-in-out;
+    box-shadow: $box-regular;
+    border-radius: 4px;
     border: 2px solid var(--bgThemeColorPrimary);
+    margin: 0px 10px 10px 10px;
 
     &:hover {
         /*box-shadow: $box-regular;*/
@@ -376,9 +384,10 @@
 
 .learn-more {
     text-decoration: underline;
-    color: $color-primary;
+    color: 'inherit';
     font-size: small;
     cursor: pointer;
+
 }
 
 

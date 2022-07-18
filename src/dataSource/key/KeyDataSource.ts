@@ -55,7 +55,7 @@ export default class KeyDataSource implements IKeyDataSource {
         let myNewKey;
         if (!myPrivateKey) {
           console.log("CREATE NEW KEY");
-          // eventEmitter.emit(userConstants.CREATE_NEW_KEY);
+          eventEmitter.emit(userConstants.CREATE_NEW_KEY);
           myNewKey = await KeyHelper.getInstance().createKeyPair(
             this._username
           );

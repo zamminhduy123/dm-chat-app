@@ -62,14 +62,23 @@ export const RegisterViewModel = () => {
     UserController.getInstance()
       .register(data)
       .then(() => {
-        setNotification({
-          type: "success",
-          message: t("Please login to generate secret key"),
-        });
-        setTimeout(() => {
-          history.push("/login");
-        }, 2000);
-        UserController.getInstance().checkKeyExist(data.username);
+        UserController.getInstance()
+          .checkKeyExist(data.username)
+          .then(() => {
+            setNotification({
+              type: "success",
+              message: t("Please login to generate secret key"),
+            });
+            setTimeout(() => {
+              history.push("/login");
+            }, 500);
+          })
+          .catch((err) => {
+            setNotification({
+              type: "error",
+              message: t("Error generating keys"),
+            });
+          });
       })
       .catch((err: any) => {
         console.log("Register Error", err);

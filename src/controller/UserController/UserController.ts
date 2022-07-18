@@ -73,6 +73,8 @@ export default class UserController
   }
 
   checkKeyExist = async (username: string) => {
+    LocalStorage.getInstance().setUser(username);
+    console.log("check key", username);
     try {
       await this._checkKeyExistUseCase.execute(username);
     } catch (err) {

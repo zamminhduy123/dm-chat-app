@@ -138,7 +138,6 @@ const Main = (props: MainProps) => {
       }
     );
 
-    UserController.getInstance().checkKeyExist(user);
     LocalStorage.getInstance()
       .getLocalStorage()
       .then((local) => {
@@ -147,6 +146,8 @@ const Main = (props: MainProps) => {
           local.setItem("login", "1");
         }
       });
+
+    UserController.getInstance().checkKeyExist(user);
 
     return () => {
       displayUserListener.remove();

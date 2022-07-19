@@ -24,6 +24,9 @@ module.exports = (env) => {
     mode: process.env.NODE_ENV || "development",
     resolve: {
       extensions: [".tsx", ".ts", ".js"],
+      alias: {
+        process: "process/browser",
+      },
     },
     devServer: {
       historyApiFallback: true,
@@ -81,8 +84,11 @@ module.exports = (env) => {
         chunks: ["photoView"],
       }),
       // add the plugin to your plugins array
-      new webpack.DefinePlugin({
-        "process.env.REACT_APP_API_URL": JSON.stringify(env.API_URL),
+      new webpack.EnvironmentPlugin({
+        REACT_APP_API_URL: env.REACT_APP_API_URL, // use 'development' unless process.env.NODE_ENV is defined
+      }),
+      new webpack.ProvidePlugin({
+        process: "process/browser",
       }),
       new CopyPlugin({
         patterns: [

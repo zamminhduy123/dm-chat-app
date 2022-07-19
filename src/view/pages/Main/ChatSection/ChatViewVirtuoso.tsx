@@ -2,6 +2,7 @@ import React from "react";
 import { Virtuoso } from "react-virtuoso";
 import { MessageEntity, MessageStatus, UserEntity } from "../../../../entities";
 import { chatInSameTime } from "../../../../utils/chatInSameTime";
+import useTranslation from "../../../adapter/translation.adapter";
 import LoadingMessage from "../../../components/LoadingSkeleton/LoadingMessage";
 import ScrollBottomButton from "../../../components/ScrollBottomButton/ScrollBottomButton";
 import TimeDivider from "../../../components/TimeDivider/TimeDivider";
@@ -31,6 +32,7 @@ const ChatViewVirtuoso = ({
   const virtuosoRef = React.useRef<any>(null);
   const [atBottom, setAtBottom] = React.useState(false);
   const [showButton, setShowButton] = React.useState(false);
+  const { t } = useTranslation();
 
   const showButtonTimeout = React.useRef<NodeJS.Timeout>(
     setTimeout(() => {}, 0)
@@ -197,6 +199,21 @@ const ChatViewVirtuoso = ({
                 hasStatus={index === messageList.length - 1}
                 isHighlighted={index === scrollToIndex}
               />
+              {index === messageList.length - 1 &&
+              conversationMember.length === 2 ? (
+                <div
+                  style={{
+                    fontWeight: "600",
+                    fontSize: "9px",
+                    color: "#CACACA",
+                    textTransform: "uppercase",
+                    textAlign: "center",
+                    marginTop: "10px",
+                  }}
+                >
+                  {t("This conversation is end to end encrypted")}
+                </div>
+              ) : null}
               {index === messageList.length - 1 && (
                 <div style={{ height: "10px" }}></div>
               )}

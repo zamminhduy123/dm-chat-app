@@ -6,7 +6,7 @@ import {
 } from "../entities";
 import axios, { AxiosError } from "axios";
 
-const CHUNK_SIZE = 5 * 1024 * 1024;
+const CHUNK_SIZE = 1 * 1024 * 1024; //1 MB
 
 export class ClientAPI {
   private origin: string;

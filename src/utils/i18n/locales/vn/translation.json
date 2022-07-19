@@ -30,6 +30,7 @@
   "The messaging app uses end-to-end encryption for maximum message security": "Ứng dụng nhắn tin sử dụng cơ chế mã hóa đầu cuối giúp bảo mật tin nhắn ở mức tối đa",
   "End-To-End encryption ensures only you and the person you're communicating with can read or listen to what is sent, and nobody in between, not even us (DM)": "Mã hóa đầu cuối đảm bảo chỉ bạn và người mà bạn đang giao tiếp có thể đọc hoặc nghe những gì được gửi và không ai ở giữa, kể cả chúng tôi (DM)",
   "Only you and the recipient can read those messages — nobody else can decipher them, including us here at DM": "Chỉ bạn và người nhận mới có thể đọc những tin nhắn đó - không ai khác có thể giải mã chúng, kể cả chúng tôi - nhân viên ở DM",
+  "This conversation is end to end encrypted": "Cuộc hội thoại này được mã hóa đầu cuối",
   "Login Success": "Đăng nhập thành công",
   "Learn more": "Tìm hiểu thêm",
   "All messages in secret chats use end-to-end encryption": "Nhắn tin 1-1 sử dụng cơ chế mã hóa đầu cuối",

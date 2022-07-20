@@ -12,7 +12,7 @@ const AutoLogin = ({ type, message }: AutoLoginProps) => {
   return (
     <div className="form flex-center">
       <div className="auto-authenticate">
-        <h2 className="mb-2 text-primary font-500">DM</h2>
+        <h2 className="mb-2 text-primary font-500">DirectMessage</h2>
         <Notification
           variant="outlined"
           border={false}

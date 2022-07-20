@@ -61,7 +61,7 @@ const Register: React.FunctionComponent = (props: RegisterProps) => {
               <h5
                 style={{ fontStyle: "normal", color: "var(--color-primary)" }}
               >
-                {t("Becoming a member of") + " " + t("DM Platform")}
+                {t("Becoming a member of") + " " + t("DirectMessage Platform")}
               </h5>
             </div>
           ) : null}

@@ -16,7 +16,7 @@ const WelcomePage = (props: WelcomePageProps) => {
         <div className="welcome-header">
           <div className="welcome-header-title">
             <span>{t("Welcome to")}&nbsp;</span>
-            <span style={{ fontWeight: "600" }}>DM!</span>
+            <span style={{ fontWeight: "600" }}>DirectMessage!</span>
           </div>
           <span style={{ fontFamily: "inherit", fontSize: "14px" }}>
             {t(
@@ -34,7 +34,7 @@ const WelcomePage = (props: WelcomePageProps) => {
             </span>
             <span className="subtitle">
               {t(
-                "Only you and the recipient can read those messages — nobody else can decipher them, including us here at DM"
+                "Only you and the recipient can read those messages — nobody else can decipher them, including us here at DirectMessage"
               )}
               .
             </span>

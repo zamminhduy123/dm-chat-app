@@ -1,2 +1,6 @@
 node_modules
 dist
+build/photo-view.html
+build/index.html
+build/home.bundle.js
+build/**/*

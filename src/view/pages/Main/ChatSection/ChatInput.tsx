@@ -139,8 +139,7 @@ const ChatInput: React.FC<ChatInputProps> = ({
     }
   };
 
-  const sendBtnRef = React.useRef<any>(null);
-
+  //handler enter click
   const onMessageSend = React.useCallback(() => {
     if (input.current) {
       if (input.current.innerText.length > 1000) {
@@ -151,7 +150,6 @@ const ChatInput: React.FC<ChatInputProps> = ({
       input.current.innerText = "";
     }
   }, []);
-  //handler enter click
   React.useEffect(() => {
     const closeOnEscapeKey = (e: KeyboardEvent) => {
       if (input.current)

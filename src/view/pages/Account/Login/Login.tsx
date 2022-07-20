@@ -37,7 +37,7 @@ const Login: React.FunctionComponent = (props: any) => {
           <h1>
             {t("Sign in") + " " + t("to")}
             <br />
-            {t("DM Platform")}
+            DirectMessage
           </h1>
         </div>
         <div className="form-content">

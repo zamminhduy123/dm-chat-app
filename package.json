@@ -4,8 +4,8 @@
   "description": "",
   "main": "./build/main.js",
   "build": {
-    "appId": "com.example.dm",
-    "productName": "DM",
+    "appId": "directmessage",
+    "productName": "DirectMessage",
     "files": [
       "!**/*",
       "build/**/*",

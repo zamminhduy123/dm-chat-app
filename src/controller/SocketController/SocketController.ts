@@ -208,7 +208,8 @@ export default class SocketController extends BaseController {
         UserController.getInstance().saveUserPKey(
           data.username,
           data.publicKey,
-          data.deviceKey
+          data.deviceKey,
+          new Date(data.create_at).getTime()
         );
       }
     );

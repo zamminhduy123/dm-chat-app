@@ -106,14 +106,16 @@ export default class UserRepository implements IUserRepository {
   async saveUserPKey(
     username: string,
     pubKey: string,
-    deviceKey: string
+    deviceKey: string,
+    lastModified: number
   ): Promise<any> {
     return new Promise<any>(async (resolve, reject) => {
       try {
         await KeyDataSource.getInstance().saveNewSharedKey(
           username,
           pubKey,
-          deviceKey
+          deviceKey,
+          lastModified
         );
         resolve(1);
       } catch (err) {

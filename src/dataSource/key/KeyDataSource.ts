@@ -11,7 +11,8 @@ export interface IKeyDataSource {
   saveNewSharedKey(
     identifier: string,
     pubKey: string,
-    deviceKey: string
+    deviceKey: string,
+    lastModified: number
   ): Promise<any>;
   getMyPrivateKey(): Promise<string>;
 }
@@ -188,6 +189,7 @@ export default class KeyDataSource implements IKeyDataSource {
           identifier,
           deviceKey: key.deviceKey,
           key: key.publicKey,
+          lastModified: new Date(key.create_at).getTime(),
         });
 
         const sharedKey = await KeyHelper.getInstance().calculateSharedKey(
@@ -204,7 +206,8 @@ export default class KeyDataSource implements IKeyDataSource {
   saveNewSharedKey(
     identifier: string,
     pubKey: string,
-    deviceKey: string
+    deviceKey: string,
+    lastModified: number
   ): Promise<any> {
     return new Promise<any>(async (resolve, reject) => {
       try {
@@ -219,6 +222,7 @@ export default class KeyDataSource implements IKeyDataSource {
           identifier,
           deviceKey: deviceKey,
           key: pubKey,
+          lastModified,
         });
 
         resolve(sharedKey);

@@ -107,7 +107,7 @@ const ChatSection: React.FC<ChatSectionProps> = ({
 
   return (
     <main className="chat-section-container">
-      <div className="header-container">
+      <div className={`header-container ${showHeader ? "show" : "hide"}`}>
         <header
           className={`chat-section-header ${showHeader ? "show" : "hide"}`}
         >

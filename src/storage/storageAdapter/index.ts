@@ -74,7 +74,7 @@ const stores: IObjectStore[] = [
   {
     name: storeNames.encrypt_sharedKey,
     option: {
-      keyPath: ["identifier"],
+      keyPath: ["identifier", "lastModified"],
     },
     indexes: [],
   },

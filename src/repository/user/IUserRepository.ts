@@ -11,6 +11,7 @@ export interface IUserRepository {
   saveUserPKey(
     username: string,
     pubKey: string,
-    deviceKey: string
+    deviceKey: string,
+    lastModified: number
   ): Promise<any>;
 }

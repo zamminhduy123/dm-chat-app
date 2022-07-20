@@ -6,7 +6,8 @@ export interface SaveUserPKeyUseCase {
   execute: (
     username: string,
     pubKey: string,
-    deviceKey: string
+    deviceKey: string,
+    lastModified: number
   ) => Promise<any>;
 }
 
@@ -21,8 +22,14 @@ export class SaveUserPKey implements SaveUserPKeyUseCase {
   async execute(
     username: string,
     pubKey: string,
-    deviceKey: string
+    deviceKey: string,
+    lastModified: number
   ): Promise<any> {
-    return this.userRepo.saveUserPKey(username, pubKey, deviceKey);
+    return this.userRepo.saveUserPKey(
+      username,
+      pubKey,
+      deviceKey,
+      lastModified
+    );
   }
 }

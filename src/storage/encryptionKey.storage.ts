@@ -19,9 +19,12 @@ export default class EncryptionKeyStorage implements IEncryptionKeyStorage {
           if (data) resolve(data.key);
           else resolve("");
         } else {
-          const data = await db.get<sSharedKey[]>(
+          const data = await db.getMany<sSharedKey[]>(
             storeNames.encrypt_sharedKey,
-            identifier
+            1,
+            [identifier, 0],
+            [identifier, Date.now()],
+            "prev"
           );
           // console.log(data);
           if (data && data.length) resolve(data[0].key);

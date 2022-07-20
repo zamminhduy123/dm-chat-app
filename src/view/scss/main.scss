@@ -81,11 +81,16 @@
     display: flex;
     justify-content: flex-end;
 
+    &.show {
+        position: relative;
+    }
+    &.hide {
+        position: absolute;
+    }
+
 }
 
 .chat-section-header {
-
-    
     display: flex;
     justify-content: center;
     align-items: center;

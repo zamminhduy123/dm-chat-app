@@ -95,10 +95,16 @@ export default class UserController
   saveUserPKey = async (
     username: string,
     pubKey: string,
-    deviceKey: string
+    deviceKey: string,
+    lastModified: number
   ) => {
     try {
-      await this._saveUserPKey.execute(username, pubKey, deviceKey);
+      await this._saveUserPKey.execute(
+        username,
+        pubKey,
+        deviceKey,
+        lastModified
+      );
     } catch (err) {
       console.error("SAVE NEW KEY ERROR: ", err);
     }

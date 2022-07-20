@@ -46,7 +46,7 @@ const ChatInput: React.FC<ChatInputProps> = ({
   const { enqueueMessage } = MessageController.getInstance();
 
   const otherUsers = receiver.filter((el) => el.username !== sender);
-  // console.log("RERENDER CHAT INPUT");
+  // console.log("RERENDER CHAT INPUT", otherUsers);
   //SEND MESSAAGE
   const sendMessageHandler = async (
     content: string | File,
@@ -140,7 +140,7 @@ const ChatInput: React.FC<ChatInputProps> = ({
   };
 
   //handler enter click
-  const onMessageSend = React.useCallback(() => {
+  const onMessageSend = () => {
     if (input.current) {
       if (input.current.innerText.length > 1000) {
         setMessageError("Maximum message length 1000");
@@ -149,7 +149,7 @@ const ChatInput: React.FC<ChatInputProps> = ({
       sendMessageHandler(input.current.innerText, MessageEnum.text);
       input.current.innerText = "";
     }
-  }, []);
+  };
   React.useEffect(() => {
     const closeOnEscapeKey = (e: KeyboardEvent) => {
       if (input.current)
@@ -318,4 +318,4 @@ const ChatInput: React.FC<ChatInputProps> = ({
   );
 };
 
-export default React.memo(ChatInput);
+export default ChatInput;

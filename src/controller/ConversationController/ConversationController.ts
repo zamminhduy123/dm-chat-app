@@ -63,12 +63,18 @@ class ConversationController
     }
     return this._instance;
   }
-  syncConversations() {
-    this._syncConversationUseCase
-      .execute(this._getState().auth.user)
-      .then((data) => {
-        this.getConversations();
-      });
+  async syncConversations() {
+    return new Promise<any>((resolve, reject) => {
+      this._syncConversationUseCase
+        .execute(this._getState().auth.user)
+        .then((data) => {
+          this.getConversations();
+          resolve(1);
+        })
+        .catch((err) => {
+          reject(err);
+        });
+    });
   }
 
   updateConversation(conversation: ConversationEntity) {

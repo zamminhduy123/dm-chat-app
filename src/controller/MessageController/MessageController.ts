@@ -142,14 +142,14 @@ export default class MessageController
   }
 
   enqueueMessage = async (message: MessageEntity) => {
-    try {
-      message = await this.encryptMessage(message);
-    } catch (err) {
-      console.log("MESSAGE ENCRYPT FAIL", err);
-      throw new Error("MESSAGE ENCRYPT FAIL");
+    console.log(message);
+    message = await this.encryptMessage(message);
+    if (message.status === 4) {
+      this._dispatch(updateSentMessage(message));
+    } else {
+      this._messageQueue.push(message);
+      if (this._messageQueue.length === 1) this.sendMessage();
     }
-    this._messageQueue.push(message);
-    if (this._messageQueue.length === 1) this.sendMessage();
   };
 
   private _sending = false;
@@ -165,7 +165,7 @@ export default class MessageController
         } catch (err) {
           console.log(err);
           nextMessage.status = 4;
-          this.updateMessage(nextMessage, true);
+          this._dispatch(updateSentMessage(nextMessage));
           this._sending = false;
         }
       }
@@ -272,6 +272,7 @@ export default class MessageController
       return message;
     } catch (err) {
       console.log(err);
+      message.status = 4;
     }
     console.log("=================ENCRYPTING===================");
     return message;
@@ -307,7 +308,7 @@ export default class MessageController
   };
 
   resendMessage = (message: MessageEntity) => {
-    // this._addMessageUseCase.execute(message);
+    this.enqueueMessage(message);
   };
 
   receiveMessage = async (message: MessageEntity) => {

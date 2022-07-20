@@ -70,8 +70,6 @@ const ChatSection: React.FC<ChatSectionProps> = ({
 
   const { user } = useAuthApp();
 
-  const users = conversation.users;
-
   //infinity scroll handler
   const { messages: messageList, hasMore, selected } = useMessage();
   const messageLoading = React.useRef(false);
@@ -112,17 +110,21 @@ const ChatSection: React.FC<ChatSectionProps> = ({
           className={`chat-section-header ${showHeader ? "show" : "hide"}`}
         >
           <ChatHeader
-            userNumber={users.length}
+            userNumber={conversation.users.length}
             lastMessageSendingTime={
               conversation.lastMessage
                 ? +conversation.lastMessage.create_at
                 : Date.now()
             }
-            info={users.filter((u) => u.username !== user)[0].phone}
+            info={
+              conversation.users.filter((u) => u.username !== user)[0].phone
+            }
             avatars={
-              users.length <= 2
-                ? users.filter((u) => u.username !== user).map((u) => u.avatar)
-                : users.map((u) => u.avatar)
+              conversation.users.length <= 2
+                ? conversation.users
+                    .filter((u) => u.username !== user)
+                    .map((u) => u.avatar)
+                : conversation.users.map((u) => u.avatar)
             }
             showHeader={showHeader}
             toggleHeader={() => setShowHeader((prev) => !prev)}
@@ -140,7 +142,7 @@ const ChatSection: React.FC<ChatSectionProps> = ({
           {messageList.length ? (
             <ChatViewVirtuoso
               messageList={messageList}
-              conversationMember={users}
+              conversationMember={conversation.users}
               resendMessageHandler={resendMessageHandler}
               hasNextPage={hasMore}
               isNextPageLoading={false}
@@ -156,7 +158,7 @@ const ChatSection: React.FC<ChatSectionProps> = ({
         </div>
         <div className="chat-section-chat-input-container">
           <ChatInput
-            receiver={users}
+            receiver={conversation.users}
             conversation={conversation}
             sender={user}
           />

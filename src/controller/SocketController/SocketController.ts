@@ -68,8 +68,11 @@ export default class SocketController extends BaseController {
 
     console.log("RESYNC");
 
-    ConversationController.getInstance().syncConversations();
-    MessageController.getInstance().syncMessage();
+    ConversationController.getInstance()
+      .syncConversations()
+      .then(() => {
+        MessageController.getInstance().syncMessage();
+      });
   };
 
   messageSent = () => {

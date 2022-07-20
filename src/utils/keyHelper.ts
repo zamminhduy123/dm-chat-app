@@ -73,7 +73,6 @@ class KeyHelper {
       console.log("end decrypt", data1);
       return arrayBufferToString(data1);
     } catch (err) {
-      console.error(err);
       throw err;
     }
   }

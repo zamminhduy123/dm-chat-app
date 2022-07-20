@@ -54,7 +54,7 @@ const ChatInput: React.FC<ChatInputProps> = ({
     preview: string = ""
   ) => {
     let data, newMessage: NewMessage;
-    console.log(typeof content === "string");
+    // console.log(typeof content === "string");
     if (typeof content === "string") {
       data = content.trim();
     } else {
@@ -65,7 +65,7 @@ const ChatInput: React.FC<ChatInputProps> = ({
         size: content.size,
       };
     }
-
+    console.log(data);
     if (data) {
       newMessage = {
         sender: sender,
@@ -139,19 +139,26 @@ const ChatInput: React.FC<ChatInputProps> = ({
     }
   };
 
+  const sendBtnRef = React.useRef<any>(null);
+
+  const onMessageSend = React.useCallback(() => {
+    if (input.current) {
+      if (input.current.innerText.length > 1000) {
+        setMessageError("Maximum message length 1000");
+        return;
+      }
+      sendMessageHandler(input.current.innerText, MessageEnum.text);
+      input.current.innerText = "";
+    }
+  }, []);
   //handler enter click
   React.useEffect(() => {
     const closeOnEscapeKey = (e: KeyboardEvent) => {
-      if (e.key === "Enter" && input.current) {
-        e.preventDefault();
-        console.log(input.current.innerText);
-        if (input.current.innerText.length > 1000) {
-          setMessageError("Maximum message length 1000");
-          return;
+      if (input.current)
+        if (e.key === "Enter") {
+          e.preventDefault();
+          onMessageSend();
         }
-        sendMessageHandler(input.current.innerText, MessageEnum.text);
-        input.current.innerText = "";
-      }
 
       if (!typingSendCoolDown && document.activeElement === input.current)
         setTypingSendCoolDown(true);
@@ -172,7 +179,7 @@ const ChatInput: React.FC<ChatInputProps> = ({
 
       timeout = setTimeout(() => {
         setTypingSendCoolDown(false);
-      }, 4000);
+      }, 2000);
     }
     return () => {
       timeout ? clearTimeout(timeout) : "";
@@ -191,7 +198,7 @@ const ChatInput: React.FC<ChatInputProps> = ({
     if (isTyping) {
       timeout = setTimeout(() => {
         setIsTyping("");
-      }, 4000);
+      }, 2000);
     }
     return () => {
       timeout ? clearTimeout(timeout) : "";
@@ -303,14 +310,7 @@ const ChatInput: React.FC<ChatInputProps> = ({
             <Icon
               icon={faPaperPlane}
               onClick={() => {
-                if (input.current) {
-                  if (input.current.innerText.length > 1000) {
-                    setMessageError("Maximum message length 1000");
-                    return;
-                  }
-                  sendMessageHandler(input.current.innerText, MessageEnum.text);
-                  input.current.innerText = "";
-                }
+                onMessageSend();
               }}
             />
           </div>

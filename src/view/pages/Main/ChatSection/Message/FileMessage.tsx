@@ -13,6 +13,7 @@ import RadialProgressBar from "../../../../components/UI/RadialProgressBar/Radia
 
 import EventEmitter from "../../../../../utils/event-emitter";
 import { messageConstants } from "../../../../action";
+import { humanFileSize } from "../../../../../utils/fileSizeConverter";
 
 interface FileMessageProps {
   message: MessageEntity;
@@ -100,7 +101,7 @@ const FileMessage = ({ message }: FileMessageProps) => {
           {t("name")}: {name}
         </p>
         <p style={{ fontSize: "x-small", letterSpacing: "1px" }}>
-          size: {size} byte
+          size: {humanFileSize(size)} byte
         </p>
       </div>
       {message.id ? (

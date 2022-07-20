@@ -1,4 +1,5 @@
 import Fetcher from "../../api";
+import { Key } from "../../entities/type/Key";
 import { LocalStorage } from "../../storage";
 import EncryptionKeyStorage from "../../storage/encryptionKey.storage";
 import eventEmitter from "../../utils/event-emitter";
@@ -52,38 +53,106 @@ export default class KeyDataSource implements IKeyDataSource {
         let myPrivateKey = localStorage.getItem(
           LocalStorage.getInstance().getPrivateKey()
         );
-        let myNewKey;
         if (!myPrivateKey) {
           console.log("CREATE NEW KEY");
-          eventEmitter.emit(userConstants.CREATE_NEW_KEY);
-          myNewKey = await KeyHelper.getInstance().createKeyPair(
-            this._username
-          );
-          myPrivateKey = myNewKey.privateKey;
-          const newPublicKey = myNewKey.publicKey;
-          localStorage.setItem(
-            LocalStorage.getInstance().getPrivateKey(),
-            myPrivateKey
-          );
-          localStorage.setItem(
-            LocalStorage.getInstance().getPublicKey(),
-            newPublicKey
-          );
-          localStorage.setItem(
-            LocalStorage.getInstance().getDeviceKey(),
-            myNewKey.deviceKey
-          );
-
-          //post public key to server
-          await Fetcher.postUserPublicKey(
-            this._username,
-            newPublicKey,
-            myNewKey.deviceKey
-          );
-        }
-        resolve(myPrivateKey);
+          try {
+            const newBundleKey = await this.createAndStoreNewKey();
+            await this.sendPublicKeyToServer();
+            myPrivateKey = newBundleKey.privateKey;
+          } catch (err) {
+            console.log(err);
+            reject(err);
+            return;
+          }
+        } else resolve(myPrivateKey);
       } catch (err) {
         reject(err);
+      }
+    });
+  }
+
+  getBundleKey(): Promise<Key> {
+    return new Promise<Key>(async (resolve, reject) => {
+      const localStorage = await LocalStorage.getInstance().getLocalStorage();
+
+      const pubKey = localStorage.getItem(
+        LocalStorage.getInstance().getPublicKey()
+      );
+      const devKey = localStorage.getItem(
+        LocalStorage.getInstance().getDeviceKey()
+      );
+      const privKey = localStorage.getItem(
+        LocalStorage.getInstance().getPrivateKey()
+      );
+
+      if (!privKey || !pubKey || !devKey) {
+        try {
+          const newBundleKey = await this.createAndStoreNewKey();
+          resolve(newBundleKey);
+        } catch (err) {
+          reject(err);
+        }
+      } else {
+        resolve({
+          privateKey: privKey,
+          publicKey: pubKey,
+          deviceKey: devKey,
+        });
+      }
+    });
+  }
+
+  createAndStoreNewKey(): Promise<Key> {
+    return new Promise<Key>(async (resolve, reject) => {
+      eventEmitter.emit(userConstants.CREATE_NEW_KEY);
+      let myNewKey;
+      try {
+        myNewKey = await KeyHelper.getInstance().createKeyPair(this._username);
+      } catch (err) {
+        console.error("ERROR CREATE NEW KEY");
+        reject(err);
+        return;
+      }
+
+      console.log("NEW KEY CREATED", myNewKey);
+      const myPrivateKey = myNewKey.privateKey;
+      const newPublicKey = myNewKey.publicKey;
+      localStorage.setItem(
+        LocalStorage.getInstance().getPrivateKey(),
+        myPrivateKey
+      );
+      localStorage.setItem(
+        LocalStorage.getInstance().getPublicKey(),
+        newPublicKey
+      );
+      localStorage.setItem(
+        LocalStorage.getInstance().getDeviceKey(),
+        myNewKey.deviceKey
+      );
+      resolve({
+        privateKey: myPrivateKey,
+        publicKey: newPublicKey,
+        deviceKey: myNewKey.deviceKey,
+      });
+    });
+  }
+
+  sendPublicKeyToServer(): Promise<boolean> {
+    return new Promise<boolean>(async (resolve, reject) => {
+      if (!this._username) await this.awaitInit;
+
+      try {
+        const bundleKey = await this.getBundleKey();
+
+        await Fetcher.postUserPublicKey(
+          this._username,
+          bundleKey.publicKey,
+          bundleKey.deviceKey
+        );
+        resolve(true);
+      } catch (err) {
+        reject(err);
+        return;
       }
     });
   }
@@ -110,21 +179,20 @@ export default class KeyDataSource implements IKeyDataSource {
         //perform get key from server and calculate shared key
         userPKey = await Fetcher.getUserPublicKey(identifier, deviceKey);
         console.log("FETCH KEYS", userPKey);
-
-        if (!userPKey.keys.length) {
+        const key = userPKey.key;
+        if (!key) {
           throw new Error("No key found with given identifier" + identifier);
         }
-        for (const key of userPKey.keys) {
-          // store to DB
-          await this._keyStorage.addPublicKey({
-            identifier,
-            deviceKey: key.deviceKey,
-            key: key.publicKey,
-          });
-        }
+
+        await this._keyStorage.addPublicKey({
+          identifier,
+          deviceKey: key.deviceKey,
+          key: key.publicKey,
+        });
+
         const sharedKey = await KeyHelper.getInstance().calculateSharedKey(
           myPrivateKey,
-          userPKey.keys[userPKey.keys.length - 1].publicKey
+          key.publicKey
         );
 
         resolve(sharedKey);

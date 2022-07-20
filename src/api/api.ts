@@ -156,6 +156,7 @@ export class ClientAPI {
   }
   async authenticate() {
     const url = this._createUrl("authentication");
+    console.log(this.origin);
     return this._get<UserEntity>(url);
   }
   async getConversation(username: string) {

@@ -21,8 +21,6 @@ const NewKeyAlert = () => {
         )}
       </span>
       <img style={{ maxWidth: "100%" }} src={newKeyImage} />
-
-      <Link to="#">{t("Learn more")}</Link>
     </div>
   );
 };

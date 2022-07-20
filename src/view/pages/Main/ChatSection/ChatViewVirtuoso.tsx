@@ -123,7 +123,7 @@ const ChatViewVirtuoso = ({
     <div className="chat-view-container" key={messageList[0].conversation_id}>
       <Virtuoso
         ref={virtuosoRef}
-        style={{ height: "100%" }}
+        style={{ height: "100%", willChange: "transform" }}
         data={messageList}
         firstItemIndex={firstItemIndex}
         initialTopMostItemIndex={14}

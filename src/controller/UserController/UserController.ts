@@ -23,6 +23,7 @@ import { LocalStorage } from "../../storage";
 import { CheckKeyExist } from "../../usecases/user/checkKeyExist";
 import { SaveUserPKey } from "../../usecases/user/saveUserPKey";
 import eventEmitter from "../../utils/event-emitter";
+import { proto } from "../../utils/MessageExtraMeta/MessageExtraMeta";
 
 export default class UserController
   extends BaseController
@@ -65,18 +66,27 @@ export default class UserController
     return await this._findUseCase.execute(content);
   }
 
-  private authenSuccess(username: string) {
+  private async authenSuccess(username: string) {
     //establish socket connection
     SocketController.getInstance().init();
     StorageController.getInstance().connect();
     LocalStorage.getInstance().setUser(username);
+
+    try {
+      await this.checkKeyExist(username);
+    } catch (err) {
+      console.error("Cannot load message.proto");
+    }
   }
 
   checkKeyExist = async (username: string) => {
-    LocalStorage.getInstance().setUser(username);
     console.log("check key", username);
     try {
+      //load proto
+      await proto.load();
+      console.log();
       await this._checkKeyExistUseCase.execute(username);
+      console.log("KEY SENT TO SERVER");
     } catch (err) {
       console.error("CHECK KEY ERROR: ", err);
     }
@@ -106,7 +116,7 @@ export default class UserController
         name: data.getName(),
       };
       this._dispatch(loginSuccess(newState));
-      this.authenSuccess(data.getUsername());
+      await this.authenSuccess(data.getUsername());
     } catch (err: any) {
       console.log(err);
     }
@@ -126,7 +136,7 @@ export default class UserController
       };
       this._dispatch(loginSuccess(newState));
 
-      this.authenSuccess(data.getUsername());
+      await this.authenSuccess(data.getUsername());
     } catch (err: any) {
       if (
         err.message === "User not found" ||

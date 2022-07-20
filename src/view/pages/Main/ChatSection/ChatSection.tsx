@@ -102,25 +102,34 @@ const ChatSection: React.FC<ChatSectionProps> = ({
     }
   }, [selected]);
 
+  //header
+  const [showHeader, setShowHeader] = React.useState(true);
+
   return (
     <main className="chat-section-container">
-      <header className="chat-section-header">
-        <ChatHeader
-          userNumber={users.length}
-          lastMessageSendingTime={
-            conversation.lastMessage
-              ? +conversation.lastMessage.create_at
-              : Date.now()
-          }
-          info={users.filter((u) => u.username !== user)[0].phone}
-          avatars={
-            users.length <= 2
-              ? users.filter((u) => u.username !== user).map((u) => u.avatar)
-              : users.map((u) => u.avatar)
-          }
-          name={conversation.name}
-        />
-      </header>
+      <div className="header-container">
+        <header
+          className={`chat-section-header ${showHeader ? "show" : "hide"}`}
+        >
+          <ChatHeader
+            userNumber={users.length}
+            lastMessageSendingTime={
+              conversation.lastMessage
+                ? +conversation.lastMessage.create_at
+                : Date.now()
+            }
+            info={users.filter((u) => u.username !== user)[0].phone}
+            avatars={
+              users.length <= 2
+                ? users.filter((u) => u.username !== user).map((u) => u.avatar)
+                : users.map((u) => u.avatar)
+            }
+            showHeader={showHeader}
+            toggleHeader={() => setShowHeader((prev) => !prev)}
+            name={conversation.name}
+          />
+        </header>
+      </div>
       {!message ? null : (
         <div style={{ margin: "0px 16px" }}>
           <ChatError message={message} />

@@ -25,44 +25,39 @@ export class DecryptMessage implements DecryptMessageUseCase {
       if (message.to) {
         let messageExtra = new MessageExtraMeta();
         //get message meta data
+        let messageContent: string;
         if (typeof message.content === "string") {
-          await messageExtra.deserialize(message.content);
+          messageContent = message.content;
         } else {
-          await messageExtra.deserialize(message.content.content);
+          messageContent = message.content.content;
         }
-
         try {
+          messageExtra.deserialize(messageContent);
+
           const sharedKey = await this.msgRepo.getSharedKey(
             message.sender === username ? message.to : message.sender,
             message.sender === username
               ? undefined
               : messageExtra.getDeviceKey()
           );
-          if (typeof message.content === "string") {
-            try {
-              message.content = await KeyHelper.getInstance().decrypt(
-                sharedKey,
-                messageExtra.getMessage()
-              );
-            } catch (err) {
-              console.log("DECRYPT ERR", err);
-              message.content = "Could not decrypt message";
-            }
-          } else {
-            try {
-              message.content.content = await KeyHelper.getInstance().decrypt(
-                sharedKey,
-                messageExtra.getMessage()
-              );
-            } catch (err) {
-              console.log("DECRYPT ERR", err);
-              message.content.content = "Could not decrypt message";
-            }
+          try {
+            messageContent = await KeyHelper.getInstance().decrypt(
+              sharedKey,
+              messageExtra.getMessage()
+            );
+          } catch (err) {
+            console.log("DECRYPT ERR", err);
+            messageContent = "Could not decrypt message";
           }
-          resolve(message);
         } catch (err) {
-          reject(err);
+          messageContent = "Could not decrypt message";
         }
+        if (typeof message.content === "string") {
+          message.content = messageContent;
+        } else {
+          message.content.content = messageContent;
+        }
+        resolve(message);
       } else {
         resolve(message);
       }

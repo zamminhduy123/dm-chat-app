@@ -92,10 +92,11 @@ export default class UserRepository implements IUserRepository {
   }
   async checkKeyExist(username: string): Promise<any> {
     KeyDataSource.getInstance().setUsername(username);
+    LocalStorage.getInstance().setUser(username);
 
     return new Promise<any>(async (resolve, reject) => {
       try {
-        await KeyDataSource.getInstance().getMyPrivateKey();
+        await KeyDataSource.getInstance().sendPublicKeyToServer();
         resolve(1);
       } catch (err) {
         reject(err);

@@ -37,7 +37,7 @@ export class EncryptMessage implements EncryptMessageUseCase {
           const sharedKey = await this.msgRepo.getSharedKey(message.to);
           console.log("SHARE KEY", sharedKey);
           if (typeof message.content === "string") {
-            message.content = await data
+            message.content = data
               .setMessage(
                 await KeyHelper.getInstance().encrypt(
                   sharedKey,
@@ -46,7 +46,7 @@ export class EncryptMessage implements EncryptMessageUseCase {
               )
               .serialize();
           } else {
-            message.content.content = await data
+            message.content.content = data
               .setMessage(
                 await KeyHelper.getInstance().encrypt(
                   sharedKey,

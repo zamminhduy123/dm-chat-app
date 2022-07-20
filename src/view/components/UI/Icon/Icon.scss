@@ -10,12 +10,7 @@
     border-radius: 4px;
     padding: 10px;
 
-    transition: background-color 0.4s ease-in-out;
-
-    &:hover{
-        background-color: theme.$color-gray-300;
-        cursor: pointer;
-    }
+    transition: background-color 0.4s ease-in;
 
     .icon-large {
         width: 25px;
@@ -28,6 +23,33 @@
     .icon-small {
         width: 15px;
         height: 15px;
+    }
+
+    &.normal {
+    
+        &:hover{
+            background-color: theme.$color-gray-300;
+            cursor: pointer;
+        }
+    }
+
+    &.contained {
+        padding: 0px 10px;
+        height: 100%;
+    
+        background-color: white;
+            cursor: pointer;
+            svg {
+                color: theme.$color-primary;
+            }
+
+    
+        &:hover{
+            background: theme.$color-gray-300;
+            // svg {
+            //     color: white;
+            // }
+        }
     }
 }
 

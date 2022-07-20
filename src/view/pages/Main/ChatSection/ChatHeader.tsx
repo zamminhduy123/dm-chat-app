@@ -4,6 +4,9 @@ import {
   faMagnifyingGlass,
   faVideo,
   faCircleInfo,
+  faBars,
+  faRightToBracket,
+  faArrowLeftLong,
 } from "@fortawesome/free-solid-svg-icons";
 import React from "react";
 import Avatar from "../../../components/Avatar/Avatar";
@@ -21,6 +24,8 @@ interface ChatHeaderProps {
   lastMessageSendingTime: number;
   userNumber: number;
   info: string;
+  showHeader: boolean;
+  toggleHeader: Function;
 }
 
 const ChatHeader: React.FC<ChatHeaderProps> = ({
@@ -29,6 +34,8 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
   userNumber,
   lastMessageSendingTime,
   info,
+  showHeader,
+  toggleHeader,
 }: ChatHeaderProps) => {
   const { t } = useTranslation();
   let extraInfo;
@@ -43,9 +50,10 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
       extraInfo = `${t("Last seen")} ${time.value} ${time.type} ${t("ago")}`;
     }
   }
-  return (
-    <div className="chat-header-container">
-      <div className="chat-header-left">
+
+  return showHeader ? (
+    <div className={`chat-header-container`}>
+      <div className={`chat-header-left`}>
         {avatars.length <= 1 ? (
           <Avatar src={avatars[0]} />
         ) : (
@@ -69,11 +77,11 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
         </div>
         <div className="chat-header-right-icon">
           <Icon icon={faMagnifyingGlass} />
-        </div>
-        <div className="chat-header-right-icon">
+        </div> */}
+        {/* <div className="chat-header-right-icon">
           <Icon icon={faVideo} />
         </div> */}
-        {userNumber === 2 ? (
+        {userNumber === 2 && showHeader ? (
           <div
             className="chat-header-right-icon"
             onClick={() => {
@@ -83,6 +91,25 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
             <Icon icon={faCircleInfo} />
           </div>
         ) : null}
+        <div
+          className="chat-header-right-icon"
+          onClick={() => {
+            toggleHeader();
+          }}
+        >
+          <Icon icon={faRightToBracket} />
+        </div>
+      </div>
+    </div>
+  ) : (
+    <div style={{ width: "fit-content" }}>
+      <div
+        className="chat-header-right-icon"
+        onClick={() => {
+          toggleHeader();
+        }}
+      >
+        <Icon icon={faBars} />
       </div>
     </div>
   );

@@ -41,14 +41,8 @@ export default class ConversationDataSource implements IConversationDataSource {
               if (conver.users.length === 2 && conver.lastMessage) {
                 if (+conver.lastMessage.type === MessageEnum.text) {
                   try {
-                    let messageExtra = await new MessageExtraMeta().deserialize(
+                    let messageExtra = new MessageExtraMeta().deserialize(
                       conver.lastMessage.content as string
-                    );
-
-                    console.log(
-                      "Other user ",
-                      conver.users.filter((u) => u.username !== username)[0]
-                        .username
                     );
                     const sharedKey =
                       await KeyDataSource.getInstance().getSharedKey(
@@ -58,17 +52,13 @@ export default class ConversationDataSource implements IConversationDataSource {
                           ? messageExtra.getDeviceKey()
                           : undefined
                       );
-                    console.log("SHARE", sharedKey);
                     data.lastMessageContent =
                       await KeyHelper.getInstance().decrypt(
                         sharedKey,
                         messageExtra.getMessage()
                       );
-                    console.log(
-                      "conv.lastMessage.content",
-                      conver.lastMessage.content
-                    );
                   } catch (err) {
+                    data.lastMessageContent = "Could not decrypt message";
                     console.log("SYNC CONVERSATION ERR", err);
                   }
                 }

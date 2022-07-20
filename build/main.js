@@ -38,6 +38,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 var _a = require("electron"), app = _a.app, BrowserWindow = _a.BrowserWindow, ipcMain = _a.ipcMain, dialog = _a.dialog, Notification = _a.Notification;
 var path = require("path");
 var download = require("./download").download;
+console.log(process.env);
 var isDev = process.env.NODE_ENV === "development";
 console.log(isDev);
 var port = 3000;

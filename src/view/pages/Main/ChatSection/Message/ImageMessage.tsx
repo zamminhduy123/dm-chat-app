@@ -16,7 +16,8 @@ const ImageMessage = ({ message, onLoad }: ImageMessageProps) => {
   return (
     <div
       style={{
-        height: "200px",
+        minHeight: "50px",
+        height: "fit-content",
       }}
     >
       <img
@@ -43,7 +44,7 @@ const ImageMessage = ({ message, onLoad }: ImageMessageProps) => {
         }}
       />
       {openImageViewer ? (
-        <NewWindow close={() => setOpenImageViewer(false)}>
+        <NewWindow url={src} close={() => setOpenImageViewer(false)}>
           <img width={"100%"} height="100%" src={src} />
         </NewWindow>
       ) : null}

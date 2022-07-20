@@ -14,7 +14,7 @@
   "Just sent": "Vừa gửi",
   "platform": "nền tảng",
   "Becoming a member of": "Trở thành thành viên của",
-  "Could not decrypt message": "Không thể mã hóa tin nhắn",
+  "Could not decrypt message": "Không thể giải mã tin nhắn",
   "We use this key to encrypt message 1-1 to ensure no one can view your message except you and your recipient": "Chúng tôi dùng khóa này để mã hóa tin nhắn của cuộc hội thoại 1-1 để đảm bảo không ai ngoài bạn và người nhận có thể đọc được tin nhắn",
   "Due to security! Message encrypted at other device in the past can not be decrypted here": "Vì lí do bảo mật! Các tin nhắn đã mã hóa ở device khác sẽ không thể được mã hóa lại ở đây",
   "sign up": "đăng ký",

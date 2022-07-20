@@ -22,6 +22,7 @@ import noImageUrl from "../../../../../assets/no-image.png";
 import Icon from "../../../../components/UI/Icon/Icon";
 import { faDownload } from "@fortawesome/free-solid-svg-icons";
 import VideoMessage from "./VideoMessage";
+import { downloadResource } from "../../../../../utils/forceDownloadBlob";
 
 interface MessageProps {
   message: MessageEntity;
@@ -39,6 +40,8 @@ const Message: React.FC<MessageProps> = (props: MessageProps) => {
   const time = getRemainingTime(
     new Date(props.message.create_at || new Date()).getTime()
   );
+
+  const downloadRef = React.useRef<HTMLAnchorElement>(null);
   const flexDir = left ? "row" : "row-reverse";
   let content: React.ReactNode;
   // console.log(props.message.type);
@@ -194,13 +197,17 @@ const Message: React.FC<MessageProps> = (props: MessageProps) => {
             paddingBlockEnd: props.hasStatus || props.hasTime ? "25px" : "0px",
           }}
           onClick={() => {
+            console.log("HI");
             typeof props.message.content !== "string"
               ? window.electronAPI
                 ? window.electronAPI.files.downloadFile(
                     props.message.content.content,
                     props.message.content.name
                   )
-                : ""
+                : downloadResource(
+                    props.message.content.content,
+                    props.message.content.name
+                  )
               : "";
           }}
         >

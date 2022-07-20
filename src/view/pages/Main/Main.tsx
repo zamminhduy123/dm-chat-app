@@ -94,7 +94,6 @@ const Main = (props: MainProps) => {
     React.useState<UserEntity | null>(null);
   const [fadeAlert, setFadeAlert] = React.useState("");
 
-  const [newKeyAlert, setNewKeyAlert] = React.useState(false);
   React.useEffect(() => {
     const displayUserListener = eventEmitter.addListener(
       userConstants.DISPLAY_USER,
@@ -131,27 +130,8 @@ const Main = (props: MainProps) => {
       }
     );
 
-    const newKeyCreatedListener = eventEmitter.addListener(
-      userConstants.CREATE_NEW_KEY,
-      () => {
-        setNewKeyAlert(true);
-      }
-    );
-
-    LocalStorage.getInstance()
-      .getLocalStorage()
-      .then((local) => {
-        if (!local.getItem("login")) {
-          setNewKeyAlert(true);
-          local.setItem("login", "1");
-        }
-      });
-
-    UserController.getInstance().checkKeyExist(user);
-
     return () => {
       displayUserListener.remove();
-      newKeyCreatedListener.remove();
     };
   }, []);
   React.useEffect(() => {
@@ -186,16 +166,6 @@ const Main = (props: MainProps) => {
       {fadeAlert ? <FadeAlert message={t(fadeAlert)} /> : null}
       <Modal isOpen={modalOpen} hasBackdrop handleClose={() => {}}>
         <ErrorReload message={t("Socket connection error") + "!"} />
-      </Modal>
-      <Modal
-        title={t("New key generated")}
-        isOpen={newKeyAlert}
-        hasBackdrop
-        handleClose={() => {
-          setNewKeyAlert(false);
-        }}
-      >
-        <NewKeyAlert />
       </Modal>
 
       <div className="flex-container">

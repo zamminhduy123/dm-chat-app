@@ -20,12 +20,17 @@ import ConversationList from "../../../components/ConversationList/ConversationL
 import LoadingList from "../../../components/LoadingSkeleton/LoadingList";
 import { getConversationById } from "../../../adapter/conversation.adapter";
 import Icon from "../../../components/UI/Icon/Icon";
-import { faUsersRectangle } from "@fortawesome/free-solid-svg-icons";
+import {
+  faUserGroup,
+  faUsers,
+  faUsersRectangle,
+} from "@fortawesome/free-solid-svg-icons";
 import NewGroup from "../NewGroup/NewGroup";
 import Modal from "../../../components/Modal/Modal";
 import addGroupURL from "../../../../assets/add-group.png";
 import debounce from "../../../../utils/debounce";
 import useAuthApp from "../../../adapter/useAuthApp";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 interface MainHeaderProps {
   searchBarActive: Boolean;
@@ -210,17 +215,25 @@ const MainHeader = ({
               {t("Close")}
             </Button>
           ) : (
-            <Button
-              variant="outlined"
-              size="medium"
-              color={"primary"}
+            <Icon
+              style="contained"
+              icon={faUserGroup}
               onClick={() => {
                 setNewGroupOpen(true);
               }}
-            >
-              {t("Add Group")}
-              <p style={{ fontSize: "16px", paddingBottom: "2px" }}>+</p>
-            </Button>
+            />
+            // <Button
+            //   variant="outlined"
+            //   size="medium"
+            //   color={"primary"}
+            //   onClick={() => {
+            //     setNewGroupOpen(true);
+            //   }}
+            // >
+            //   {/* {t("Add Group")} */}
+            //   <FontAwesomeIcon />
+            //   <p style={{ fontSize: "16px", paddingBottom: "2px" }}>+</p>
+            // </Button>
             // <Icon
             //   icon={faUsersRectangle}
             //   size="large"

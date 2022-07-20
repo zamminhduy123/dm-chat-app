@@ -127,26 +127,28 @@ export default class MessageDataSource implements IMessageDataSourceInterface {
             let messageExtra = new MessageExtraMeta();
             //get message meta data
             if (!(`${message.to}` === `g${message.conversation_id}`)) {
-              if (+message.type === MessageEnum.text) {
-                await messageExtra.deserialize(message.content);
-              } else {
-                console.log("MESSAGE", message.content);
-                message.content = JSON.parse(message.content);
-                console.log("MESSAGE", message.content.content);
-                await messageExtra.deserialize(message.content.content);
-              }
-              console.log(
-                "MESSAGE EXTRA",
-                messageExtra.getDeviceKey(),
-                messageExtra.getMessage()
-              );
+              let messageContent = "";
               try {
+                if (+message.type === MessageEnum.text) {
+                  messageContent = message.content;
+                } else {
+                  message.content = JSON.parse(message.content);
+                  messageContent = message.content.content;
+                }
                 const conversation = await this._conversationStorage.get(
                   message.conversation_id
                 );
                 if (conversation) {
                   let decryptedMessage = "Could not decrypt message";
                   try {
+                    messageExtra.deserialize(messageContent);
+                    console.log(
+                      "MDS",
+                      conversation.users.map((u) => u.username),
+                      message.sender,
+                      messageExtra.getMessage(),
+                      messageExtra.getDeviceKey()
+                    );
                     decryptedMessage =
                       await KeyDataSource.getInstance().decryptMessage(
                         conversation.users.map((u) => u.username),
@@ -156,6 +158,7 @@ export default class MessageDataSource implements IMessageDataSourceInterface {
                       );
                   } catch (err) {
                     console.log("DECRYPT ERR", err);
+                    decryptedMessage = "Could not decrypt message";
                   }
                   if (typeof message.content === "string") {
                     message.content = decryptedMessage;
@@ -165,7 +168,9 @@ export default class MessageDataSource implements IMessageDataSourceInterface {
                 } else {
                   //TODO: fetch the conversation
                 }
-              } catch (err) {}
+              } catch (err) {
+                console.log("Sync message error", err);
+              }
               console.log(dbData);
             }
             dbData.push(messageEntityToStorage(message));

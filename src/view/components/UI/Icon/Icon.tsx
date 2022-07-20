@@ -12,6 +12,7 @@ interface IconProps {
   onClick?: () => void;
   colorNotActive?: string;
   rounded?: Boolean;
+  style?: "contained" | "normal";
 }
 
 const Icon: React.FC<IconProps> = ({
@@ -22,6 +23,7 @@ const Icon: React.FC<IconProps> = ({
   onClick = () => {},
   selected = false,
   colorNotActive = "",
+  style = "normal",
 }: IconProps) => {
   const iconClassName = ["icon", "icon-" + size, type].join(" ");
 
@@ -31,6 +33,7 @@ const Icon: React.FC<IconProps> = ({
     "icon-container-" + size,
     selected ? "selected" : "",
     type,
+    style,
   ].join(" ");
   return (
     <div

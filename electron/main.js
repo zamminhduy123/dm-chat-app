@@ -8,6 +8,8 @@ const {
 const path = require("path");
 const { download } = require("./download");
 
+console.log(process.env);
+
 const isDev = process.env.NODE_ENV === "development";
 console.log(isDev);
 const port = 3000;
@@ -55,10 +57,18 @@ function createPhotoView(imageMessage) {
 function showNotification(title, body) {
   if (currentNotification) {
     currentNotification.close();
-    currentNotification = new Notification({ title: title, body: body });
+    currentNotification = new Notification({
+      title: title,
+      body: body,
+      icon: "icon.ico",
+    });
     currentNotification.show();
   } else {
-    currentNotification = new Notification({ title: title, body: body });
+    currentNotification = new Notification({
+      title: title,
+      body: body,
+      icon: "icon.ico",
+    });
     currentNotification.show();
   }
 }

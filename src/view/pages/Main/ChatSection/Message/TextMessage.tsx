@@ -73,6 +73,7 @@ const TextMessage: React.FC<TextMessageProps> = (props: TextMessageProps) => {
           overflowWrap: "break-word",
           color: props.isHighlighted ? "#fff" : `inherit`,
           fontFamily: "Inter",
+          whiteSpace: "pre-wrap",
         }}
       >
         {message}

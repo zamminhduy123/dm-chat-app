@@ -1,10 +1,11 @@
 import React from "react";
 import { useEffect, useMemo } from "react";
 import { createPortal } from "react-dom";
+import { isValidHttpUrl } from "../../../utils/utils";
 
 interface RenderInWindowProps {
   children: React.ReactNode;
-
+  url?: string;
   close: Function;
 }
 
@@ -15,15 +16,18 @@ const NewWindow = (props: RenderInWindowProps) => {
   useEffect(() => {
     const div = document.createElement("div");
     setContainer(div);
+
+    return () => {
+      props.close();
+    };
   }, []);
 
   useEffect(() => {
     let curWindow: any;
-    console.log(newWindow);
     if (container) {
       if (newWindow && newWindow.current !== null) {
         newWindow.current = window.open(
-          "",
+          props.url ? (isValidHttpUrl(props.url) ? props.url : "") : "",
           "image-viewer",
           "popup,width=600,height=400,left=200,top=200"
         );
@@ -36,6 +40,14 @@ const NewWindow = (props: RenderInWindowProps) => {
       };
     }
   }, [container]);
+
+  useEffect(() => {
+    if (newWindow.current)
+      newWindow.current.onbeforeunload = () => {
+        close();
+        props.close();
+      };
+  });
 
   return container && createPortal(props.children, container);
 };

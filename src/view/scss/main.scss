@@ -48,7 +48,7 @@
     flex: 1;
     display: flex;
     flex-direction: column;
-    
+    position: relative;
 
     height: 100%;
     overflow-y: hidden;
@@ -71,19 +71,42 @@
     border-radius: 0px 0px 4px 4px;
 }
 
-.chat-section-header {
+.header-container {
+    position: absolute;
+    background: transparent;
+    z-index: 99;
+
+    width: 100%;
     flex: 0 0 68px;
+    display: flex;
+    justify-content: flex-end;
+
+}
+
+.chat-section-header {
+
     
-    margin: 0px 10px;
     display: flex;
     justify-content: center;
     align-items: center;
     background-color:  var(--bgThemeColorPrimary);
     border-radius: 4px;
-    transition: box-shadow 0.4s ease-in-out;
     box-shadow: $box-regular;
-    &:hover {
-        box-shadow: $box-regular;
+   
+    z-index: 100;
+
+    margin:  0px 10px;
+
+    &.show {
+        width: 100%;
+        height: 68px;
+    }
+    &.hide {
+        width: 40px;
+        height: 40px;
+        margin-top: 14px;
+        margin-right: 16px;
+        box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
     }
 
 }
@@ -133,6 +156,7 @@
     flex: 0 0 60px;
     height: fit-content;
     
+    z-index: 100;
 }
 
 .user-phone {
@@ -153,12 +177,14 @@
     padding: 0px 16px;
     display: flex;
     flex-flow: row nowrap;
+
 }
 
 .chat-header-left {
     display: flex;
     align-items: center;
     flex-grow: 1;
+
 }
 
 .chat-header-left-body {
@@ -244,6 +270,7 @@
     align-items: center;
 
     height: fit-content;
+    min-height: 64px;
 
     transition: border 0.2s ease-in-out;
     box-shadow: $box-regular;
@@ -331,7 +358,8 @@
     word-break: break-word;
     word-wrap: break-word;
     font-family: 'Inter';
-
+    display: inline;
+    white-space: pre-wrap;
     color: var(--textThemeColor1);
 
     outline: none;
@@ -344,12 +372,12 @@
         cursor: text;
         background: none;
         color: $color-neutral-500;
-        display: block;
+        white-space: pre-wrap;
+        display: inline;
         position: absolute;
         padding-top: 2px;
         left: 16px;
         text-overflow: ellipsis;
-        white-space: nowrap;
         overflow: hidden;
         pointer-events: none;
     }

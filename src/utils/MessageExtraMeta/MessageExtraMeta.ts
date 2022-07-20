@@ -1,5 +1,27 @@
 import protobuf from "protobufjs";
 
+class MessageProto {
+  private ExtraMetaMessage: any;
+  getExtraMeta() {
+    return this.ExtraMetaMessage;
+  }
+  load() {
+    return new Promise<any>((resolve, reject) => {
+      protobuf.load("./message.json", (err: any, root: any) => {
+        if (err && !root) reject(err);
+        // Obtain a message type
+        this.ExtraMetaMessage = root.lookupType(
+          "messagepackage.ExtraMetaMessage"
+        );
+        resolve(1);
+      });
+    });
+  }
+}
+
+const proto = new MessageProto();
+export { proto };
+
 export default class MessageExtraMeta {
   private _deviceKey: string;
   private _message: string;
@@ -25,58 +47,33 @@ export default class MessageExtraMeta {
     return this;
   }
 
-  async serialize() {
-    return new Promise<string>((resolve, reject) => {
-      protobuf.load("./message.json", (err: any, root: any) => {
-        if (err && !root) reject(err);
+  serialize() {
+    var payload = { device_key: this._deviceKey, message: this._message };
 
-        // console.log(root);
+    // Verify the payload if necessary (i.e. when possibly incomplete or invalid)
+    var errMsg = proto.getExtraMeta().verify(payload);
+    // console.log("ERRR", errMsg);
+    if (errMsg) throw Error(errMsg);
 
-        // Obtain a message type
-        var ExtraMetaMessage = root.lookupType(
-          "messagepackage.ExtraMetaMessage"
-        );
+    // Create a new message
+    var message = proto.getExtraMeta().create(payload); // or use .fromObject if conversion is necessary
 
-        // Exemplary payload
-        var payload = { device_key: this._deviceKey, message: this._message };
-
-        // Verify the payload if necessary (i.e. when possibly incomplete or invalid)
-        var errMsg = ExtraMetaMessage.verify(payload);
-        // console.log("ERRR", errMsg);
-        if (errMsg) throw Error(errMsg);
-
-        // Create a new message
-        var message = ExtraMetaMessage.create(payload); // or use .fromObject if conversion is necessary
-
-        // Encode a message to an Uint8Array (browser) or Buffer (node)
-        var buffer = ExtraMetaMessage.encode(message).finish();
-        resolve(Buffer.from(buffer).toString("base64"));
-      });
-    });
+    // Encode a message to an Uint8Array (browser) or Buffer (node)
+    var buffer = proto.getExtraMeta().encode(message).finish();
+    return Buffer.from(buffer).toString("base64");
   }
 
-  async deserialize(encodedMessage: string): Promise<any> {
-    return new Promise<any>((resolve, reject) => {
-      protobuf.load("message.json", (err, root) => {
-        if (err) reject(err);
+  deserialize(encodedMessage: string) {
+    // Decode an Uint8Array (browser) or Buffer (node) to a message
+    var message = proto
+      .getExtraMeta()
+      .decode(Buffer.from(encodedMessage, "base64"));
 
-        // Obtain a message type
-        var ExtraMetaMessage = root!.lookupType(
-          "messagepackage.ExtraMetaMessage"
-        );
-
-        // Decode an Uint8Array (browser) or Buffer (node) to a message
-        var message = ExtraMetaMessage.decode(
-          Buffer.from(encodedMessage, "base64")
-        );
-
-        // Maybe convert the message back to a plain object
-        var object = ExtraMetaMessage.toObject(message);
-        console.log("DESERIALIZE", object["device_key"], object["message"]);
-        this.setDeviceKey(object["device_key"]);
-        this.setMessage(object["message"]);
-        resolve(this);
-      });
-    });
+    // Maybe convert the message back to a plain object
+    var object = proto.getExtraMeta().toObject(message);
+    console.log("DESERIALIZE", object["device_key"], object["message"]);
+    this.setDeviceKey(object["device_key"]);
+    this.setMessage(object["message"]);
+    return this;
   }
 }

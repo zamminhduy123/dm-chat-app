@@ -24,6 +24,7 @@ import { CheckKeyExist } from "../../usecases/user/checkKeyExist";
 import { SaveUserPKey } from "../../usecases/user/saveUserPKey";
 import eventEmitter from "../../utils/event-emitter";
 import { proto } from "../../utils/MessageExtraMeta/MessageExtraMeta";
+import { faThumbsDown } from "@fortawesome/free-solid-svg-icons";
 
 export default class UserController
   extends BaseController
@@ -66,11 +67,15 @@ export default class UserController
     return await this._findUseCase.execute(content);
   }
 
-  private async authenSuccess(username: string) {
+  private async authenSuccess(username: string, hashKey: string) {
     //establish socket connection
     SocketController.getInstance().init();
     StorageController.getInstance().connect();
     LocalStorage.getInstance().setUser(username);
+
+    const localStorage = await LocalStorage.getInstance().getLocalStorage();
+    if (!localStorage.getItem(LocalStorage.getInstance().getHashKey()))
+      localStorage.setItem(LocalStorage.getInstance().getHashKey(), hashKey);
 
     try {
       await this.checkKeyExist(username);
@@ -122,7 +127,7 @@ export default class UserController
         name: data.getName(),
       };
       this._dispatch(loginSuccess(newState));
-      await this.authenSuccess(data.getUsername());
+      await this.authenSuccess(data.getUsername(), data.getHashKey());
     } catch (err: any) {
       console.log(err);
     }
@@ -142,7 +147,7 @@ export default class UserController
       };
       this._dispatch(loginSuccess(newState));
 
-      await this.authenSuccess(data.getUsername());
+      await this.authenSuccess(data.getUsername(), data.getHashKey());
     } catch (err: any) {
       if (
         err.message === "User not found" ||

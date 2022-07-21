@@ -1,4 +1,7 @@
+import Fetcher from "../api";
+import KeyHelper from "../utils/keyHelper";
 import messageToKeywords from "../utils/messageToKeywords";
+import LocalStorage from "./localstorage/LocalStorage";
 import db, { indexName, storeNames } from "./storageAdapter";
 
 import {
@@ -20,6 +23,40 @@ interface IMessageStorage {
   getAllPendingMessage: () => Promise<sPendingMesage[]>;
 }
 export default class MessageStorage implements IMessageStorage {
+  private _localHashKey: string;
+  constructor() {
+    this._localHashKey = "";
+    LocalStorage.getInstance()
+      .getLocalStorage()
+      .then((localStorage) => {
+        const key = localStorage.getItem(
+          LocalStorage.getInstance().getHashKey()
+        );
+        if (key) {
+          this._localHashKey = key;
+        } else {
+          //TODO: fetch key
+          Fetcher.getHashKey()
+            .then((key) => (this._localHashKey = key))
+            .catch((err) => console.error("Error fetching hashKey"));
+        }
+      });
+  }
+
+  private async decryptLocalMessage(message: sMessageEntity) {
+    //decrypt
+    if (typeof message.content === "string")
+      message.content = await KeyHelper.getInstance().decrypt(
+        this._localHashKey,
+        message.content
+      );
+    else
+      message.content.content = await KeyHelper.getInstance().decrypt(
+        this._localHashKey,
+        message.content.content
+      );
+    return message;
+  }
   getAllPendingMessage(): Promise<sPendingMesage[]> {
     return new Promise<sPendingMesage[]>(async (resolve, reject) => {
       try {
@@ -44,10 +81,8 @@ export default class MessageStorage implements IMessageStorage {
   get(messageId: string): Promise<sMessageEntity> {
     return new Promise<sMessageEntity>(async (resolve, reject) => {
       try {
-        const data = await db.get<sMessageEntity>(
-          storeNames.message,
-          +messageId
-        );
+        let data = await db.get<sMessageEntity>(storeNames.message, +messageId);
+        data = await this.decryptLocalMessage(data);
         resolve(data);
       } catch (err) {
         reject(err);
@@ -64,6 +99,11 @@ export default class MessageStorage implements IMessageStorage {
           [conversation_id, new Date().getTime()]
         );
         // console.log("DATA", data);
+        await Promise.all(
+          data.map(async (m) => {
+            return await this.decryptLocalMessage(m);
+          })
+        );
         resolve(data);
       } catch (err) {
         reject(err);
@@ -87,6 +127,12 @@ export default class MessageStorage implements IMessageStorage {
           to ? undefined : 15
         );
         // console.log("STORAGE MESSAGE:", data, to);
+
+        await Promise.all(
+          data.map(async (m) => {
+            return await this.decryptLocalMessage(m);
+          })
+        );
         resolve(data);
       } catch (err) {
         reject(err);
@@ -107,9 +153,29 @@ export default class MessageStorage implements IMessageStorage {
       }
     });
   }
+
+  private async encryptLocalMessage(message: sMessageEntity) {
+    if (typeof message.content === "string")
+      message.content = await KeyHelper.getInstance().encrypt(
+        this._localHashKey as string,
+        message.content
+      );
+    else
+      message.content.content = await KeyHelper.getInstance().encrypt(
+        this._localHashKey as string,
+        message.content.content
+      );
+    return message;
+  }
   upsert(newMessage: sMessageEntity[]) {
     return new Promise<any>(async (resolve, reject) => {
       try {
+        //encrypt message
+        await Promise.all(
+          newMessage.map(async (msg) => {
+            return await this.encryptLocalMessage(msg);
+          })
+        );
         const data = await db.upsert<sMessageEntity>(
           storeNames.message,
           newMessage
@@ -148,10 +214,18 @@ export default class MessageStorage implements IMessageStorage {
   update(updatedMessage: sMessageEntity[]) {
     return new Promise<any>(async (resolve, reject) => {
       try {
+        //encrypt message
+        await Promise.all(
+          updatedMessage.map(async (msg) => {
+            return await this.encryptLocalMessage(msg);
+          })
+        );
+
         const data = await db.update<sMessageEntity>(
           storeNames.message,
           updatedMessage
         );
+
         resolve(data);
       } catch (err) {
         reject(err);

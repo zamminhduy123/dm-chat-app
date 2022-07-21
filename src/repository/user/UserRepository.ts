@@ -18,7 +18,8 @@ export default class UserRepository implements IUserRepository {
                 el.name,
                 el.gender,
                 el.avatar,
-                el.phone
+                el.phone,
+                el.hashKey || ""
               );
             });
           }
@@ -50,7 +51,8 @@ export default class UserRepository implements IUserRepository {
               data.name,
               data.gender,
               data.avatar,
-              data.phone
+              data.phone,
+              data.hashKey || ""
             )
           );
         })
@@ -69,7 +71,8 @@ export default class UserRepository implements IUserRepository {
               data.name,
               data.gender,
               data.avatar,
-              data.phone
+              data.phone,
+              data.hashKey || ""
             )
           );
         })

@@ -11,7 +11,14 @@ export const standardConversationArray = (ObjArray: any[]): Conversation[] => {
     const users: User[] = [];
     for (const user of conversation.users) {
       users.push(
-        new User(user.username, user.name, user.gender, user.avatar, user.phone)
+        new User(
+          user.username,
+          user.name,
+          user.gender,
+          user.avatar,
+          user.phone,
+          ""
+        )
       );
     }
     const lastMessage = conversation.lastMessage;

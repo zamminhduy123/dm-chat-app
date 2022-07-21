@@ -154,6 +154,10 @@ export class ClientAPI {
     const url = this._createUrl("authentication/logout");
     return this._post(url, null);
   }
+  async getHashKey() {
+    const url = this._createUrl("authentication/hashKey");
+    return this._get<string>(url);
+  }
   async authenticate() {
     const url = this._createUrl("authentication");
     console.log(this.origin);

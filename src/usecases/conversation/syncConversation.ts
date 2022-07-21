@@ -3,7 +3,7 @@ import { IConversationRepository } from "../../repository/conversation";
 import ConversationRepository from "../../repository/conversation/ConversationRepository";
 
 export interface SyncConversationUseCase {
-  execute: (username: string) => Promise<any>;
+  execute: (username: string) => Promise<Conversation[]>;
 }
 
 export class SyncConversation implements SyncConversationUseCase {
@@ -14,7 +14,7 @@ export class SyncConversation implements SyncConversationUseCase {
     else this.converRepo = new ConversationRepository();
   }
 
-  async execute(username: string): Promise<any> {
+  async execute(username: string): Promise<Conversation[]> {
     return this.converRepo.syncConversation(username);
   }
 }

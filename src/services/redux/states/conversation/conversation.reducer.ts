@@ -48,6 +48,9 @@ const updateConversation = (state = initialState, action: Action) => {
   //       }
   //     : action.payload.lastMessage,
   // };
+  if (indexU === -1) {
+    return addConversation(state, action);
+  }
   return {
     ...state,
     ...{

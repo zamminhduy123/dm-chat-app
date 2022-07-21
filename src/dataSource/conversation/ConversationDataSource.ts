@@ -22,12 +22,14 @@ export default class ConversationDataSource implements IConversationDataSource {
   constructor() {
     this._convStorage = new ConversationStorage();
   }
-  sync(username: string): Promise<any> {
-    return new Promise<any>(async (resolve, reject) => {
+  sync(username: string): Promise<ConversationEntity[]> {
+    return new Promise<ConversationEntity[]>(async (resolve, reject) => {
       //try fetch from server
       let serverData: ConversationEntity[];
       try {
         serverData = await Fetcher.getConversation(username);
+
+        const mappedData: ConversationEntity[] = [];
 
         if (serverData) {
           for (const conver of serverData) {
@@ -46,8 +48,7 @@ export default class ConversationDataSource implements IConversationDataSource {
                     );
                     const sharedKey =
                       await KeyDataSource.getInstance().getSharedKey(
-                        conver.users.filter((u) => u.username !== username)[0]
-                          .username,
+                        conver.lastMessage.to,
                         conver.lastMessage.sender !== username
                           ? messageExtra.getDeviceKey()
                           : undefined
@@ -64,11 +65,12 @@ export default class ConversationDataSource implements IConversationDataSource {
                 }
               }
               await this._convStorage.update([data]);
+              mappedData.push(conversationStorageToEntity(data));
             }
           }
         }
 
-        resolve(true);
+        resolve(mappedData);
       } catch (err) {
         console.log("Server fetch error", err);
         reject(err);

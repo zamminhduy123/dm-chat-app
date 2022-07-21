@@ -6,4 +6,5 @@ export type UserEntity = {
   gender: GenderEnum;
   avatar: string;
   phone: string;
+  hashKey?: string;
 };

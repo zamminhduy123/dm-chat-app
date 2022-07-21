@@ -2,12 +2,14 @@ export default class LocalStorage {
   private _username: string;
   private _lastMessageId: string;
   private _myKey: string;
+  private _hashKey: string;
   private static _instance: LocalStorage | null;
 
   setUser(username: string) {
     this._username = username;
     this._lastMessageId = `lastMessageId-${this._username}`;
     this._myKey = `myKey-${this._username}`;
+    this._hashKey = `hashKey-${this._username}`;
     if (this._username) {
       this.resolveInit();
     }
@@ -20,6 +22,7 @@ export default class LocalStorage {
     this._username = "";
     this._lastMessageId = "";
     this._myKey = "";
+    this._hashKey = "";
     this.awaitInit = new Promise((res, rej) => {
       this.resolveInit = res;
     });
@@ -44,6 +47,9 @@ export default class LocalStorage {
   }
   getPublicKey() {
     return this._myKey + "-public";
+  }
+  getHashKey() {
+    return this._hashKey;
   }
 
   async getLocalStorage() {

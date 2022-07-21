@@ -10,19 +10,25 @@ class User {
   private _gender: GenderEnum;
   private _avatar: string;
   private _phone: string;
+  private _hashKey: string;
 
   constructor(
     username: string,
     name: string,
     gender: GenderEnum,
     avatar: string,
-    phone: string
+    phone: string,
+    hashKey: string
   ) {
     this._username = username;
     this._name = name;
     this._gender = gender;
     this._avatar = avatar;
     this._phone = phone;
+    this._hashKey = hashKey;
+  }
+  getHashKey(): string {
+    return this._hashKey;
   }
 
   getPhone(): string {

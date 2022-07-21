@@ -18,9 +18,14 @@ export default class ConversationRepository implements IConversationRepository {
         .catch(reject);
     });
   }
-  syncConversation(username: string): Promise<any> {
+  syncConversation(username: string): Promise<Conversation[]> {
     return new Promise<any>((resolve, reject) => {
-      this.conversationDataSrc.sync(username).then(resolve).catch(reject);
+      this.conversationDataSrc
+        .sync(username)
+        .then((data) => {
+          resolve(Helper.standardConversationArray(data));
+        })
+        .catch(reject);
     });
   }
   addConversation(newConversation: ConversationEntity): Promise<any> {

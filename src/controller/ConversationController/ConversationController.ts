@@ -67,9 +67,14 @@ class ConversationController
     return new Promise<any>((resolve, reject) => {
       this._syncConversationUseCase
         .execute(this._getState().auth.user)
-        .then((data) => {
-          this.getConversations();
-          resolve(1);
+        .then((data: Conversation[]) => {
+          // this.getConversations();
+          // resolve(1);
+
+          //perform redux update
+          for (const conversation of Helper.conversationModelToEntity(data)) {
+            this._dispatch(updateConversation(conversation));
+          }
         })
         .catch((err) => {
           reject(err);

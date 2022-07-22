@@ -170,23 +170,7 @@ export default class MessageStorage implements IMessageStorage {
   upsert(newMessage: sMessageEntity[]) {
     return new Promise<any>(async (resolve, reject) => {
       try {
-        //encrypt message
-        await Promise.all(
-          newMessage.map(async (msg) => {
-            return await this.encryptLocalMessage(msg);
-          })
-        );
-        const data = await db.upsert<sMessageEntity>(
-          storeNames.message,
-          newMessage
-        );
-        const deletePending: string[] = [];
-        for (const msg of newMessage) {
-          if (msg.clientMsgId) deletePending.push(msg.clientMsgId);
-        }
-        await db.delete(storeNames.pending, deletePending);
-
-        //add to indexed DB
+        //add to search db
         await Promise.all(
           newMessage.map(async (msg) => {
             if (typeof msg.content !== "string") {
@@ -204,6 +188,22 @@ export default class MessageStorage implements IMessageStorage {
             );
           })
         );
+        //encrypt message
+        await Promise.all(
+          newMessage.map(async (msg) => {
+            return await this.encryptLocalMessage(msg);
+          })
+        );
+        //add to local db
+        const data = await db.upsert<sMessageEntity>(
+          storeNames.message,
+          newMessage
+        );
+        const deletePending: string[] = [];
+        for (const msg of newMessage) {
+          if (msg.clientMsgId) deletePending.push(msg.clientMsgId);
+        }
+        await db.delete(storeNames.pending, deletePending);
 
         resolve(data);
       } catch (err) {

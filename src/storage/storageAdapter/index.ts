@@ -17,6 +17,7 @@ export const indexName = {
   conversationId_sendTime: "conversationId_sendTime",
   status_sendTime: "status_sendTime",
   clientId_MsgId: "clientId_MsgId",
+  identifier_lastModified: "identifier_lastModified"
 };
 
 const stores: IObjectStore[] = [
@@ -74,9 +75,15 @@ const stores: IObjectStore[] = [
   {
     name: storeNames.encrypt_sharedKey,
     option: {
-      keyPath: ["identifier", "lastModified"],
+      keyPath: ["identifier"],
     },
-    indexes: [],
+    indexes: [{
+      name: "identifier_lastModified",
+      keyPath: ["identifier","lastModified"],
+      option: {
+        unique: true,
+      },
+    },],
   },
 ];
 

@@ -6,7 +6,7 @@ import {
 } from "../entities";
 import axios, { AxiosError } from "axios";
 
-const CHUNK_SIZE = 1 * 1024 * 1024; //1 MB
+const CHUNK_SIZE = 5 * 1024 * 1024; //1 MB
 
 export class ClientAPI {
   private origin: string;
@@ -65,6 +65,7 @@ export class ClientAPI {
         },
         withCredentials: true,
         ...(data ? { data: data } : null),
+        timeout: contentType === "application/json" ? 10000 : 0,
       };
       // console.log(requestOptions);
       axios(requestOptions)

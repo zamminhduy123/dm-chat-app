@@ -1,3 +1,4 @@
+@import '../../scss/theme';
 .new-key-alert-container {
     display: flex;
     flex-direction: column;
@@ -11,9 +12,11 @@
         text-decoration: underline;
     }
     span  {
+        color: var(--textThemeColor1);
         margin-top: 4px;
     }
     p{
+        color: var(--textThemeColor1);
         font-size: small;
     }
 }

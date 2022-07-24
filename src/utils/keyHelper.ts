@@ -64,13 +64,13 @@ class KeyHelper {
         ...(typeof algorithm !== "string" ? algorithm : { name: algorithm }),
         iv,
       };
-      console.log("start decrypt", data);
+      // console.log("start decrypt", data);
       const data1 = await this.crypto.subtle.decrypt(
         decryptedAlgParams,
         key,
         Buffer.from(data, "base64")
       );
-      console.log("end decrypt", data1);
+      // console.log("end decrypt", data1);
       return arrayBufferToString(data1);
     } catch (err) {
       throw err;

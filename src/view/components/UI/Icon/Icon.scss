@@ -1,4 +1,4 @@
-@use '../../../scss/theme';
+@import '../../../scss/theme';
 
 
 .icon-container {
@@ -28,7 +28,7 @@
     &.normal {
     
         &:hover{
-            background-color: theme.$color-gray-300;
+            background-color: $color-gray-300;
             cursor: pointer;
         }
     }
@@ -37,15 +37,15 @@
         padding: 0px 10px;
         height: 100%;
     
-        background-color: white;
+        background-color: var(--bgThemeColorPrimary);
             cursor: pointer;
             svg {
-                color: theme.$color-primary;
+                color: $color-primary;
             }
 
     
         &:hover{
-            background: theme.$color-gray-300;
+            background: $color-gray-300;
             // svg {
             //     color: white;
             // }

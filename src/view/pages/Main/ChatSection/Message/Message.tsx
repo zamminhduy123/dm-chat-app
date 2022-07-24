@@ -41,35 +41,50 @@ const Message: React.FC<MessageProps> = (props: MessageProps) => {
     new Date(props.message.create_at || new Date()).getTime()
   );
 
-  const downloadRef = React.useRef<HTMLAnchorElement>(null);
+  // console.log (props.message)
+
   const flexDir = left ? "row" : "row-reverse";
   let content: React.ReactNode;
+  let decryptFail = false;
   // console.log(props.message.type);
-  if (+props.message.type === MessageEnum.text) {
-    if (typeof props.message.content === "string") {
-      content = (
-        <TextMessage
-          messageId={props.message.id || props.message.clientId!}
-          content={props.message.content}
-          isHighlighted={props.isHighlighted}
-        />
-      );
+  if (+props.message.status !== MessageStatus.DECRYPT_FAIL){
+    if (+props.message.type === MessageEnum.text) {
+      if (typeof props.message.content === "string") {
+        content = (
+          <TextMessage
+            decryptFail={false}
+            messageId={props.message.id || props.message.clientId!}
+            content={props.message.content}
+            isHighlighted={props.isHighlighted}
+          />
+        );
+      }
+    } else {
+      // console.log(props.message.content);
+      if (typeof props.message.content !== "string") {
+        if (+props.message.type === MessageEnum.image) {
+          content = <ImageMessage message={props.message} />;
+        }
+        if (+props.message.type === MessageEnum.video) {
+          content = <VideoMessage message={props.message} />;
+        }
+  
+        if (+props.message.type === MessageEnum.file) {
+          content = <FileMessage message={props.message} />;
+        }
+      }
     }
   } else {
-    // console.log(props.message.content);
-    if (typeof props.message.content !== "string") {
-      if (+props.message.type === MessageEnum.image) {
-        content = <ImageMessage message={props.message} />;
-      }
-      if (+props.message.type === MessageEnum.video) {
-        content = <VideoMessage message={props.message} />;
-      }
-
-      if (+props.message.type === MessageEnum.file) {
-        content = <FileMessage message={props.message} />;
-      }
-    }
+    decryptFail=true
+    content = (
+      <TextMessage
+        messageId={props.message.id || props.message.clientId!}
+        content={t('Could not decrypt message')}
+        decryptFail={true}
+      />
+    );
   }
+
 
   //hover
   const [hover, setHover] = React.useState(false);
@@ -82,10 +97,10 @@ const Message: React.FC<MessageProps> = (props: MessageProps) => {
   return (
     <div
       onMouseEnter={() => {
-        if (+props.message.type === MessageEnum.image) setHover(true);
+        if (+props.message.type === MessageEnum.image && !decryptFail) setHover(true);
       }}
       onMouseLeave={() => {
-        if (+props.message.type === MessageEnum.image) setHover(false);
+        if (+props.message.type === MessageEnum.image && !decryptFail) setHover(false);
       }}
       style={{
         display: "flex",
@@ -109,23 +124,23 @@ const Message: React.FC<MessageProps> = (props: MessageProps) => {
           maxHeight: "50%",
           overflowWrap: "break-word",
           background: `${
-            +props.message.type === MessageEnum.image
+            +props.message.type === MessageEnum.image && +props.message.status !== MessageStatus.DECRYPT_FAIL
               ? "transparent"
               : props.isHighlighted
               ? "#5EBA7D"
               : !left
-              ? "white"
+              ? "var(--bgThemeColorPrimary)"
               : "linear-gradient(45deg,#fd267a,#ff6036)"
           }`,
           zIndex: "100",
           fontSize: "15px",
-          padding: +props.message.type !== MessageEnum.image ? "12px" : "0px",
+          padding: +props.message.type === MessageEnum.image && +props.message.status !== MessageStatus.DECRYPT_FAIL ? "0px" : "12px",
           boxShadow:
             +props.message.type === MessageEnum.text
               ? "0 1px 0 0 rgba(0,0,0,0.18)"
               : "",
           borderRadius: "10px",
-          color: `${!left ? "#001a33" : "white"}`,
+          color: `${!left ? "var(--textThemeColor1)" : "white"}`,
         }}
       >
         {content}
@@ -137,8 +152,8 @@ const Message: React.FC<MessageProps> = (props: MessageProps) => {
               fontSize: "13px",
               fontWeight: "400",
               color: `${
-                +props.message.type === MessageEnum.image || !left
-                  ? "rgba(0,0,0,0.5)"
+                +props.message.type === MessageEnum.image && +props.message.status !== MessageStatus.DECRYPT_FAIL  || !left
+                  ? "var(--textThemeColor1)"
                   : "rgba(255,255,255,0.7)"
               }`,
               marginTop: "10px",
@@ -197,7 +212,7 @@ const Message: React.FC<MessageProps> = (props: MessageProps) => {
             paddingBlockEnd: props.hasStatus || props.hasTime ? "25px" : "0px",
           }}
           onClick={() => {
-            console.log("HI");
+            // console.log("HI");
             typeof props.message.content !== "string"
               ? window.electronAPI
                 ? window.electronAPI.files.downloadFile(

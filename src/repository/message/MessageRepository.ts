@@ -67,10 +67,10 @@ export default class MessageRepository implements IMessageRepository {
         .catch(reject);
     });
   }
-  syncMessage(conversation_id: string): Promise<any> {
+  syncMessage(): Promise<any> {
     //get from storage
     return new Promise<any>((resolve, reject) => {
-      this.messageDataSrc.sync(conversation_id).then(resolve).catch(reject);
+      this.messageDataSrc.sync().then(resolve).catch(reject);
     });
   }
 

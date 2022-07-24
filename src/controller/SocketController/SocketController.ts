@@ -33,6 +33,7 @@ export default class SocketController extends BaseController {
     try {
       Socket.getInstance().registerConnectSuccess(this.registerListener);
       Socket.getInstance().connect();
+      console.log("SOCKET ESTABLISH")
     } catch (err) {
       console.log("Socket connect error", err);
     }
@@ -56,6 +57,7 @@ export default class SocketController extends BaseController {
 
   static destroy() {
     this._instance = null;
+    Socket._instance = null;
   }
 
   private registerListener = () => {
@@ -68,11 +70,8 @@ export default class SocketController extends BaseController {
 
     console.log("RESYNC");
 
-    ConversationController.getInstance()
-      .syncConversations()
-      .then(() => {
-        MessageController.getInstance().syncMessage();
-      });
+    ConversationController.getInstance().syncConversations();
+    MessageController.getInstance().syncMessage();
   };
 
   messageSent = () => {

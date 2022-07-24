@@ -14,7 +14,7 @@ export class SyncMessage implements SyncMessageUseCase {
     this.msgRepo = msgRepo;
   }
 
-  async execute(username: string): Promise<any> {
-    return this.msgRepo.syncMessage(username);
+  async execute(): Promise<any> {
+    return this.msgRepo.syncMessage();
   }
 }

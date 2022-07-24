@@ -1,4 +1,5 @@
 import Fetcher from "../api";
+import { FileEntity, MessageEnum, MessageStatus } from "../entities";
 import KeyHelper from "../utils/keyHelper";
 import messageToKeywords from "../utils/messageToKeywords";
 import LocalStorage from "./localstorage/LocalStorage";
@@ -21,6 +22,7 @@ interface IMessageStorage {
   upsertPending: (newMessage: sPendingMesage[]) => Promise<any>;
   update: (updatedMessage: sMessageEntity[]) => Promise<any>;
   getAllPendingMessage: () => Promise<sPendingMesage[]>;
+  delete: (id: string) => Promise<boolean>;
 }
 export default class MessageStorage implements IMessageStorage {
   private _localHashKey: string;
@@ -42,19 +44,32 @@ export default class MessageStorage implements IMessageStorage {
         }
       });
   }
+  delete(id: string) {
+    return new Promise<boolean>(async (resolve, reject) => {
+      try {
+        resolve(await db.delete(storeNames.message, [id]));
+      } catch (err) {
+        reject(err);
+      }
+    });
+  }
 
   private async decryptLocalMessage(message: sMessageEntity) {
     //decrypt
-    if (typeof message.content === "string")
-      message.content = await KeyHelper.getInstance().decrypt(
-        this._localHashKey,
-        message.content
-      );
-    else
-      message.content.content = await KeyHelper.getInstance().decrypt(
-        this._localHashKey,
-        message.content.content
-      );
+    try {
+      if (typeof message.content === "string")
+        message.content = await KeyHelper.getInstance().decrypt(
+          this._localHashKey,
+          message.content
+        );
+      else
+        message.content.content = await KeyHelper.getInstance().decrypt(
+          this._localHashKey,
+          message.content.content
+        );
+    } catch (err) {
+      console.log("LOCAL DECRYPT ERROR", err);
+    }
     return message;
   }
   getAllPendingMessage(): Promise<sPendingMesage[]> {
@@ -126,13 +141,15 @@ export default class MessageStorage implements IMessageStorage {
           true,
           to ? undefined : 15
         );
-        // console.log("STORAGE MESSAGE:", data, to);
 
+        // console.log("STORAGE MESSAGE 1 :", data, to);
         await Promise.all(
           data.map(async (m) => {
+            console.log(m.content);
             return await this.decryptLocalMessage(m);
           })
         );
+        // console.log("STORAGE MESSAGE 2:", data, to);
         resolve(data);
       } catch (err) {
         reject(err);
@@ -173,7 +190,11 @@ export default class MessageStorage implements IMessageStorage {
         //add to search db
         await Promise.all(
           newMessage.map(async (msg) => {
-            if (typeof msg.content !== "string") {
+            if (
+              typeof msg.content !== "string" ||
+              +msg.status === MessageStatus.DECRYPT_FAIL ||
+              +msg.status === MessageStatus.ERROR
+            ) {
               return;
             }
             const kws = messageToKeywords(msg.content);

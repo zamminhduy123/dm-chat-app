@@ -2,6 +2,7 @@ import { MessageEntity } from "../../../../entities";
 import { messageConstants } from "../../../../view/action";
 
 export const setMessage = (messageList: MessageEntity[]) => {
+  console.log(messageList)
   return {
     type: messageConstants.SET_MESSAGE,
     payload: {
@@ -24,6 +25,17 @@ export const loadMoreMessages = (messageList: MessageEntity[]) => {
     payload: {
       messages: messageList,
     },
+  };
+};
+
+export const deleteMessage = (identifier: string) => {
+  console.log("DELETE",  {
+    type: messageConstants.DELETE_MESSAGE,
+    payload: identifier,
+  });
+  return {
+    type: messageConstants.DELETE_MESSAGE,
+    payload: identifier,
   };
 };
 

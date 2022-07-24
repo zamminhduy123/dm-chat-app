@@ -95,7 +95,7 @@ export default class IndexedDBAdapter {
   private getBound(lower: any = "", upper: any = "") {
     let range: IDBKeyRange | undefined;
     if (lower !== "" && upper !== "") {
-      range = IDBKeyRange.bound(lower, upper, false, false);
+      range = IDBKeyRange.bound(lower, upper, true, true);
     } else if (lower === "") {
       range = IDBKeyRange.upperBound(upper, false);
     } else if (upper === "") {

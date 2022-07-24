@@ -60,7 +60,7 @@ const ChatSection: React.FC<ChatSectionProps> = ({
 
   const networkError = useClientNetwork();
   let message = "";
-  if (errorMessage) message = errorMessage;
+  if (errorMessage) message = t(errorMessage);
   if (networkError)
     message = `${t("Cannot connect to server")}. ${t(
       "Please check your internet connection"

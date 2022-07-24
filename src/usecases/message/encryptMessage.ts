@@ -27,7 +27,7 @@ export class EncryptMessage implements EncryptMessageUseCase {
           await LocalStorage.getInstance().getLocalStorage()
         ).getItem(LocalStorage.getInstance().getDeviceKey());
         if (!deviceKey) {
-          throw new Error("Lost device key");
+          reject("Lost device key");
         } else {
           data.setDeviceKey(deviceKey);
         }

@@ -1,5 +1,6 @@
 import {
   ConversationEntity,
+  FileEntity,
   GenderEnum,
   MessageEntity,
   MessageEnum,
@@ -98,7 +99,7 @@ export const messageEntityToPendingStorage = (
     sender: message.sender,
     type: message.type,
     status: message.status,
-    content: message.content,
+    content: +message.type === MessageEnum.text ? message.content : {...message.content as FileEntity},
     conversation_id: message.conversation_id || "",
     to: message.to || "",
   };
@@ -123,7 +124,7 @@ export const messageEntityToStorage = (
     sender: message.sender,
     type: message.type,
     status: message.status,
-    content: message.content,
+    content: +message.type === MessageEnum.text ? message.content : {...message.content as FileEntity},
     conversation_id: message.conversation_id || "",
     to: message.to,
   };

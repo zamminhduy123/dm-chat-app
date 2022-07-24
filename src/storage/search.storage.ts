@@ -11,6 +11,7 @@ export default class SearchStorage implements ISearchStorage {
     return new Promise<sKeywordMessageEntity[]>(async (resolve, reject) => {
       try {
         //get keyword index
+        console.log(lastCharacterBefore(keyword),lastCharacterAfter(keyword))
         const datas = await db.getManyWithIndex<sKeywordMessageEntity[]>(
           storeNames.keyword_message,
           indexName.keyword,

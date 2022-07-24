@@ -63,8 +63,7 @@ class ConversationController
     }
     return this._instance;
   }
-  async syncConversations() {
-    return new Promise<any>((resolve, reject) => {
+  syncConversations() {
       this._syncConversationUseCase
         .execute(this._getState().auth.user)
         .then((data: Conversation[]) => {
@@ -77,9 +76,8 @@ class ConversationController
           }
         })
         .catch((err) => {
-          reject(err);
+          console.error("syncConversations error",err)
         });
-    });
   }
 
   updateConversation(conversation: ConversationEntity) {
@@ -130,7 +128,7 @@ class ConversationController
       .execute(conversation)
       .then((data) => {
         this._dispatch(addConversation(conversation));
-        this.select(conversation.id);
+        // this.select(conversation.id);
       })
       .catch((err) => {
         throw err;

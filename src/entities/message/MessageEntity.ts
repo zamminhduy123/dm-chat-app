@@ -11,6 +11,7 @@ export enum MessageStatus {
   RECEIVED = 2,
   SEEN = 3,
   ERROR = 4,
+  DECRYPT_FAIL = 5,
 }
 
 export type FileEntity = {

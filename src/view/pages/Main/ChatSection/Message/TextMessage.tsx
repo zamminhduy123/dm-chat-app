@@ -15,20 +15,19 @@ interface TextMessageProps {
   content: string;
   messageId: string;
   isHighlighted?: Boolean;
+  decryptFail?:boolean
 }
 
 const TextMessage: React.FC<TextMessageProps> = (props: TextMessageProps) => {
   const text = React.useRef<HTMLParagraphElement>(null);
   const { t } = useTranslation();
-  let messageEncryptedFail = false,
-    message = props.content;
-  if (props.content === "Could not decrypt message") {
-    messageEncryptedFail = true;
+  let messageEncryptedFail = props.decryptFail,message = props.content;
+  if (messageEncryptedFail) {
     message = `${t("Could not decrypt message")}. `;
   }
 
   React.useEffect(() => {
-    if (props.content !== "Could not decrypt message") {
+    if (!messageEncryptedFail) {
       worker.postMessage({
         event: "phone-check",
         text: props.content,

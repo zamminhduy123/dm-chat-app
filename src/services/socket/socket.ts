@@ -7,6 +7,7 @@ const MAX_RECONNECTION_ATTEMP = 20,
 class Socket {
   private _user: string = "";
   static _instance: Socket | null;
+  private url: string = "";
   public getUser(): string {
     return this._user;
   }
@@ -18,12 +19,11 @@ class Socket {
   private _retryAttemp = 0;
 
   private createNewSocket() {
-    let url;
     // if (process.env.REACT_APP_SERVER === "local") url = "http://localhost:3001";
     // else
 
-    url = process.env.REACT_APP_API_URL || "http://localhost:3001";
-    this.socket = io(url, {
+    this.url = process.env.REACT_APP_API_URL || "http://localhost:3001";
+    this.socket = io(this.url, {
       autoConnect: false,
       withCredentials: true,
       reconnection: false,
@@ -130,8 +130,21 @@ class Socket {
     }
   };
 
-  emit = <T>(eventName: string, data: T) => {
-    this.socket.emit(eventName, data);
+  emit = async <T>(eventName: string, data: T, callback?: Function) => {
+    return new Promise<any>((resolve,reject) => {
+      this.socket
+        .timeout(TIMEOUT)
+        .emit(eventName, data, (err: any, response: any) => {
+          if (err) {
+            reject("Emit timeout")
+            // the other side did not acknowledge the event in the given delay
+          } else {
+            if (callback) callback(response);
+            resolve(true);
+          }
+        });
+    })
+
   };
 
   registerListener<T>(eventName: string, callback: (data: T) => void) {
@@ -152,8 +165,6 @@ class Socket {
     this._connectSuccessCB = [];
 
     clearInterval(this.pingInterval);
-
-    delete this.socket;
 
     console.log(this.socket);
   }

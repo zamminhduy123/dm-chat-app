@@ -4,6 +4,7 @@ import MessageRepository from "../../repository/message/MessageRepository";
 import { GetMessageFromConversation, AddMessage } from "../../usecases/message";
 import {
   addMessage,
+  deleteMessage,
   loadMoreMessages,
   setMessage,
   updateMessage,
@@ -15,6 +16,7 @@ import {
   Message,
   MessageEntity,
   MessageEnum,
+  MessageStatus,
   NewMessage,
 } from "../../entities";
 import { generateClientId, mapTypeMessage } from "../../utils/utils";
@@ -74,7 +76,7 @@ export default class MessageController
 
   syncMessage() {
     this._syncMessageUseCase
-      .execute(this._getState().conversation.selected)
+      .execute()
       .then((data) => {
         if (this.syncAttemp === 0) {
           // this._resendPendingMessageUseCase
@@ -82,8 +84,10 @@ export default class MessageController
           //   .then((data) => this.getAllMesssageFromConversation())
           //   .catch(console.log);
         }
-        this.getMesssageFromConversation();
-        this.syncAttemp++;
+        if (data){
+          this.getMesssageFromConversation();
+          this.syncAttemp++;
+        }
       })
       .catch((err) => {
         //if user's network still good but axios network error -> server down -> logout
@@ -142,7 +146,7 @@ export default class MessageController
   }
 
   enqueueMessage = async (message: MessageEntity) => {
-    console.log(message);
+    console.log("ENQUEUE",message);
     message = await this.encryptMessage(message);
     if (message.status === 4) {
       this._dispatch(updateSentMessage(message));
@@ -161,11 +165,12 @@ export default class MessageController
         this._sending = true;
         try {
           console.log("SEND", nextMessage);
-          this._addMessageUseCase.execute(nextMessage);
+          await this._addMessageUseCase.execute(nextMessage);
         } catch (err) {
           console.log(err);
           nextMessage.status = 4;
-          this._dispatch(updateSentMessage(nextMessage));
+          nextMessage.id = nextMessage.clientId;
+          this.updateMessage(nextMessage,true);
           this._sending = false;
         }
       }
@@ -279,36 +284,32 @@ export default class MessageController
   };
 
   decryptMessage = async (message: MessageEntity) => {
-    // console.log(message);
-    try {
-      console.log("=============== START DECRYPT ========================");
-      let isGroup = `${message.to}` === `g${message.conversation_id}`;
-      console.log("MESSAGE TO DECRYPT", message.content, isGroup);
-
-      //encryptmessage
-      if (!isGroup) {
-        message = await this._decryptMessageUseCase.execute(
-          message,
-          this._getState().auth.user
-        );
-      }
-      console.log("AFTER DECRYPT", message.content);
-      console.log("================ END DECRYPT ========================");
-
-      return message;
-    } catch (err) {
-      // if (typeof message.content === "string") {
-      //   message.content = "Could not decrypt this message";
-      // } else {
-      //   message.content.content = "Could not decrypt this message";
-      // }
-      // console.log("DECRYPT Error", err);
-      return message;
+    console.log("=============== START DECRYPT ========================");
+    let isGroup = `${message.to}` === `g${message.conversation_id}`;
+    console.log("MESSAGE TO DECRYPT", message.content, isGroup);
+    if (!isGroup) {
+      message = await this._decryptMessageUseCase.execute(
+        message,
+        this._getState().auth.user
+      );
     }
+    console.log("AFTER DECRYPT", message.content);
+    console.log("================ END DECRYPT ========================");
+
+    return message;
   };
 
   resendMessage = (message: MessageEntity) => {
-    this.enqueueMessage(message);
+    const resendMessage = {...message}
+    console.log(resendMessage);
+    //delete message on UI
+    // console.log("DELETE")
+    this._dispatch(deleteMessage(message.id || message.clientId!))
+    resendMessage.status = MessageStatus.SENDING;
+    resendMessage.create_at = Date.now();
+    console.log("ADD NEW")
+    this._dispatch(addMessage(resendMessage));
+    this.enqueueMessage(resendMessage);
   };
 
   receiveMessage = async (message: MessageEntity) => {

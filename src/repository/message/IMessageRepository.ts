@@ -7,7 +7,7 @@ export interface IMessageRepository {
     from: number,
     to?: number
   ): Promise<Message[]>;
-  syncMessage(conversation_id: string): Promise<any>;
+  syncMessage(): Promise<any>;
   addMessage(newMessage: MessageEntity): Promise<any>;
   updateMessage(updatedMessage: MessageEntity, key?: string): Promise<any>;
   resendPendingMessage(): Promise<any>;

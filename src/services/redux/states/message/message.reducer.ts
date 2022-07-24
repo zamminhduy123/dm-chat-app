@@ -38,6 +38,25 @@ const addMessage = (state = initialState, action: Action) => {
     selected: undefined,
   });
 };
+const deleteMessage = (state = initialState, action: Action) => {
+  // console.log("ASDASDASDASD",action.payload)
+  let messageIndex = state.messages.findIndex(
+    (msg) => msg.id === action.payload
+  );
+  if (messageIndex === -1)
+    messageIndex = state.messages.findIndex(
+      (msg) => msg.clientId === action.payload
+    );
+
+  if (messageIndex >= 0) {
+    // console.log(newMessageList);
+    return updateObject(state, {
+      messages: state.messages.filter((msg, index) => index !== messageIndex),
+      selected: undefined,
+    });
+  }
+  return state;
+};
 
 const updateSentMessage = (state = initialState, action: Action) => {
   const indexU = state.messages.findIndex(
@@ -108,6 +127,8 @@ const reducer = (state = initialState, action: Action) => {
       return setMessages(state, action);
     case messageConstants.ADD_MESSAGE:
       return addMessage(state, action);
+    case messageConstants.DELETE_MESSAGE:
+      return deleteMessage(state, action);
     case messageConstants.SELECT_MESSAGE:
       return selectMessage(state, action);
     case messageConstants.LOAD_MORE:

@@ -16,6 +16,7 @@ export class AddMessage implements AddMessageUseCase {
   }
 
   async execute(message: MessageEntity): Promise<any> {
+    console.log(message);
     return this.msgRepo.addMessage(message);
   }
 }

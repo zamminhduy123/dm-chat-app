@@ -1,4 +1,4 @@
-import { MessageEntity } from "../../entities";
+import { Message, MessageEntity, MessageStatus } from "../../entities";
 import {
   IMessageRepository,
   MessageRepository,
@@ -22,6 +22,7 @@ export class DecryptMessage implements DecryptMessageUseCase {
     username: string
   ): Promise<MessageEntity> {
     return new Promise<MessageEntity>(async (resolve, reject) => {
+      console.log()
       if (message.to) {
         let messageExtra = new MessageExtraMeta();
         //get message meta data
@@ -35,10 +36,10 @@ export class DecryptMessage implements DecryptMessageUseCase {
           messageExtra.deserialize(messageContent);
 
           const sharedKey = await this.msgRepo.getSharedKey(
-            message.sender === username ? message.to : message.sender,
-            message.sender === username
-              ? undefined
-              : messageExtra.getDeviceKey()
+            message.to === username ? message.sender : message.to,
+            message.to === username
+              ? messageExtra.getDeviceKey()
+              : undefined
           );
           try {
             messageContent = await KeyHelper.getInstance().decrypt(
@@ -47,16 +48,17 @@ export class DecryptMessage implements DecryptMessageUseCase {
             );
           } catch (err) {
             console.log("DECRYPT ERR", err);
-            messageContent = "Could not decrypt message";
+            message.status = MessageStatus.DECRYPT_FAIL;
           }
         } catch (err) {
           messageContent = "Could not decrypt message";
         }
-        if (typeof message.content === "string") {
-          message.content = messageContent;
-        } else {
-          message.content.content = messageContent;
-        }
+        if (messageContent)
+          if (typeof message.content === "string") {
+            message.content = messageContent;
+          } else {
+            message.content.content = messageContent;
+          }
         resolve(message);
       } else {
         resolve(message);

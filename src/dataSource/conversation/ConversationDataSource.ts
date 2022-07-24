@@ -47,12 +47,14 @@ export default class ConversationDataSource implements IConversationDataSource {
                       conver.lastMessage.content as string
                     );
                     const sharedKey =
-                      await KeyDataSource.getInstance().getSharedKey(
-                        conver.lastMessage.to,
-                        conver.lastMessage.sender !== username
-                          ? messageExtra.getDeviceKey()
-                          : undefined
-                      );
+                    await KeyDataSource.getInstance().getSharedKey(
+                      conver.lastMessage.to === username
+                        ? conver.lastMessage.sender
+                        : conver.lastMessage.to,
+                        conver.lastMessage.to === username
+                        ? messageExtra.getDeviceKey()
+                        : undefined
+                    );
                     data.lastMessageContent =
                       await KeyHelper.getInstance().decrypt(
                         sharedKey,

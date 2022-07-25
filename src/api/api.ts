@@ -8,6 +8,8 @@ import axios, { AxiosError } from "axios";
 
 const CHUNK_SIZE = 5 * 1024 * 1024; //1 MB
 
+axios.defaults.timeout = 10000;
+
 export class ClientAPI {
   private origin: string;
   constructor() {
@@ -65,7 +67,7 @@ export class ClientAPI {
         },
         withCredentials: true,
         ...(data ? { data: data } : null),
-        timeout: contentType === "application/octet-stream" ? 0 : 10000,
+        timeout: contentType === "multipart/form-data" ? 0 : 10000,
       };
       // console.log(requestOptions);
       axios(requestOptions)
@@ -103,7 +105,7 @@ export class ClientAPI {
           const headers = { "Content-Type": "application/octet-stream" };
           const url = this._createUrl("file/chunkUpload?" + params.toString());
           axios
-            .post(url, data, { headers })
+            .post(url, data, { headers, timeout: 0 })
             .then((response) => {
               const filesize = file.size;
               const chunks = Math.ceil(filesize / CHUNK_SIZE) - 1;

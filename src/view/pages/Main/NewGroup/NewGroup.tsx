@@ -99,27 +99,32 @@ const NewGroup = ({ onClose }: NewGroupProps) => {
   };
 
   const deleteMember = (user: User) => {
-    const indexU = groupMember.findIndex(
-      (u) => u.getUsername() === user.getUsername()
+    setGroupMember(
+      groupMember.filter((u) => u.getUsername() !== user.getUsername())
     );
-    setGroupMember([
-      ...groupMember.slice(0, indexU),
-      ...groupMember.slice(indexU + 1),
-    ]);
+    setUserList([...userList, user]);
   };
 
   const groupNameInput = React.useRef<HTMLInputElement>(null);
   return (
     <div className="d-flex new-group-container">
-      <div className="d-flex">
+      <div className="d-flex flex-center">
+        <label
+          style={{ marginRight: "4px", marginBottom: "2px" }}
+          htmlFor="groupName"
+        >
+          {t("name")}
+        </label>
         <input
+          id="groupName"
           ref={groupNameInput}
-          className="new-group-name"
+          className="new-group-input"
           autoComplete="true"
           type="text"
           placeholder={t("Type your") + " " + t("group name").toLowerCase()}
         />
       </div>
+      <div className="seperator"></div>
       <p className="text-xs" style={{ marginBottom: "4px" }}>
         {t("Add people to group")}
       </p>
@@ -148,7 +153,14 @@ const NewGroup = ({ onClose }: NewGroupProps) => {
                     )
                   ) {
                     setGroupMember([...groupMember, user]);
-                    setUserList([]);
+                    const indexU = userList.findIndex(
+                      (u) => u.getUsername() === user.getUsername()
+                    );
+                    setUserList(
+                      userList.filter(
+                        (u) => u.getUsername() !== user.getUsername()
+                      )
+                    );
                   }
                 }}
               />

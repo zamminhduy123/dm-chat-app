@@ -11,6 +11,14 @@
         color: $color-primary;
     }
 
+    label {
+        font-family: inherit;
+        justify-self: flex-start;
+        color: $color-primary;
+        font-size: medium;
+        white-space: nowrap;
+    }
+
     h2 {
         margin-bottom: 4px;
     }
@@ -39,7 +47,31 @@
     }
 }
 
+.new-group-input {
+    outline: none;
+    display: block;
+    background: white;
+    width: 100%;
+    border: 1px;
+    border-style: solid;
+    border-color: $color-neutral-700;
+    border-radius: 5px;
+    box-sizing: border-box;
+    padding: 10px 0px 10px 20px;
+    color: black;
+    font-weight: 500;
+    line-height: inherit;
+    transition: 0.3s ease;
+
+    &:hover,
+    &:focus {
+      color: var(--textThemeColor1);
+      border: 1px solid $color-primary;
+    }
+}
+
 .seperator {
+    margin: 10px 0px;
     border-bottom: 1px solid $color-neutral-700;
 }
 

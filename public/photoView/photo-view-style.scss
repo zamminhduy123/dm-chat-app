@@ -5,7 +5,7 @@
 }
 
 body {
-  background: black;
+  background: #001a33;
   /* Keep the inherited background full size. */
   background-attachment: fixed;
   background-size: cover;
@@ -37,6 +37,8 @@ body {
 }
 
 #config-container {
+  height: 48px;
+  background-color: rgb(49, 58, 85);
   width: 100%;
   display: flex;
   flex-direction: row;
@@ -51,19 +53,29 @@ body {
 }
 
 button {
-  padding: 8px 16px;
-  border: 1px solid gray;
-  background-color: black;
+  margin: 0px 16px;
+  width: 48px;
   color: white;
   cursor: pointer;
+  border: none;
+
+  i,svg{
+    width: 100%;
+    height: 100%;
+  }
+  background-color: transparent;
   transition: background-color 0.2s ease-in-out;
 }
+#fit-btn {
+  i,svg {
+    transform: scaleX(-1);
+  }
+}
 button:hover {
-  background-color: #72808e;
+  color: #fd297b;
 }
 
 #photo-container {
-  border-radius: 4px;
   display: flex;
   flex: 1;
   flex-direction: column;

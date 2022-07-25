@@ -10,6 +10,7 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;500;600;700&family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap"
         rel="stylesheet">
+        <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 </head>
 
 <body>
@@ -35,11 +36,21 @@
 
         <div id='config-container'>
             <div class="btn-group" data-toggle="buttons-radio">
-                <button id="zoomin-btn" >Zoom In</button>
-                <button id="zoomout-btn" >Zoom Out</button>
-                <button  id="fit-btn" >fit</button>
-                <button  id="rotateRight-btn" >Rotate Right</button>
-                <button  id="download-btn" >Download</button>
+                <button id="zoomin-btn" title="Zoom in">
+                    <i class="fas fa-expand"></i>
+                </button>
+                <button id="zoomout-btn"  title="Zoom out">
+                    <i class="fas fa-compress"></i>
+                </button>
+                <button  id="fit-btn"  title="Fit">
+                    <i class="fab fa-microsoft"></i>
+                </button>
+                <button  id="rotateRight-btn"  title="Rotate right">
+                    <i class="fas fa-undo"></i>
+                </button>
+                <button  id="download-btn"  title="Download">
+                    <i class="fas fa-download"></i>
+                </button>
             </div>
         </div>
     </div>

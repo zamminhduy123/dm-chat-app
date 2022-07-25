@@ -42,7 +42,10 @@ const render = (imageMessage) => {
 
   async function download() {
     // console.log(window.electronAPI.files.downloadFile, content, "name");
-    await window.electronAPI.files.downloadFile(url, photoData.name);
+    await window.electronAPI.files.downloadFile(
+      photoData.content.content,
+      photoData.name
+    );
   }
 
   loadImage(imageMessage);

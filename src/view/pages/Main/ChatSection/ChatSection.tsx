@@ -126,6 +126,7 @@ const ChatSection: React.FC<ChatSectionProps> = ({
                     .map((u) => u.avatar)
                 : conversation.users.map((u) => u.avatar)
             }
+            isStranger={conversation.id === ""}
             showHeader={showHeader}
             toggleHeader={() => setShowHeader((prev) => !prev)}
             name={conversation.name}

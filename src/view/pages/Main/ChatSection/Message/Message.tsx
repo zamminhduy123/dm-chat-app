@@ -182,6 +182,8 @@ const Message: React.FC<MessageProps> = (props: MessageProps) => {
                   : t("Just sent")
                 : time.value
                 ? `${time.value} ${time.type}`
+                : props.hasStatus
+                ? ""
                 : t("Just sent")
               : ""}
           </span>

@@ -26,6 +26,7 @@ interface ChatHeaderProps {
   info: string;
   showHeader: boolean;
   toggleHeader: Function;
+  isStranger: Boolean;
 }
 
 const ChatHeader: React.FC<ChatHeaderProps> = ({
@@ -36,18 +37,23 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
   info,
   showHeader,
   toggleHeader,
+  isStranger,
 }: ChatHeaderProps) => {
   const { t } = useTranslation();
   let extraInfo;
   if (userNumber > 2) {
     extraInfo = `${userNumber} ${t("members")}`;
   } else {
-    if (chatInSameTime(lastMessageSendingTime, Date.now(), 15 * 60 * 1000)) {
-      // 15 minute
-      extraInfo = t("Online");
+    if (isStranger) {
+      extraInfo = t("Stranger");
     } else {
-      const time = getRemainingTime(lastMessageSendingTime);
-      extraInfo = `${t("Last seen")} ${time.value} ${time.type} ${t("ago")}`;
+      if (chatInSameTime(lastMessageSendingTime, Date.now(), 15 * 60 * 1000)) {
+        // 15 minute
+        extraInfo = t("Online");
+      } else {
+        const time = getRemainingTime(lastMessageSendingTime);
+        extraInfo = `${t("Last seen")} ${time.value} ${time.type} ${t("ago")}`;
+      }
     }
   }
 

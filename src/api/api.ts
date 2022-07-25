@@ -65,7 +65,7 @@ export class ClientAPI {
         },
         withCredentials: true,
         ...(data ? { data: data } : null),
-        timeout: contentType === "application/json" ? 10000 : 0,
+        timeout: contentType === "application/octet-stream" ? 0 : 10000,
       };
       // console.log(requestOptions);
       axios(requestOptions)

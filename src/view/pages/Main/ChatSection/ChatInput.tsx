@@ -163,6 +163,18 @@ const ChatInput: React.FC<ChatInputProps> = ({
     };
     document.body.addEventListener("keydown", closeOnEscapeKey);
 
+    input.current?.addEventListener("paste", function (e: any) {
+      e.preventDefault();
+
+      if (e.clipboardData && input.current) {
+        input.current.innerText = (e.originalEvent || e).clipboardData.getData(
+          "text/plain"
+        );
+
+        // document.execCommand('insertText', false, content);
+      }
+    });
+
     return () => {
       document.body.removeEventListener("keydown", closeOnEscapeKey);
     };

@@ -84,7 +84,7 @@ export default class MessageController
           //   .then((data) => this.getAllMesssageFromConversation())
           //   .catch(console.log);
         }
-        if (data){
+        if (data) {
           this.getMesssageFromConversation();
           this.syncAttemp++;
         }
@@ -146,10 +146,11 @@ export default class MessageController
   }
 
   enqueueMessage = async (message: MessageEntity) => {
-    console.log("ENQUEUE",message);
+    console.log("ENQUEUE", message);
     message = await this.encryptMessage(message);
-    if (message.status === 4) {
-      this._dispatch(updateSentMessage(message));
+    console.log("ENCRYPTED MESSAGE", message);
+    if (+message.status === MessageStatus.ERROR) {
+      this._dispatch(updateSentMessage(Helper.cloneMessage(message)));
     } else {
       this._messageQueue.push(message);
       if (this._messageQueue.length === 1) this.sendMessage();
@@ -168,9 +169,9 @@ export default class MessageController
           await this._addMessageUseCase.execute(nextMessage);
         } catch (err) {
           console.log(err);
-          nextMessage.status = 4;
+          nextMessage.status = MessageStatus.ERROR;
           nextMessage.id = nextMessage.clientId;
-          this.updateMessage(nextMessage,true);
+          this.updateMessage(nextMessage, true);
           this._sending = false;
         }
       }
@@ -228,6 +229,9 @@ export default class MessageController
   updateMessage = async (updatedMessage: MessageEntity, sentUpdate = false) => {
     console.log("UPDATE MESSAGE", updatedMessage, sentUpdate);
     updatedMessage = await this.decryptMessage(updatedMessage);
+    if (+updatedMessage.status === MessageStatus.ERROR) {
+      updatedMessage.id = updatedMessage.clientId;
+    }
 
     if (sentUpdate) {
       //trigger queue to continue send message
@@ -272,12 +276,13 @@ export default class MessageController
       );
       //encryptmessage
       if (!isGroup) {
-        await this._encryptMessageUseCase.execute(message);
+        return await this._encryptMessageUseCase.execute(
+          Helper.cloneMessage(message)
+        );
       }
-      return message;
     } catch (err) {
       console.log(err);
-      message.status = 4;
+      message.status = MessageStatus.ERROR;
     }
     console.log("=================ENCRYPTING===================");
     return message;
@@ -300,14 +305,14 @@ export default class MessageController
   };
 
   resendMessage = (message: MessageEntity) => {
-    const resendMessage = {...message}
+    const resendMessage = { ...message };
     console.log(resendMessage);
     //delete message on UI
     // console.log("DELETE")
-    this._dispatch(deleteMessage(message.id || message.clientId!))
+    this._dispatch(deleteMessage(message.id || message.clientId!));
     resendMessage.status = MessageStatus.SENDING;
     resendMessage.create_at = Date.now();
-    console.log("ADD NEW")
+    console.log("ADD NEW");
     this._dispatch(addMessage(resendMessage));
     this.enqueueMessage(resendMessage);
   };

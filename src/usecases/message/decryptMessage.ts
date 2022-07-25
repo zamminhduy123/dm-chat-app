@@ -22,7 +22,7 @@ export class DecryptMessage implements DecryptMessageUseCase {
     username: string
   ): Promise<MessageEntity> {
     return new Promise<MessageEntity>(async (resolve, reject) => {
-      console.log()
+      console.log();
       if (message.to) {
         let messageExtra = new MessageExtraMeta();
         //get message meta data
@@ -37,9 +37,7 @@ export class DecryptMessage implements DecryptMessageUseCase {
 
           const sharedKey = await this.msgRepo.getSharedKey(
             message.to === username ? message.sender : message.to,
-            message.to === username
-              ? messageExtra.getDeviceKey()
-              : undefined
+            message.to === username ? messageExtra.getDeviceKey() : undefined
           );
           try {
             messageContent = await KeyHelper.getInstance().decrypt(
@@ -51,6 +49,7 @@ export class DecryptMessage implements DecryptMessageUseCase {
             message.status = MessageStatus.DECRYPT_FAIL;
           }
         } catch (err) {
+          console.error(err);
           messageContent = "Could not decrypt message";
         }
         if (messageContent)

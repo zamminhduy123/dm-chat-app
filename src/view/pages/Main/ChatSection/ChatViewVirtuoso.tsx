@@ -52,8 +52,8 @@ const ChatViewVirtuoso = ({
 
   //   const [scrollTo, setScrollTo] = React.useState(messageList.length - 1);
   const lastIndex = React.useRef(messageList.length - 1);
-  const [align, setAlign] = React.useState("center");
-  const [behavior, setBehavior] = React.useState("auto");
+  const [align, setAlign] = React.useState("top");
+  const [behavior, setBehavior] = React.useState("smooth");
 
   const [oldListLength, setOldListLength] = React.useState(messageList.length);
   const [firstItemIndex, setFirstItemIndex] = React.useState(
@@ -110,8 +110,8 @@ const ChatViewVirtuoso = ({
       timeout = setTimeout(() => {
         virtuosoRef.current.scrollToIndex({
           index: scrollToIndex,
-          align,
-          behavior: "auto",
+          align: "center",
+          behavior: "smooth",
         });
       }, 300);
     } else {
@@ -230,6 +230,7 @@ const ChatViewVirtuoso = ({
               ? virtuosoRef.current.scrollToIndex({
                   index: messageList.length - 1,
                   behavior: "auto",
+                  align: "bottom",
                 })
               : null;
           }}

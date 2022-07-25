@@ -33,7 +33,7 @@ export default class SocketController extends BaseController {
     try {
       Socket.getInstance().registerConnectSuccess(this.registerListener);
       Socket.getInstance().connect();
-      console.log("SOCKET ESTABLISH")
+      console.log("SOCKET ESTABLISH");
     } catch (err) {
       console.log("Socket connect error", err);
     }
@@ -196,7 +196,7 @@ export default class SocketController extends BaseController {
         // console.log("RECEIVED", data, data.content);
         MessageController.getInstance().receiveMessage(data);
 
-        this.messageReceived(data);
+        // this.messageReceived(data);
       }
     );
   };

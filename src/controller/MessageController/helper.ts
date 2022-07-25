@@ -1,4 +1,10 @@
-import { Message, MessageEntity, MessageStatus } from "../../entities";
+import {
+  FileEntity,
+  Message,
+  MessageEntity,
+  MessageEnum,
+  MessageStatus,
+} from "../../entities";
 import { NewMessage } from "../../entities/type/NewMessage";
 
 export const conversationModelToEntity = (
@@ -36,5 +42,15 @@ export const newMessageToMessageEntity = (
     clientId: newMessage.clientID,
     status: MessageStatus.SENDING,
     create_at: new Date().getTime(),
+  };
+};
+
+export const cloneMessage = (message: MessageEntity): MessageEntity => {
+  return {
+    ...message,
+    content:
+      +message.type === MessageEnum.text
+        ? message.content
+        : { ...(message.content as FileEntity) },
   };
 };

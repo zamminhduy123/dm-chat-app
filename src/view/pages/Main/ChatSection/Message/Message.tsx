@@ -47,7 +47,7 @@ const Message: React.FC<MessageProps> = (props: MessageProps) => {
   let content: React.ReactNode;
   let decryptFail = false;
   // console.log(props.message.type);
-  if (+props.message.status !== MessageStatus.DECRYPT_FAIL){
+  if (+props.message.status !== MessageStatus.DECRYPT_FAIL) {
     if (+props.message.type === MessageEnum.text) {
       if (typeof props.message.content === "string") {
         content = (
@@ -68,23 +68,22 @@ const Message: React.FC<MessageProps> = (props: MessageProps) => {
         if (+props.message.type === MessageEnum.video) {
           content = <VideoMessage message={props.message} />;
         }
-  
+
         if (+props.message.type === MessageEnum.file) {
           content = <FileMessage message={props.message} />;
         }
       }
     }
   } else {
-    decryptFail=true
+    decryptFail = true;
     content = (
       <TextMessage
         messageId={props.message.id || props.message.clientId!}
-        content={t('Could not decrypt message')}
+        content={t("Could not decrypt message")}
         decryptFail={true}
       />
     );
   }
-
 
   //hover
   const [hover, setHover] = React.useState(false);
@@ -97,10 +96,12 @@ const Message: React.FC<MessageProps> = (props: MessageProps) => {
   return (
     <div
       onMouseEnter={() => {
-        if (+props.message.type === MessageEnum.image && !decryptFail) setHover(true);
+        if (+props.message.type === MessageEnum.image && !decryptFail)
+          setHover(true);
       }}
       onMouseLeave={() => {
-        if (+props.message.type === MessageEnum.image && !decryptFail) setHover(false);
+        if (+props.message.type === MessageEnum.image && !decryptFail)
+          setHover(false);
       }}
       style={{
         display: "flex",
@@ -124,7 +125,8 @@ const Message: React.FC<MessageProps> = (props: MessageProps) => {
           maxHeight: "50%",
           overflowWrap: "break-word",
           background: `${
-            +props.message.type === MessageEnum.image && +props.message.status !== MessageStatus.DECRYPT_FAIL
+            +props.message.type === MessageEnum.image &&
+            +props.message.status !== MessageStatus.DECRYPT_FAIL
               ? "transparent"
               : props.isHighlighted
               ? "#5EBA7D"
@@ -134,7 +136,11 @@ const Message: React.FC<MessageProps> = (props: MessageProps) => {
           }`,
           zIndex: "100",
           fontSize: "15px",
-          padding: +props.message.type === MessageEnum.image && +props.message.status !== MessageStatus.DECRYPT_FAIL ? "0px" : "12px",
+          padding:
+            +props.message.type === MessageEnum.image &&
+            +props.message.status !== MessageStatus.DECRYPT_FAIL
+              ? "0px"
+              : "12px",
           boxShadow:
             +props.message.type === MessageEnum.text
               ? "0 1px 0 0 rgba(0,0,0,0.18)"
@@ -152,7 +158,9 @@ const Message: React.FC<MessageProps> = (props: MessageProps) => {
               fontSize: "13px",
               fontWeight: "400",
               color: `${
-                +props.message.type === MessageEnum.image && +props.message.status !== MessageStatus.DECRYPT_FAIL  || !left
+                (+props.message.type === MessageEnum.image &&
+                  +props.message.status !== MessageStatus.DECRYPT_FAIL) ||
+                !left
                   ? "var(--textThemeColor1)"
                   : "rgba(255,255,255,0.7)"
               }`,
@@ -174,7 +182,7 @@ const Message: React.FC<MessageProps> = (props: MessageProps) => {
                   : t("Just sent")
                 : time.value
                 ? `${time.value} ${time.type}`
-                : ""
+                : t("Just sent")
               : ""}
           </span>
         ) : null}

@@ -242,6 +242,24 @@ export default class MessageController
         .then((data) => {
           // console.log(updatedMessage);
           this._dispatch(updateSentMessage(updatedMessage));
+
+          //new conversation case
+          console.log(
+            updatedMessage.conversation_id &&
+              this._getState().conversation.selected !==
+                updatedMessage.conversation_id &&
+              updatedMessage.sender === this._getState().auth.user
+          );
+          if (
+            updatedMessage.conversation_id &&
+            this._getState().conversation.selected !==
+              updatedMessage.conversation_id &&
+            updatedMessage.sender === this._getState().auth.user
+          ) {
+            ConversationController.getInstance().select(
+              updatedMessage.conversation_id
+            );
+          }
         })
         .catch((err) => {
           //if user's network still good but axios network error -> server down -> logout

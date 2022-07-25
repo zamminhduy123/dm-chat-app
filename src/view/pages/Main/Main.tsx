@@ -45,8 +45,7 @@ const Main = (props: MainProps) => {
   const [activeConversation, setActiveConversation] =
     React.useState<ConversationEntity>();
 
-  const { selected } = useCurrentConversation();
-  const activeConversationId = selected;
+  const { selected: activeConversationId } = useCurrentConversation();
   // console.log("activeConversationId", activeConversationId);
 
   const { user, avatar, name, phone, gender } = useAuthApp();
@@ -78,7 +77,7 @@ const Main = (props: MainProps) => {
     };
   }, []);
   React.useEffect(() => {
-    if (isMounted.current)
+    if (isMounted.current && activeConversationId)
       setActiveConversation(getConversationById(activeConversationId));
   }, [activeConversationId]);
   React.useEffect(() => {

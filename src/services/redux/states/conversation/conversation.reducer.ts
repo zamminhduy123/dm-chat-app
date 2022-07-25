@@ -86,6 +86,7 @@ const updateLastMessage = (state = initialState, action: Action) => {
 };
 
 const reducer = (state = initialState, action: Action) => {
+  console.log(state.selected);
   switch (action.type) {
     case conversationConstants.SELECT_CONVERSATION:
       return setConversation(state, action);

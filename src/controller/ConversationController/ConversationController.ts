@@ -64,20 +64,20 @@ class ConversationController
     return this._instance;
   }
   syncConversations() {
-      this._syncConversationUseCase
-        .execute(this._getState().auth.user)
-        .then((data: Conversation[]) => {
-          // this.getConversations();
-          // resolve(1);
+    this._syncConversationUseCase
+      .execute(this._getState().auth.user)
+      .then((data: Conversation[]) => {
+        // this.getConversations();
+        // resolve(1);
 
-          //perform redux update
-          for (const conversation of Helper.conversationModelToEntity(data)) {
-            this._dispatch(updateConversation(conversation));
-          }
-        })
-        .catch((err) => {
-          console.error("syncConversations error",err)
-        });
+        //perform redux update
+        for (const conversation of Helper.conversationModelToEntity(data)) {
+          this._dispatch(updateConversation(conversation));
+        }
+      })
+      .catch((err) => {
+        console.error("syncConversations error", err);
+      });
   }
 
   updateConversation(conversation: ConversationEntity) {
@@ -128,7 +128,6 @@ class ConversationController
       .execute(conversation)
       .then((data) => {
         this._dispatch(addConversation(conversation));
-        // this.select(conversation.id);
       })
       .catch((err) => {
         throw err;

@@ -272,7 +272,7 @@ const MainHeader = ({
                         converationExisted.id
                       );
                     } else {
-                      // ConversationController.getInstance().select("");
+                      ConversationController.getInstance().select("");
                       onSearchItemClick(conversation);
                     }
                   }}

@@ -89,7 +89,7 @@ const ChatViewVirtuoso = ({
       setOldListLength(messageList.length);
       virtuosoRef.current.scrollToIndex({
         index: messageList.length - 1,
-        align,
+        align: "end",
         behavior,
       });
     }

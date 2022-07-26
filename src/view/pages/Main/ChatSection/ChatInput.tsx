@@ -309,7 +309,7 @@ const ChatInput: React.FC<ChatInputProps> = ({
           ></div>
         </div>
         <div className="chat-input-right-panel">
-          {process.env.REACT_APP_NODE_ENV === "development" && (
+          {/* {process.env.REACT_APP_NODE_ENV === "development" && (
             <div className="chat-input-icon">
               <Icon
                 icon={faCode}
@@ -318,7 +318,15 @@ const ChatInput: React.FC<ChatInputProps> = ({
                 }}
               />
             </div>
-          )}
+          )} */}
+          <div className="chat-input-icon">
+            <Icon
+              icon={faCode}
+              onClick={() => {
+                spammingTrigger();
+              }}
+            />
+          </div>
           <div className="chat-input-icon">
             <input
               ref={fileInput}

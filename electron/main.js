@@ -93,14 +93,15 @@ function createHomeWindow() {
       payload.directory ? payload.directory : "documents"
     );
     const defaultFilename = payload.name
-      ? payload.name
+      ? payload.name.split(".")[0]
       : payload.fileUrl.split("?")[0].split("/").pop();
     let customUrl = dialog.showSaveDialogSync({
       defaultPath: `${defaultPath}/${defaultFilename}`,
     });
+    let ext = payload.name.split(".")[1];
     if (customUrl) {
       let filePath = customUrl.split("/"),
-        directory = filePath.join("/");
+        directory = filePath.join("/") + "." + ext;
 
       const onProgress = (progress) => {
         homeWindow.webContents.send("download-progress", {

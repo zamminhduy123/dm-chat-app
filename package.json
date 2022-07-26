@@ -21,7 +21,7 @@
     "tsc": "tsc --project ./electron",
     "webpack:serve": "webpack serve --env REACT_APP_API_URL=http://localhost:3001 REACT_APP_NODE_ENV=development",
     "webpack:hostedServer": "webpack serve --env REACT_APP_API_URL=https://za-chat-be.onrender.com REACT_APP_NODE_ENV=development",
-    "webpack:build": "webpack --env REACT_APP_API_URL=https://za-chat-be.onrender.com",
+    "webpack:build": "webpack --env REACT_APP_API_URL=https://za-chat-be.onrender.com REACT_APP_NODE_ENV=production",
     "preelectron-pack": "npm run webpack:build",
     "electron:start": "cross-env NODE_ENV=development electron .",
     "electron:build": "cross-env NODE_ENV=production electron-builder",

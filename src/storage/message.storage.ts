@@ -145,7 +145,7 @@ export default class MessageStorage implements IMessageStorage {
         // console.log("STORAGE MESSAGE 1 :", data, to);
         await Promise.all(
           data.map(async (m) => {
-            console.log(m.content);
+            // console.log(m.content);
             return await this.decryptLocalMessage(m);
           })
         );

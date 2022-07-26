@@ -4,4 +4,5 @@ export interface IMessage {
   messages: MessageEntity[];
   hasMore: Boolean;
   selected: MessageEntity | undefined;
+  totalMessage: number;
 }

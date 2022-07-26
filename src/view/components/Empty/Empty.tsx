@@ -10,11 +10,8 @@ interface EmptyProps {
 const Empty = ({ src, message, title }: EmptyProps) => {
   const { t } = useTranslation();
   return (
-    <div
-      className="w-100 d-flex flex-center mt-2 flex-column"
-      style={{ minHeight: "100px" }}
-    >
-      <img width={"80%"} src={src || search_empty_image} />
+    <div className="w-100 d-flex flex-center mt-2 flex-column">
+      <img height="300px" src={src || search_empty_image} />
       <b className="mt-2 text-s font-500 color-info">
         {title || t("Search empty")}
       </b>

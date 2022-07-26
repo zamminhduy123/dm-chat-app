@@ -7,6 +7,7 @@ import {
   faBars,
   faRightToBracket,
   faArrowLeftLong,
+  faCode,
 } from "@fortawesome/free-solid-svg-icons";
 import React from "react";
 import Avatar from "../../../components/Avatar/Avatar";
@@ -85,7 +86,7 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
           <Icon icon={faMagnifyingGlass} />
         </div> */}
         {/* <div className="chat-header-right-icon">
-          <Icon icon={faVideo} />
+          <Icon icon={faCode} onClick={() => spamTrigger()} />
         </div> */}
         {userNumber === 2 && showHeader ? (
           <div

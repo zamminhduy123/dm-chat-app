@@ -11,7 +11,7 @@ export default class SearchStorage implements ISearchStorage {
     return new Promise<sKeywordMessageEntity[]>(async (resolve, reject) => {
       try {
         //get keyword index
-        console.log(lastCharacterBefore(keyword),lastCharacterAfter(keyword))
+        console.log(lastCharacterBefore(keyword), lastCharacterAfter(keyword));
         const datas = await db.getManyWithIndex<sKeywordMessageEntity[]>(
           storeNames.keyword_message,
           indexName.keyword,
@@ -19,7 +19,7 @@ export default class SearchStorage implements ISearchStorage {
           [lastCharacterAfter(keyword)],
           "next",
           false,
-          100
+          50
         );
         resolve(datas);
       } catch (err) {

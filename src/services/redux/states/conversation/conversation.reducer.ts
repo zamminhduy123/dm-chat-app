@@ -30,6 +30,31 @@ const addConversation = (state = initialState, action: Action) => {
   });
 };
 
+const addTotalMessage = (state = initialState, action: Action) => {
+  const currentConversation = state.conversations.findIndex(
+    (conv) => conv.id === state.selected
+  );
+  if (currentConversation) {
+    const updatedCurrentConversation = {
+      ...state.conversations[currentConversation],
+      lastMessage: state.conversations[currentConversation].lastMessage && {
+        ...state.conversations[currentConversation].lastMessage,
+      },
+    };
+    updatedCurrentConversation.totalMessage += 1;
+    return updateObject(state, {
+      conversations: [
+        updatedCurrentConversation,
+        ...state.conversations.filter(
+          (conv) => conv.id !== updatedCurrentConversation.id
+        ),
+      ],
+    });
+  }
+
+  return state;
+};
+
 const updateConversation = (state = initialState, action: Action) => {
   const indexU = state.conversations.findIndex(
     (c) => c.id === action.payload.id
@@ -94,6 +119,8 @@ const reducer = (state = initialState, action: Action) => {
       return setConversation(state, action);
     case conversationConstants.ADD_CONVERSATION:
       return addConversation(state, action);
+    case conversationConstants.ADD_TOTAL_MESSAGE:
+      return addTotalMessage(state, action);
     case conversationConstants.UPDATE_CONVERSATION:
       return updateConversation(state, action);
     case conversationConstants.UPDATE_LAST_MESSAGE:

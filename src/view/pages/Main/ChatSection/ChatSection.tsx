@@ -23,6 +23,8 @@ import ChatHeader from "./ChatHeader";
 import ChatInput from "./ChatInput";
 import ChatViewVirtuoso from "./ChatViewVirtuoso";
 
+import { LoremIpsum } from "lorem-ipsum";
+
 interface ChatSectionProps {
   conversation: ConversationEntity;
 }
@@ -71,7 +73,12 @@ const ChatSection: React.FC<ChatSectionProps> = ({
   const { user } = useAuthApp();
 
   //infinity scroll handler
-  const { messages: messageList, hasMore, selected } = useMessage();
+  const {
+    messages: messageList,
+    hasMore,
+    selected,
+    totalMessage,
+  } = useMessage();
   const messageLoading = React.useRef(false);
   const loadMoreMessage = async () => {
     if (messageList.length && !messageLoading.current) {
@@ -148,7 +155,7 @@ const ChatSection: React.FC<ChatSectionProps> = ({
               hasNextPage={hasMore}
               isNextPageLoading={false}
               loadNextPage={loadMoreMessage}
-              totalMessage={+conversation.totalMessage}
+              totalMessage={totalMessage}
               scrollToIndex={
                 selected
                   ? messageList.findIndex((m) => m.id === selected.id)

@@ -20,7 +20,10 @@ import { AddConversation } from "../../usecases/conversation/addConversation";
 import { SyncConversation } from "../../usecases/conversation/syncConversation";
 import { UpdateConversation } from "../../usecases/conversation/updateConversation";
 import { AddGroupConversation } from "../../usecases/conversation/addGroupConversation";
-import { selectMessage } from "../../services/redux/states/message/message.action";
+import {
+  selectMessage,
+  setTotalMessage,
+} from "../../services/redux/states/message/message.action";
 
 class ConversationController
   extends BaseController
@@ -99,6 +102,7 @@ class ConversationController
     if (existed) {
       this._dispatch(selectConversation(conversation_id));
       this._dispatch(selectMessage(atMsg));
+      this._dispatch(setTotalMessage(+existed.totalMessage));
     } else {
       this._dispatch(selectConversation(""));
     }

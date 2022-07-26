@@ -19,6 +19,12 @@ export const setConversation = (conversationList: ConversationEntity[]) => {
   };
 };
 
+export const addTotalMessage = () => {
+  return {
+    type: conversationConstants.ADD_TOTAL_MESSAGE,
+  };
+};
+
 export const addConversation = (newConver: ConversationEntity) => {
   return {
     type: conversationConstants.ADD_CONVERSATION,

@@ -34,25 +34,11 @@ const ChatViewVirtuoso = ({
   const [showButton, setShowButton] = React.useState(false);
   const { t } = useTranslation();
 
+  const scrollRef = React.useRef<HTMLDivElement>(null);
   const showButtonTimeout = React.useRef<NodeJS.Timeout>(
     setTimeout(() => {}, 0)
   );
-
-  React.useEffect(() => {
-    clearTimeout(showButtonTimeout.current);
-    if (!atBottom) {
-      showButtonTimeout.current = setTimeout(() => setShowButton(true), 500);
-    } else {
-      setShowButton(false);
-    }
-    return () => {
-      clearTimeout(showButtonTimeout.current);
-    };
-  }, [atBottom, setShowButton]);
-
-  //   const [scrollTo, setScrollTo] = React.useState(messageList.length - 1);
   const lastIndex = React.useRef(messageList.length - 1);
-  const [align, setAlign] = React.useState("top");
   const [behavior, setBehavior] = React.useState("smooth");
 
   const [oldListLength, setOldListLength] = React.useState(messageList.length);
@@ -85,23 +71,19 @@ const ChatViewVirtuoso = ({
       setIsLoadMore(false);
     } else {
       setFirstItemIndex(Math.max(totalMessage - messageList.length, 0));
-
       setOldListLength(messageList.length);
       virtuosoRef.current.scrollToIndex({
-        index: messageList.length - 1,
+        index: Number.MAX_VALUE,
         align: "end",
-        behavior,
+        behavior: "auto",
       });
+      // scrollRef.current?.scrollIntoView({
+      //   block: "center",
+      //   behavior: "auto",
+      // });
     }
   }, [messageList]);
-
-  console.log(
-    "FIRST",
-    firstItemIndex,
-    messageList.length,
-    totalMessage,
-    scrollToIndex
-  );
+  console.log("FIRST", firstItemIndex, messageList, totalMessage);
 
   React.useEffect(() => {
     let timeout: NodeJS.Timeout;
@@ -119,16 +101,60 @@ const ChatViewVirtuoso = ({
     return () => clearTimeout(timeout);
   }, [scrollToIndex]);
 
+  // console.log(totalMessage);
+
   return (
     <div className="chat-view-container" key={messageList[0].conversation_id}>
       <Virtuoso
         ref={virtuosoRef}
-        style={{ height: "100%", willChange: "transform" }}
+        style={{ height: "100%", width: "100%" }}
         data={messageList}
         firstItemIndex={firstItemIndex}
-        initialTopMostItemIndex={14}
+        initialTopMostItemIndex={15}
         startReached={prependItems}
+        alignToBottom
+        components={{
+          Header: () => {
+            if (firstItemIndex !== 0) {
+              return <LoadingMessage />;
+            }
+            return <div></div>;
+          },
+          Footer: () => {
+            return (
+              <div
+                ref={scrollRef}
+                style={{
+                  fontWeight: "600",
+                  fontSize: "9px",
+                  color: "#CACACA",
+                  textTransform: "uppercase",
+                  textAlign: "center",
+                  marginTop: "20px",
+                }}
+              >
+                {t("This conversation is end to end encrypted")}
+              </div>
+            );
+          },
+        }}
+        onScroll={(e) => {
+          const target = e.target as HTMLDivElement;
+          if (
+            target.scrollTop + 200 <
+            target.scrollHeight - target.clientHeight
+          ) {
+            if (!showButton) {
+              setShowButton(true);
+            }
+          } else {
+            if (showButton) {
+              setShowButton(false);
+            }
+          }
+        }}
         atBottomStateChange={(bottom) => {
+          console.log("BOTTOM", bottom);
           setAtBottom(bottom);
         }}
         itemContent={(realIndex, message) => {
@@ -182,7 +208,6 @@ const ChatViewVirtuoso = ({
           }
           return (
             <div key={message.clientId || message.id}>
-              {index === 0 && firstItemIndex != 0 ? <LoadingMessage /> : null}
               {index === 0 || notSameDayBefore ? (
                 <TimeDivider date={new Date(message.create_at || 0)} />
               ) : null}
@@ -199,8 +224,7 @@ const ChatViewVirtuoso = ({
                 hasStatus={index === messageList.length - 1}
                 isHighlighted={index === scrollToIndex}
               />
-              {index === messageList.length - 1 &&
-              conversationMember.length === 2 ? (
+              {/* {index === messageList.length - 1 && (
                 <div
                   style={{
                     fontWeight: "600",
@@ -208,34 +232,34 @@ const ChatViewVirtuoso = ({
                     color: "#CACACA",
                     textTransform: "uppercase",
                     textAlign: "center",
-                    marginTop: "10px",
+                    marginTop: "20px",
                   }}
                 >
                   {t("This conversation is end to end encrypted")}
                 </div>
-              ) : null}
-              {index === messageList.length - 1 && (
-                <div style={{ height: "10px" }}></div>
-              )}
+              )} */}
             </div>
           );
         }}
       />
-      {showButton ? (
+      {showButton && (
         <ScrollBottomButton
           bottom="30px"
           right="40px"
           onClick={() => {
-            virtuosoRef.current
-              ? virtuosoRef.current.scrollToIndex({
-                  index: messageList.length - 1,
-                  behavior: "auto",
-                  align: "bottom",
-                })
-              : null;
+            setShowButton(false);
+            // scrollRef.current?.scrollIntoView({
+            //   block: "end",
+            //   behavior: "auto",
+            // });
+            virtuosoRef.current.scrollToIndex({
+              index: Number.MAX_VALUE,
+              align: "end",
+              behavior: "auto",
+            });
           }}
         />
-      ) : null}
+      )}
     </div>
   );
 };

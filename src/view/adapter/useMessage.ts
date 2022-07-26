@@ -4,7 +4,8 @@ import { observeStore, store } from "../../services/redux";
 import { IMessage } from "../../services/redux/interfaces";
 
 export function useMessage(): IMessage {
-  const { messages, hasMore, selected } = store.getState().message;
+  const { messages, hasMore, selected, totalMessage } =
+    store.getState().message;
   //force update
   const [, updateState] = React.useState({});
   const forceUpdate = React.useCallback(() => updateState({}), []);
@@ -17,5 +18,5 @@ export function useMessage(): IMessage {
       unsubscribe();
     };
   }, []);
-  return { messages, hasMore, selected };
+  return { messages, hasMore, selected, totalMessage };
 }

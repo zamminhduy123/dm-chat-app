@@ -31,6 +31,7 @@ import { standardConversationArray } from "../../repository/conversation/helpers
 import { standardMessageArray } from "../../repository/message/helpers";
 import { EncryptMessage } from "../../usecases/message/encryptMessage";
 import { DecryptMessage } from "../../usecases/message/decryptMessage";
+import { addTotalMessage } from "../../services/redux/states/message/message.action";
 
 export default class MessageController
   extends BaseController

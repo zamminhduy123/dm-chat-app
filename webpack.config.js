@@ -86,6 +86,7 @@ module.exports = (env) => {
       // add the plugin to your plugins array
       new webpack.EnvironmentPlugin({
         REACT_APP_API_URL: env.REACT_APP_API_URL, // use 'development' unless process.env.NODE_ENV is defined
+        REACT_APP_NODE_ENV: env.REACT_APP_NODE_ENV,
       }),
       new webpack.ProvidePlugin({
         process: "process/browser",

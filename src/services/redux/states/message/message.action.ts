@@ -2,12 +2,25 @@ import { MessageEntity } from "../../../../entities";
 import { messageConstants } from "../../../../view/action";
 
 export const setMessage = (messageList: MessageEntity[]) => {
-  console.log(messageList)
+  console.log(messageList);
   return {
     type: messageConstants.SET_MESSAGE,
     payload: {
       messages: messageList,
     },
+  };
+};
+export const setTotalMessage = (total: number) => {
+  return {
+    type: messageConstants.SET_TOTAL_MESSAGE,
+    payload: {
+      totalMessage: total,
+    },
+  };
+};
+export const addTotalMessage = () => {
+  return {
+    type: messageConstants.ADD_TOTAL_MESSAGE,
   };
 };
 export const selectMessage = (message?: MessageEntity) => {
@@ -29,7 +42,7 @@ export const loadMoreMessages = (messageList: MessageEntity[]) => {
 };
 
 export const deleteMessage = (identifier: string) => {
-  console.log("DELETE",  {
+  console.log("DELETE", {
     type: messageConstants.DELETE_MESSAGE,
     payload: identifier,
   });

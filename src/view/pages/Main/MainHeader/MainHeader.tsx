@@ -31,6 +31,7 @@ import addGroupURL from "../../../../assets/add-group.png";
 import debounce from "../../../../utils/debounce";
 import useAuthApp from "../../../adapter/useAuthApp";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import SocketController from "../../../../controller/SocketController/SocketController";
 
 interface MainHeaderProps {
   searchBarActive: Boolean;
@@ -109,6 +110,7 @@ const MainHeader = ({
     if (searchContent == "" && isMounted.current) {
       setUserList([]);
       setMessageList([]);
+      setLoading(false);
     }
   }, [searchContent]);
 
@@ -166,6 +168,8 @@ const MainHeader = ({
       setSearchContent("");
     }
   }, [searchBarActive]);
+
+  console.log(loading, "HUH");
 
   //NEW GROUP
   const [newGroupOpen, setNewGroupOpen] = React.useState(false);
@@ -272,6 +276,7 @@ const MainHeader = ({
                         converationExisted.id
                       );
                     } else {
+                      SocketController.getInstance().typingRegister("-1");
                       ConversationController.getInstance().select("");
                       onSearchItemClick(conversation);
                     }

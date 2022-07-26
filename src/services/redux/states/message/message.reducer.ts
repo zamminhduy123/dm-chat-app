@@ -8,9 +8,18 @@ const initialState: IMessage = {
   messages: [],
   hasMore: true,
   selected: undefined,
+  totalMessage: 0,
 };
 const setMessages = (state = initialState, action: Action) => {
   return updateObject(state, { ...action.payload });
+};
+
+const setTotalMessage = (state = initialState, action: Action) => {
+  return updateObject(state, { ...action.payload });
+};
+
+const addTotalMessage = (state = initialState, action: Action) => {
+  return updateObject(state, { totalMessage: state.totalMessage + 1 });
 };
 
 const loadMoreMessages = (state = initialState, action: Action) => {
@@ -36,6 +45,7 @@ const addMessage = (state = initialState, action: Action) => {
   return updateObject(state, {
     messages: [...newMessageList],
     selected: undefined,
+    totalMessage: state.totalMessage + 1,
   });
 };
 const deleteMessage = (state = initialState, action: Action) => {
@@ -125,6 +135,10 @@ const reducer = (state = initialState, action: Action) => {
   switch (action.type) {
     case messageConstants.SET_MESSAGE:
       return setMessages(state, action);
+    case messageConstants.SET_TOTAL_MESSAGE:
+      return setTotalMessage(state, action);
+    case messageConstants.ADD_TOTAL_MESSAGE:
+      return addTotalMessage(state, action);
     case messageConstants.ADD_MESSAGE:
       return addMessage(state, action);
     case messageConstants.DELETE_MESSAGE:

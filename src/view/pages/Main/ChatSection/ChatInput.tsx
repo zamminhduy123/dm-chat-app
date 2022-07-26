@@ -1,5 +1,5 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPaperclip } from "@fortawesome/free-solid-svg-icons";
+import { faCode, faPaperclip } from "@fortawesome/free-solid-svg-icons";
 import {
   faThumbsUp,
   faImage,
@@ -26,6 +26,7 @@ import {
 import useAuthApp from "../../../adapter/useAuthApp";
 
 import debounce from "../../../../utils/debounce";
+import { loremIpsum } from "lorem-ipsum";
 
 interface ChatInputProps {
   sender: string;
@@ -199,8 +200,8 @@ const ChatInput: React.FC<ChatInputProps> = ({
   const [isTyping, setIsTyping] = React.useState<string>("");
   const typingReceive = React.useCallback((senderName: string) => {
     if (!isTyping) {
-      setIsTyping(senderName);
-      // console.log(senderName);
+      if (otherUsers.findIndex((user) => user.username == senderName))
+        setIsTyping(senderName);
     }
   }, []);
   React.useEffect(() => {
@@ -246,6 +247,32 @@ const ChatInput: React.FC<ChatInputProps> = ({
     };
   }, [messageSendError]);
 
+  //const test feature
+  const [startSpamming, setStartSpamming] = React.useState(-1);
+  const spammingTrigger = React.useCallback(() => {
+    setStartSpamming(0);
+  }, []);
+  React.useEffect(() => {
+    let timeout: NodeJS.Timeout;
+    if (startSpamming > -1 && startSpamming < 5) {
+      timeout = setTimeout(() => {
+        sendMessageHandler(
+          loremIpsum({
+            count: Math.floor(Math.random() * (10 - 1)) + 1,
+            units: "sentences",
+            sentenceLowerBound: 1,
+            sentenceUpperBound: 25,
+          }),
+          MessageEnum.text
+        );
+        setStartSpamming((prev) => prev + 1);
+      }, 500);
+    } else {
+      setStartSpamming(-1);
+    }
+    return () => clearTimeout(timeout);
+  }, [startSpamming]);
+
   return (
     <>
       <div className="chat-input-alert">
@@ -282,6 +309,16 @@ const ChatInput: React.FC<ChatInputProps> = ({
           ></div>
         </div>
         <div className="chat-input-right-panel">
+          {process.env.REACT_APP_NODE_ENV === "development" && (
+            <div className="chat-input-icon">
+              <Icon
+                icon={faCode}
+                onClick={() => {
+                  spammingTrigger();
+                }}
+              />
+            </div>
+          )}
           <div className="chat-input-icon">
             <input
               ref={fileInput}

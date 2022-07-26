@@ -121,21 +121,25 @@ const ChatViewVirtuoso = ({
             return <div></div>;
           },
           Footer: () => {
-            return (
-              <div
-                ref={scrollRef}
-                style={{
-                  fontWeight: "600",
-                  fontSize: "9px",
-                  color: "#CACACA",
-                  textTransform: "uppercase",
-                  textAlign: "center",
-                  marginTop: "20px",
-                }}
-              >
-                {t("This conversation is end to end encrypted")}
-              </div>
-            );
+            if (conversationMember.length <= 2) {
+              return (
+                <div
+                  ref={scrollRef}
+                  style={{
+                    fontWeight: "600",
+                    fontSize: "9px",
+                    color: "#CACACA",
+                    textTransform: "uppercase",
+                    textAlign: "center",
+                    marginTop: "20px",
+                  }}
+                >
+                  {t("This conversation is end to end encrypted")}
+                </div>
+              );
+            } else {
+              return <div ref={scrollRef} style={{ height: "10px" }}></div>;
+            }
           },
         }}
         onScroll={(e) => {

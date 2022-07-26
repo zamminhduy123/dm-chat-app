@@ -13,13 +13,18 @@ import {
 import * as Helper from "./helper";
 import { SyncMessage } from "../../usecases/message/syncMessage";
 import {
+  FileEntity,
   Message,
   MessageEntity,
   MessageEnum,
   MessageStatus,
   NewMessage,
 } from "../../entities";
-import { generateClientId, mapTypeMessage } from "../../utils/utils";
+import {
+  generateClientId,
+  isValidHttpUrl,
+  mapTypeMessage,
+} from "../../utils/utils";
 import { UpdateMessage } from "../../usecases/message/updateMessage";
 import { ResendPendingMessage } from "../../usecases/message/resendPendingMessage";
 import { GetFileUrl } from "../../usecases/message/getFileUrl";
@@ -326,6 +331,15 @@ export default class MessageController
   resendMessage = (message: MessageEntity) => {
     const resendMessage = { ...message };
     console.log(resendMessage);
+
+    //if message is a file or image
+    // if (resendMessage.type !== MessageEnum.text){
+    //   const file = resendMessage.content as FileEntity
+    //   if (!isValidHttpUrl(file.content)){
+    //     //try send to get url
+    //     await this.getFileUrl
+    //   }
+    // }
     //delete message on UI
     // console.log("DELETE")
     this._dispatch(deleteMessage(message.id || message.clientId!));

@@ -1,4 +1,3 @@
-import { t } from "i18next";
 import React from "react";
 import {
   MessageEntity,
@@ -23,6 +22,7 @@ import Icon from "../../../../components/UI/Icon/Icon";
 import { faDownload } from "@fortawesome/free-solid-svg-icons";
 import VideoMessage from "./VideoMessage";
 import { downloadResource } from "../../../../../utils/forceDownloadBlob";
+import useTranslation from "../../../../adapter/translation.adapter";
 
 interface MessageProps {
   message: MessageEntity;
@@ -35,11 +35,28 @@ interface MessageProps {
 }
 
 const Message: React.FC<MessageProps> = (props: MessageProps) => {
+  const { t } = useTranslation();
   const { user, avatar } = useAuthApp();
   const left = user != props.message.sender;
   const time = getRemainingTime(
     new Date(props.message.create_at || new Date()).getTime()
   );
+
+  let showResend = false,
+    resendMessage = t("Resent");
+  if (+props.message.status === MessageStatus.ERROR) {
+    if (+props.message.type === MessageEnum.text) {
+      showResend = true;
+    } else {
+      const file = props.message.content as FileEntity;
+      if (!isValidHttpUrl(file.content)) {
+        resendMessage = t("Can not resend.Try again later!");
+        showResend = false;
+      } else {
+        showResend = true;
+      }
+    }
+  }
 
   // console.log (props.message)
 
@@ -197,19 +214,21 @@ const Message: React.FC<MessageProps> = (props: MessageProps) => {
               color: `var(--color-danger)`,
               marginTop: "10px",
             }}
-            onClick={() => props.resend?.(props.message)}
           >
             {t("Error")}&nbsp;
             <div style={{ flexGrow: "1" }}></div>
             <span
               style={{
                 textAlign: "right",
-                cursor: "pointer",
-                color: "var(--color-primary)",
-                textDecoration: "underline",
+                cursor: `${showResend ? "pointer" : ""}`,
+                color: "var(--color-danger)",
+                textDecoration: `${showResend ? "underline" : ""}`,
+              }}
+              onClick={() => {
+                showResend ? props.resend?.(props.message) : void 0;
               }}
             >
-              {t("Resent")}
+              {resendMessage}
             </span>
           </span>
         ) : null}

@@ -128,5 +128,6 @@
   "Next": "Tiếp",
   "Back": "Quay lại",
   "User Info": "Thông tin",
-  "User not found": "Không tìm thấy người dùng"
+  "User not found": "Không tìm thấy người dùng",
+  "Can not resend.Try again later!": "Không thể gửi lại. Thử lại sau!"
 }

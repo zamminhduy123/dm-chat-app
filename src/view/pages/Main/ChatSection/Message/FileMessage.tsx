@@ -6,7 +6,11 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
 import { Link } from "react-router-dom";
-import { FileEntity, MessageEntity } from "../../../../../entities";
+import {
+  FileEntity,
+  MessageEntity,
+  MessageStatus,
+} from "../../../../../entities";
 import useTranslation from "../../../../adapter/translation.adapter";
 import Icon from "../../../../components/UI/Icon/Icon";
 import RadialProgressBar from "../../../../components/UI/RadialProgressBar/RadialProgressBar";
@@ -104,7 +108,7 @@ const FileMessage = ({ message }: FileMessageProps) => {
           size: {humanFileSize(size)} byte
         </p>
       </div>
-      {message.id ? (
+      {message.id && +message.status !== MessageStatus.ERROR ? (
         <div
           className="d-flex flex-center"
           style={{

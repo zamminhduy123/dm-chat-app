@@ -32,7 +32,7 @@ export interface IMessageDataSourceInterface {
   sync(): Promise<any>;
   resendPendingMessage(): Promise<any>;
   getFileUrl(file: File, onProgress?: Function): Promise<string>;
-  searchByKeyword(kw: string): Promise<MessageEntity[]>;
+  searchByKeyword(kw: string, offset: number): Promise<MessageEntity[]>;
 }
 
 export default class MessageDataSource implements IMessageDataSourceInterface {
@@ -124,7 +124,7 @@ export default class MessageDataSource implements IMessageDataSourceInterface {
     //get last message from storage
     return new Promise<any>(async (resolve, reject) => {
       try {
-        const storageMessage = await this._msgStorage.get(updated.id!)
+        const storageMessage = await this._msgStorage.get(updated.id!);
         storageMessage.status = updated.status;
         await this._msgStorage.update([storageMessage]);
         resolve(1);
@@ -172,7 +172,7 @@ export default class MessageDataSource implements IMessageDataSourceInterface {
                 let decryptedMessage;
                 try {
                   messageExtra.deserialize(messageContent);
-                  console.log("MESSAGE DS",this._username)
+                  console.log("MESSAGE DS", this._username);
                   const sharedKey =
                     await KeyDataSource.getInstance().getSharedKey(
                       message.to === this._username
@@ -240,7 +240,7 @@ export default class MessageDataSource implements IMessageDataSourceInterface {
     });
   };
 
-  searchByKeyword = (kw: string): Promise<MessageEntity[]> => {
+  searchByKeyword = (kw: string, offset: number): Promise<MessageEntity[]> => {
     return new Promise<MessageEntity[]>(async (resolve, reject) => {
       try {
         let result: MessageEntity[] = [];
@@ -250,7 +250,7 @@ export default class MessageDataSource implements IMessageDataSourceInterface {
         const kws = messageToKeywords(kw);
         await Promise.all(
           kws.map(async (kw, index) => {
-            const data = await this._searchStorage.getDataByKeyword(kw);
+            const data = await this._searchStorage.getDataByKeyword(kw, offset);
             if (index > 0) {
               data.forEach((d: sKeywordMessageEntity) => {
                 if (!messageIds.has(d.msgId)) {

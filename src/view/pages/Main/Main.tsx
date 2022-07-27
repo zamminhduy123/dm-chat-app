@@ -206,7 +206,10 @@ const Main = (props: MainProps) => {
             />
             {!searchBarActive ? (
               page === "conversation" ? (
-                <ConversationTab activeConversation={activeConversationId} />
+                <ConversationTab
+                  username={user}
+                  activeConversation={activeConversationId}
+                />
               ) : (
                 <Contact />
               )

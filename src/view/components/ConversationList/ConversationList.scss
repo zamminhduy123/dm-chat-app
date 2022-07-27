@@ -1,23 +1,24 @@
-@use '../../scss/theme.scss';
-@import '../../scss//theme.scss';
+@import '../../scss/theme.scss';
 /* Conversation Container */
 
 
 .conversation-list {
-    scrollbar-gutter: stable;
     list-style-type: none;
-    padding: 0px 16px;
-    flex: 1;  /* <------------------- required     */
-    overflow-y: auto;  /* <---------- required */
+    height: 100%;
+    width: 100%;
+    padding: 0px 8px;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+
 }
 .conversation-container {
     height: 72px;
-    width: 100%;
 
     padding: 0px 16px;
 
     transition: 0.15s ease-in;
-    transition-property: transform;
+    transition-property: transform,background-color;
     background-color: var(--bgThemeColorAccent);
     border-radius: 4px;
     margin: 10px 0px;
@@ -25,21 +26,29 @@
     box-shadow: 0 3px 20px rgb(0 0 0 / 4%)
 }
 
+#virtuoso-item-list {
+    div {
+        display: flex;
+        justify-content: center;
+    }
+}
+
 .conversation-container:hover {
     &:hover {
-        transform: scale(1.03);
+        // transform: scale(1.03);
+        background-color: var(--hover);
     }
 }
 
 .conversation-container.selected {
-    background: theme.$gradient-primary;
+    background: $gradient-primary;
     span {
         color: white !important;
     }
 }
 
 .conversation-container > div {
-    width: inherit;
+    width: 100%;
     height: inherit;
     
     display: flex;
@@ -84,7 +93,7 @@
     font-weight: 400;
     letter-spacing: normal;
     white-space: nowrap;
-    color: theme.$color-neutral-500;
+    color: $color-neutral-500;
 }
 
 .conversation-body .conversation-content {

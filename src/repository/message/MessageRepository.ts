@@ -74,11 +74,11 @@ export default class MessageRepository implements IMessageRepository {
     });
   }
 
-  searchByKeyword(kw: string): Promise<Message[]> {
+  searchByKeyword(kw: string, offset: number): Promise<Message[]> {
     //get from storage
     return new Promise<Message[]>((resolve, reject) => {
       this.messageDataSrc
-        .searchByKeyword(kw)
+        .searchByKeyword(kw, offset)
         .then((data) => {
           //console.log("DataSrc", data);
           resolve(Helper.standardMessageArray(data));

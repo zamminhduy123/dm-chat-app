@@ -11,10 +11,12 @@ import { ConversationEntity } from "../../../../entities";
 export type ConversationProps = {
   // loggedOut: Boolean;
   activeConversation: string;
+  username: string;
 };
 
 const Conversation: React.FC<ConversationProps> = ({
   activeConversation,
+  username,
 }: ConversationProps) => {
   const { t } = useTranslation();
 
@@ -29,6 +31,7 @@ const Conversation: React.FC<ConversationProps> = ({
       </div>
       {conversationList && conversationList.length ? (
         <ConversationList
+          username={username}
           list={conversationList}
           selectedItemId={activeConversation}
           onItemClick={(conversation) => {

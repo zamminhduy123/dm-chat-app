@@ -12,5 +12,5 @@ export interface IMessageRepository {
   updateMessage(updatedMessage: MessageEntity, key?: string): Promise<any>;
   resendPendingMessage(): Promise<any>;
   getFileUrl(file: File, onProgress?: Function): Promise<string>;
-  searchByKeyword(kw: string): Promise<Message[]>;
+  searchByKeyword(kw: string, offset: number): Promise<Message[]>;
 }

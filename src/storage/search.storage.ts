@@ -3,15 +3,26 @@ import db, { indexName, storeNames } from "./storageAdapter/searchDB";
 import { sKeywordMessageEntity } from "./storageEntity/sKeywordMessageEntity";
 
 interface ISearchStorage {
-  getDataByKeyword(keyword: string): Promise<sKeywordMessageEntity[]>;
+  getDataByKeyword(
+    keyword: string,
+    offset: number
+  ): Promise<sKeywordMessageEntity[]>;
   upsert(kw: sKeywordMessageEntity[]): Promise<any>;
 }
 export default class SearchStorage implements ISearchStorage {
-  getDataByKeyword(keyword: string): Promise<sKeywordMessageEntity[]> {
+  getDataByKeyword(
+    keyword: string,
+    offset: number
+  ): Promise<sKeywordMessageEntity[]> {
     return new Promise<sKeywordMessageEntity[]>(async (resolve, reject) => {
       try {
         //get keyword index
-        console.log(lastCharacterBefore(keyword), lastCharacterAfter(keyword));
+        console.log(
+          lastCharacterBefore(keyword),
+          lastCharacterAfter(keyword),
+          "OFfset",
+          offset
+        );
         const datas = await db.getManyWithIndex<sKeywordMessageEntity[]>(
           storeNames.keyword_message,
           indexName.keyword,
@@ -19,7 +30,8 @@ export default class SearchStorage implements ISearchStorage {
           [lastCharacterAfter(keyword)],
           "next",
           false,
-          50
+          20,
+          offset
         );
         resolve(datas);
       } catch (err) {

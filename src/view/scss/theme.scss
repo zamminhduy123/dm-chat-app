@@ -44,6 +44,10 @@ $themes: (
     darkTheme: rgb(49, 58, 85),
     lightTheme: #dbe8fc
   ),
+  hover: (
+    darkTheme: rgb(64, 77, 116),
+    lightTheme: rgba(0, 0, 0, 0.08)
+  ),
   textThemeColor1: (
     darkTheme: #FFF,
     lightTheme: $color-black,

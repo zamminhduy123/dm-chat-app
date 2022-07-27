@@ -147,10 +147,12 @@ export default class IndexedDBAdapter {
     upper: any = "",
     direction: IDBCursorDirection = "prev",
     reverse: Boolean = false,
-    limit?: number
+    limit?: number,
+    offset?: number
   ): Promise<T> => {
     return new Promise<T>(async (resolve, reject) => {
       let conn;
+      const result: any = [];
       try {
         conn = await this.openDB();
         const range = this.getBound(lower, upper);
@@ -161,29 +163,40 @@ export default class IndexedDBAdapter {
           .index(index)
           .openCursor(range, direction);
 
-        const result: any = [];
-
-        let ind = limit;
+        let ind = limit,
+          advanced = false;
 
         request.onsuccess = function (event) {
           const cursor = request.result;
-
-          if (cursor) {
-            if (limit) {
-              if (!ind) {
-                resolve(result as T);
-                return;
-              } else {
-                ind--;
-              }
-            }
-            if (reverse) {
-              result.unshift(cursor.value);
-            } else result.push(cursor.value);
-            cursor.continue();
+          if (!advanced && offset && cursor) {
+            cursor.advance(offset);
+            advanced = true;
           } else {
-            resolve(result as T);
+            console.log(cursor);
+            if (cursor) {
+              if (limit) {
+                if (!ind) {
+                  resolve(result as T);
+                  return;
+                } else {
+                  ind--;
+                }
+              }
+              if (reverse) {
+                result.unshift(cursor.value);
+              } else result.push(cursor.value);
+              cursor.continue();
+            } else {
+              resolve(result as T);
+              return;
+            }
           }
+        };
+        request.onerror = function (event) {
+          console.log(result);
+          console.error(event);
+          resolve(result as T);
+          return;
         };
       } finally {
         if (conn) conn.close();

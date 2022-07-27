@@ -5,7 +5,7 @@ import {
 } from "../../repository/message";
 
 export interface SearchMessageByKeywordUseCase {
-  execute: (kw: string) => Promise<Message[]>;
+  execute: (kw: string, offset: number) => Promise<Message[]>;
 }
 
 export class SearchMessageByKeyword implements SearchMessageByKeywordUseCase {
@@ -15,7 +15,7 @@ export class SearchMessageByKeyword implements SearchMessageByKeywordUseCase {
     this.msgRepo = msgRepo;
   }
 
-  async execute(kw: string): Promise<Message[]> {
-    return this.msgRepo.searchByKeyword(kw);
+  async execute(kw: string, offset: number): Promise<Message[]> {
+    return this.msgRepo.searchByKeyword(kw, offset);
   }
 }

@@ -15,12 +15,14 @@ export type ConversationProps = {
   conversation: ConversationEntity;
   onClick: (conv: ConversationEntity) => void;
   selected?: Boolean;
+  username: string;
 };
 
 const ConversationItem: React.FC<ConversationProps> = ({
   conversation,
   onClick,
   selected = false,
+  username,
 }: ConversationProps) => {
   const time = getRemainingTime(
     new Date(conversation.lastMessage?.create_at || new Date()).getTime()
@@ -28,10 +30,9 @@ const ConversationItem: React.FC<ConversationProps> = ({
   const classname = ["conversation-container", selected ? "selected" : ""].join(
     " "
   );
-  const { user } = useAuthApp();
   const { t } = useTranslation();
   return (
-    <li
+    <div
       className={classname}
       onClick={() => {
         SocketController.getInstance().typingRegister(conversation.id);
@@ -57,7 +58,7 @@ const ConversationItem: React.FC<ConversationProps> = ({
               </span>
             </div>
             <div className="conversation-content">
-              {user === conversation.lastMessage?.sender ? (
+              {username === conversation.lastMessage?.sender ? (
                 <span>{`${t("You")}:`}</span>
               ) : conversation.users.length > 2 ? (
                 conversation.lastMessage && conversation.lastMessage.content ? (
@@ -88,7 +89,7 @@ const ConversationItem: React.FC<ConversationProps> = ({
           </div>
         </div>
       </div>
-    </li>
+    </div>
   );
 };
 

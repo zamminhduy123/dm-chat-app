@@ -60,29 +60,62 @@ const MainHeader = ({
 
   const isMounted = React.useRef(true);
 
+  const [hasMore, setHasMore] = React.useState(false);
+
+  const loadMoreMessage = async () => {
+    if (messageList) {
+      const newList = await MessageController.getInstance().searchMessage(
+        searchContent,
+        messageList.length
+      );
+      if (!newList.length) {
+        setHasMore(false);
+      } else if (isMounted.current) {
+        if (
+          newList[0].getId() === messageList[messageList.length - 1].getId()
+        ) {
+          newList.shift();
+        }
+
+        if (newList.length) {
+          setHasMore(true);
+          setMessageList([...messageList, ...newList]);
+        } else {
+          setHasMore(false);
+        }
+      }
+    }
+  };
+
   const search = async (value: string) => {
     const phoneReg = /(84|0[3|5|7|8|9])+([0-9]{8})\b/g;
     if (value[0] === "@") {
       value = value.slice(1);
       if (value && isMounted.current) {
-        const userList = await UserController.getInstance().find(value);
-        if (isMounted.current)
-          setUserList(userList.filter((el) => el.getUsername() !== user));
+        userSearch(value);
       } else {
         setUserList([]);
       }
     } else if (value.match(phoneReg)) {
-      const userList = await UserController.getInstance().find(value);
-      if (isMounted.current) setUserList(userList);
+      userSearch(value);
     } else {
       if (isMounted.current) setUserList([]);
     }
+    messageSearch(value, 0);
+  };
 
+  const userSearch = async (value: string) => {
+    const userList = await UserController.getInstance().find(value);
+    if (isMounted.current)
+      setUserList(userList.filter((el) => el.getUsername() !== user));
+  };
+  const messageSearch = async (value: string, offset: number) => {
     const messageList = await MessageController.getInstance().searchMessage(
       value
     );
     // console.log(list);
     if (isMounted.current) {
+      if (messageList.length) setHasMore(true);
       setMessageList(messageList);
       setLoading(false);
     }
@@ -226,23 +259,6 @@ const MainHeader = ({
                 setNewGroupOpen(true);
               }}
             />
-            // <Button
-            //   variant="outlined"
-            //   size="medium"
-            //   color={"primary"}
-            //   onClick={() => {
-            //     setNewGroupOpen(true);
-            //   }}
-            // >
-            //   {/* {t("Add Group")} */}
-            //   <FontAwesomeIcon />
-            //   <p style={{ fontSize: "16px", paddingBottom: "2px" }}>+</p>
-            // </Button>
-            // <Icon
-            //   icon={faUsersRectangle}
-            //   size="large"
-            //   onClick={() => setNewGroupOpen(true)}
-            // />
           )}
         </div>
       </div>
@@ -264,6 +280,7 @@ const MainHeader = ({
                   {t("User")} ({userList?.length || 0})
                 </div>
                 <ConversationList
+                  username={user}
                   list={tempUserConversationList()}
                   onItemClick={(conversation) => {
                     const converationExisted =
@@ -288,6 +305,9 @@ const MainHeader = ({
                   {t("Message")} ({messageList?.length || 0})
                 </div>
                 <ConversationList
+                  username={user}
+                  hasMore={hasMore}
+                  onLoadMore={loadMoreMessage}
                   list={tempMessageConversationList()}
                   onItemClick={(conversation) => {
                     ConversationController.getInstance().select(

@@ -361,10 +361,11 @@ export default class MessageController
   };
 
   //search message
-  searchMessage = async (keyword: string) => {
+  searchMessage = async (keyword: string, offset?: number) => {
     try {
       const messages = await this._searchMessageByKeywordUseCase.execute(
-        keyword
+        keyword,
+        offset || 0
       );
       return messages;
     } catch (err) {

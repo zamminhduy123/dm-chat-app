@@ -270,11 +270,14 @@ const MainHeader = ({
         !loading ? (
           (userList && userList.length) ||
           (messageList && messageList.length) ? (
-            <div
-              className="d-flex flex-column"
-              style={{ flex: 1, minHeight: 0, overflowY: "scroll" }}
-            >
-              <div>
+            <div className="d-flex flex-column" style={{ flex: 1 }}>
+              <div
+                className=""
+                style={{
+                  height: "fit-content",
+                  flex: `${userList?.length === 0 ? 0 : 1}`,
+                }}
+              >
                 <div className="list-title">
                   {t("User")} ({userList?.length || 0})
                 </div>

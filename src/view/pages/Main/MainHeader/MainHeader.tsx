@@ -71,6 +71,7 @@ const MainHeader = ({
       if (!newList.length) {
         setHasMore(false);
       } else if (isMounted.current) {
+        console.log(newList);
         if (
           newList[0].getId() === messageList[messageList.length - 1].getId()
         ) {
@@ -110,13 +111,11 @@ const MainHeader = ({
       setUserList(userList.filter((el) => el.getUsername() !== user));
   };
   const messageSearch = async (value: string, offset: number) => {
-    const messageList = await MessageController.getInstance().searchMessage(
-      value
-    );
-    // console.log(list);
+    const newList = await MessageController.getInstance().searchMessage(value);
     if (isMounted.current) {
-      if (messageList.length) setHasMore(true);
-      setMessageList(messageList);
+      if (newList.length) setHasMore(true);
+      setMessageList(newList);
+      console.log(newList);
       setLoading(false);
     }
   };

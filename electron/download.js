@@ -13,6 +13,7 @@ const download = (url, dest, onComplete, onProgress) => {
     total_bytes = parseInt(response.headers["content-length"]);
     response
       .on("data", function (chunk) {
+        // console.log("FILE CHUNK", chunk.length);
         body += chunk;
         received_bytes += chunk.length;
         onProgress(received_bytes / total_bytes);

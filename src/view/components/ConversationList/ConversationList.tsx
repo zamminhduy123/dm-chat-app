@@ -38,6 +38,7 @@ const ConversationList: React.FC<ConversationProps> = ({
         }}
         ref={virtuosoRef}
         data={list}
+        endReached={() => onLoadMore?.()}
         components={{
           Header: () => {
             return <div></div>;
@@ -51,7 +52,7 @@ const ConversationList: React.FC<ConversationProps> = ({
                   width: "100%",
                 }}
               >
-                {hasMore && (
+                {/* {hasMore && (
                   <Button
                     color={"primary"}
                     variant={"contained"}
@@ -62,7 +63,7 @@ const ConversationList: React.FC<ConversationProps> = ({
                   >
                     {t("Load more")}
                   </Button>
-                )}
+                )} */}
               </div>
             );
           },

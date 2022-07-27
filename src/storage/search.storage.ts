@@ -30,9 +30,10 @@ export default class SearchStorage implements ISearchStorage {
           [lastCharacterAfter(keyword)],
           "next",
           false,
-          20,
+          50,
           offset
         );
+        // console.log(datas);
         resolve(datas);
       } catch (err) {
         reject(err);

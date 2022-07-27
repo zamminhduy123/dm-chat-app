@@ -1,4 +1,5 @@
 import Fetcher from "../api";
+import { cloneMessage } from "../controller/MessageController/helper";
 import { FileEntity, MessageEnum, MessageStatus } from "../entities";
 import KeyHelper from "../utils/keyHelper";
 import messageToKeywords from "../utils/messageToKeywords";
@@ -12,7 +13,7 @@ import {
 import { sMessageEntity } from "./storageEntity";
 import { sKeywordMessageEntity } from "./storageEntity/sKeywordMessageEntity";
 import { sPendingMesage } from "./storageEntity/sPendingMessage";
-import { messageToKeywordMessage } from "./storageHelper";
+import { clonesMessageEntity, messageToKeywordMessage } from "./storageHelper";
 
 interface IMessageStorage {
   getAllFromConversation: (
@@ -70,7 +71,7 @@ export default class MessageStorage implements IMessageStorage {
     } catch (err) {
       console.log("LOCAL DECRYPT ERROR", err);
     }
-    return message;
+    return clonesMessageEntity(message);
   }
   getAllPendingMessage(): Promise<sPendingMesage[]> {
     return new Promise<sPendingMesage[]>(async (resolve, reject) => {
@@ -175,14 +176,14 @@ export default class MessageStorage implements IMessageStorage {
     if (typeof message.content === "string")
       message.content = await KeyHelper.getInstance().encrypt(
         this._localHashKey as string,
-        message.content
+        message.content || "ERROR"
       );
     else
       message.content.content = await KeyHelper.getInstance().encrypt(
         this._localHashKey as string,
-        message.content.content
+        message.content.content || "ERROR"
       );
-    return message;
+    return clonesMessageEntity(message);
   }
   upsert(newMessage: sMessageEntity[]) {
     return new Promise<any>(async (resolve, reject) => {

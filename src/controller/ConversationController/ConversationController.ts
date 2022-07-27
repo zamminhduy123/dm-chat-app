@@ -105,6 +105,7 @@ class ConversationController
       this._dispatch(setTotalMessage(+existed.totalMessage));
     } else {
       this._dispatch(selectConversation(""));
+      this._dispatch(setTotalMessage(0));
     }
   }
   findConversation(conversation_id: string): ConversationEntity | undefined {

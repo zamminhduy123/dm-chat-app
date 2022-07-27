@@ -171,7 +171,7 @@ export default class MessageDataSource implements IMessageDataSourceInterface {
 
                 let decryptedMessage;
                 try {
-                  messageExtra.deserialize(messageContent);
+                  messageExtra.deserialize(messageContent || "");
                   console.log("MESSAGE DS", this._username);
                   const sharedKey =
                     await KeyDataSource.getInstance().getSharedKey(
@@ -182,7 +182,7 @@ export default class MessageDataSource implements IMessageDataSourceInterface {
                         ? messageExtra.getDeviceKey()
                         : undefined
                     );
-
+                  console.log("SHAREKEY", sharedKey);
                   decryptedMessage = await KeyHelper.getInstance().decrypt(
                     sharedKey,
                     messageExtra.getMessage()
@@ -201,11 +201,16 @@ export default class MessageDataSource implements IMessageDataSourceInterface {
               } catch (err) {
                 console.log("Sync message error", err);
               }
+            } else {
+              if (+message.type !== MessageEnum.text) {
+                message.content = JSON.parse(message.content);
+              }
             }
+            console.log("FUCK MESSAGE", message);
             dbData.push(messageEntityToStorage(message));
           }
           try {
-            console.log(dbData);
+            console.log("DBDATA:", dbData);
             await this._msgStorage.upsert(dbData);
             //announce to server that client receive the mesage
             data.forEach((msg: any) => {

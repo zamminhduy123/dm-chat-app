@@ -172,7 +172,7 @@ export default class IndexedDBAdapter {
             cursor.advance(offset);
             advanced = true;
           } else {
-            console.log(cursor);
+            // console.log(cursor);
             if (cursor) {
               if (limit) {
                 if (!ind) {
@@ -193,7 +193,7 @@ export default class IndexedDBAdapter {
           }
         };
         request.onerror = function (event) {
-          console.log(result);
+          // console.log(result);
           console.error(event);
           resolve(result as T);
           return;

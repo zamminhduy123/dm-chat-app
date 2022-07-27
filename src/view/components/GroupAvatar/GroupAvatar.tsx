@@ -19,7 +19,7 @@ const GroupAvatar = ({ avatars }: GroupAvatarProps) => {
             id = "last-avatar-number";
           }
           return (
-            <div key={avatar} id={id}>
+            <div key={avatar + index} id={id}>
               {index < 3 || avatars.length === 4 ? (
                 <Avatar size="extra-small" src={avatar} left={false} />
               ) : (

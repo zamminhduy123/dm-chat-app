@@ -58,6 +58,7 @@ export default class MessageStorage implements IMessageStorage {
   private async decryptLocalMessage(message: sMessageEntity) {
     //decrypt
     try {
+      console.log("LOCAL KEY", this._localHashKey, message.content);
       if (typeof message.content === "string")
         message.content = await KeyHelper.getInstance().decrypt(
           this._localHashKey,
@@ -70,6 +71,7 @@ export default class MessageStorage implements IMessageStorage {
         );
     } catch (err) {
       console.log("LOCAL DECRYPT ERROR", err);
+      message.status = MessageStatus.DECRYPT_FAIL;
     }
     return clonesMessageEntity(message);
   }

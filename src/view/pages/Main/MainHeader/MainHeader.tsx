@@ -107,8 +107,15 @@ const MainHeader = ({
 
   const userSearch = async (value: string) => {
     const userList = await UserController.getInstance().find(value);
-    if (isMounted.current)
+    // let currentSearch = searchContent;
+    // if (currentSearch[0] === "@") {
+    //   currentSearch = currentSearch.slice(1);
+    // }
+    // console.log(searchContent, currentSearch, userList[0]);
+    if (isMounted.current) {
       setUserList(userList.filter((el) => el.getUsername() !== user));
+      setLoading(false);
+    }
   };
   const messageSearch = async (value: string, offset: number) => {
     const newList = await MessageController.getInstance().searchMessage(value);
@@ -144,6 +151,7 @@ const MainHeader = ({
       setMessageList([]);
       setLoading(false);
     }
+    // console.log(searchContent);
   }, [searchContent]);
 
   React.useEffect(() => {

@@ -37,7 +37,7 @@
     font-weight: 500;
     line-height: inherit;
     transition: border 0.3s ease;
-    border-bottom: 2px solid $color-neutral-700;
+    border-bottom: 2px solid var(--hover);
     margin: 8px 0px;
     &:hover,
     &:focus {
@@ -54,7 +54,7 @@
     width: 100%;
     border: 1px;
     border-style: solid;
-    border-color: $color-neutral-700;
+    border-color: var(--hover);
     border-radius: 5px;
     box-sizing: border-box;
     padding: 10px 0px 10px 20px;

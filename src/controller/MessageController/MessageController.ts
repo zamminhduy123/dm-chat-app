@@ -220,7 +220,7 @@ export default class MessageController
       this._dispatch(addMessage(newMessageEntity));
 
       //update conversation last message
-      this._dispatch(updateLastMessage(newMessageEntity));
+      ConversationController.getInstance().updateNewMessage(newMessageEntity);
       return newMessageEntity;
     } catch (err) {
       throw err;

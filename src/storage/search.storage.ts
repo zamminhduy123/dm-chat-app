@@ -26,14 +26,14 @@ export default class SearchStorage implements ISearchStorage {
         const datas = await db.getManyWithIndex<sKeywordMessageEntity[]>(
           storeNames.keyword_message,
           indexName.keyword,
-          [lastCharacterBefore(keyword)],
+          [keyword],
           [lastCharacterAfter(keyword)],
           "next",
           false,
           50,
           offset
         );
-        // console.log(datas);
+        console.log("ASDASD", datas);
         resolve(datas);
       } catch (err) {
         reject(err);

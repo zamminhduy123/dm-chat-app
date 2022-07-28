@@ -18,6 +18,7 @@ import RadialProgressBar from "../../../../components/UI/RadialProgressBar/Radia
 import EventEmitter from "../../../../../utils/event-emitter";
 import { messageConstants } from "../../../../action";
 import { humanFileSize } from "../../../../../utils/fileSizeConverter";
+import { downloadResource } from "../../../../../utils/forceDownloadBlob";
 
 interface FileMessageProps {
   message: MessageEntity;
@@ -135,6 +136,8 @@ const FileMessage = ({ message }: FileMessageProps) => {
                   if (id === message.id) setDownloadProgress(100);
                 }
               );
+            } else {
+              downloadResource(content, name);
             }
           }}
         >

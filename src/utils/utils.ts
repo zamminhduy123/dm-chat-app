@@ -22,7 +22,7 @@ export function getRemainingTime(time: number): {
   type: string;
 } {
   const { t } = useTranslation();
-  const remainingTime = Date.now() - new Date(time).getTime();
+  const remainingTime = Math.max(Date.now() - new Date(time).getTime(), 0);
   const days = Math.floor(remainingTime / (1000 * 60 * 60 * 24));
   let returnedTime = {
     value: days,

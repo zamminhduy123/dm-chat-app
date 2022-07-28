@@ -41,11 +41,14 @@ export default class MessageDataSource implements IMessageDataSourceInterface {
   private _conversationStorage: ConversationStorage;
   private _username: string;
 
+  private _messageIds;
+
   constructor(username: string) {
     this._msgStorage = new MessageStorage();
     this._conversationStorage = new ConversationStorage();
     this._searchStorage = new SearchStorage();
     this._username = username;
+    this._messageIds = new Set<string>();
   }
   resendPendingMessage(): Promise<any> {
     return new Promise<any>(async (resolve, reject) => {
@@ -249,29 +252,34 @@ export default class MessageDataSource implements IMessageDataSourceInterface {
     return new Promise<MessageEntity[]>(async (resolve, reject) => {
       try {
         let result: MessageEntity[] = [];
-
-        let messageIds = new Set<string>();
-
+        if (offset === 0) {
+          this._messageIds.clear();
+        }
+        let newMessageIds: string[] = [];
         const kws = messageToKeywords(kw);
         await Promise.all(
           kws.map(async (kw, index) => {
             const data = await this._searchStorage.getDataByKeyword(kw, offset);
             if (index > 0) {
               data.forEach((d: sKeywordMessageEntity) => {
-                if (!messageIds.has(d.msgId)) {
-                  messageIds.delete(d.msgId);
+                if (!this._messageIds.has(d.msgId)) {
+                  this._messageIds.delete(d.msgId);
+                  newMessageIds = newMessageIds.filter((id) => id !== d.msgId);
                 }
               });
             } else {
-              data.forEach((d: sKeywordMessageEntity) =>
-                messageIds.add(d.msgId)
-              );
+              data.forEach((d: sKeywordMessageEntity) => {
+                if (!this._messageIds.has(d.msgId)) {
+                  newMessageIds.push(d.msgId);
+                }
+                this._messageIds.add(d.msgId);
+              });
             }
           })
         );
 
         await Promise.all(
-          Array.from(messageIds).map(async (id: string) => {
+          newMessageIds.map(async (id: string) => {
             try {
               const message = await this._msgStorage.get(id);
               result.push(messageStorageToEntity(message));

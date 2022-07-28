@@ -1,4 +1,9 @@
-import { ConversationEntity, MessageEnum } from "../../entities";
+import {
+  ConversationEntity,
+  FileEntity,
+  MessageEntity,
+  MessageEnum,
+} from "../../entities";
 import { Conversation } from "../../entities/conversation/Conversation";
 import { UserEntity } from "../../entities/user/UserEntity";
 import { mapMessageType } from "../../utils/utils";
@@ -62,5 +67,18 @@ export const convertLastMessage = (
             : "",
         }
       : null,
+  };
+};
+
+export const convertMessage = (message: MessageEntity): MessageEntity => {
+  return {
+    ...message,
+    content:
+      +message.type === MessageEnum.text
+        ? (message.content as string)
+        : {
+            ...(message.content as FileEntity),
+            content: mapMessageType(+message.type),
+          },
   };
 };

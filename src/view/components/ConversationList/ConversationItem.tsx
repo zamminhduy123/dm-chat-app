@@ -77,7 +77,7 @@ const ConversationItem: React.FC<ConversationProps> = ({
                   ? +conversation.lastMessage.type !== MessageEnum.text
                     ? t(
                         capitalizeFirstLetter(
-                          conversation.lastMessage.content as string
+                          mapMessageType(+conversation.lastMessage.type)
                         )
                       )
                     : (conversation.lastMessage.content as string)

@@ -91,8 +91,10 @@ class ConversationController
     this._updateConversationUseCase.execute(conversation).then((data) => {});
   }
 
-  updateLastMessage(messageEntity: MessageEntity) {
-    this._dispatch(updateLastMessage(messageEntity));
+  updateNewMessage(messageEntity: MessageEntity) {
+    const convertMessage = Helper.convertMessage(messageEntity);
+    console.log("UPDATE LAST MESSAGE", convertMessage);
+    this._dispatch(updateLastMessage(convertMessage));
   }
 
   getConversations() {

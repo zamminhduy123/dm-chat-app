@@ -2,35 +2,22 @@ import { t, use } from "i18next";
 import React, { useCallback } from "react";
 import { MessageController } from "../../../../controller";
 import SocketController from "../../../../controller/SocketController/SocketController";
-import {
-  ConversationEntity,
-  MessageEntity,
-  MessageEnum,
-  UserEntity,
-} from "../../../../entities";
-import { NewMessage } from "../../../../entities/type/NewMessage";
-import {
-  generateClientId,
-  mapMessageType,
-  mapTypeMessage,
-} from "../../../../utils/utils";
-import useAuthApp from "../../../adapter/useAuthApp";
+import { ConversationEntity, MessageEntity } from "../../../../entities";
 import useClientNetwork from "../../../adapter/useClientNetwork";
 import { useMessage } from "../../../adapter/useMessage";
-import DropContainer from "../../../components/DropContainer/DropContainer";
 import ChatError from "./ChatError";
 import ChatHeader from "./ChatHeader";
 import ChatInput from "./ChatInput";
 import ChatViewVirtuoso from "./ChatViewVirtuoso";
 
-import { LoremIpsum } from "lorem-ipsum";
-
 interface ChatSectionProps {
   conversation: ConversationEntity;
+  username: string;
 }
 
 const ChatSection: React.FC<ChatSectionProps> = ({
   conversation,
+  username,
 }: ChatSectionProps) => {
   // console.log("ACTIVE", conversation);
 
@@ -69,8 +56,6 @@ const ChatSection: React.FC<ChatSectionProps> = ({
     )}!`;
 
   // console.log("MESSAGE", message);
-
-  const { user } = useAuthApp();
 
   //infinity scroll handler
   const {
@@ -124,12 +109,12 @@ const ChatSection: React.FC<ChatSectionProps> = ({
                 : Date.now()
             }
             info={
-              conversation.users.filter((u) => u.username !== user)[0].phone
+              conversation.users.filter((u) => u.username !== username)[0].phone
             }
             avatars={
               conversation.users.length <= 2
                 ? conversation.users
-                    .filter((u) => u.username !== user)
+                    .filter((u) => u.username !== username)
                     .map((u) => u.avatar)
                 : conversation.users.map((u) => u.avatar)
             }
@@ -168,7 +153,7 @@ const ChatSection: React.FC<ChatSectionProps> = ({
           <ChatInput
             receiver={conversation.users}
             conversation={conversation}
-            sender={user}
+            sender={username}
           />
         </div>
       </article>

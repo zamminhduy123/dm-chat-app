@@ -31,9 +31,6 @@ export default class LocalStorage {
   destroy() {
     this._username = "";
     this._lastMessageId = "";
-    this.awaitInit = new Promise((res, rej) => {
-      this.resolveInit = res;
-    });
   }
 
   getLastMessageId() {

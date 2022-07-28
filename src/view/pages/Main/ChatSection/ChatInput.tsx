@@ -11,13 +11,17 @@ import Icon from "../../../components/UI/Icon/Icon";
 import SocketController from "../../../../controller/SocketController/SocketController";
 import {
   ConversationEntity,
+  GenderEnum,
   MessageEnum,
   NewMessage,
   UserEntity,
 } from "../../../../entities";
 import DotFalling from "../../../components/DotFalling/DotFalling";
 import ScrollBottomButton from "../../../components/ScrollBottomButton/ScrollBottomButton";
-import { MessageController } from "../../../../controller";
+import {
+  ConversationController,
+  MessageController,
+} from "../../../../controller";
 import {
   generateClientId,
   mapMessageType,
@@ -54,8 +58,27 @@ const ChatInput: React.FC<ChatInputProps> = ({
     type: MessageEnum,
     preview: string = ""
   ) => {
+    //create new
+    // if (!conversation.id) {
+    //   const other = otherUsers[0];
+    //   ConversationController.getInstance().addNewConversation({
+    //     id: sender,
+    //     name: other.name,
+    //     avatar: other.avatar,
+    //     users: [
+    //       {
+    //         username: other.username,
+    //         name: other.name,
+    //         avatar: other.avatar,
+    //         gender: other.gender,
+    //         phone: other.phone,
+    //       },
+    //     ],
+    //     lastMessage: null,
+    //     totalMessage: 0,
+    //   });
+    // }
     let data, newMessage: NewMessage;
-    // console.log(typeof content === "string");
     if (typeof content === "string") {
       data = content.trim();
     } else {

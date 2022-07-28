@@ -63,6 +63,7 @@ const deleteMessage = (state = initialState, action: Action) => {
     return updateObject(state, {
       messages: state.messages.filter((msg, index) => index !== messageIndex),
       selected: undefined,
+      totalMessage: state.totalMessage - 1,
     });
   }
   return state;

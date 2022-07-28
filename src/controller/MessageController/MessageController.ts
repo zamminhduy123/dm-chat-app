@@ -14,6 +14,7 @@ import * as Helper from "./helper";
 import { SyncMessage } from "../../usecases/message/syncMessage";
 import {
   FileEntity,
+  GenderEnum,
   Message,
   MessageEntity,
   MessageEnum,
@@ -37,6 +38,11 @@ import { standardMessageArray } from "../../repository/message/helpers";
 import { EncryptMessage } from "../../usecases/message/encryptMessage";
 import { DecryptMessage } from "../../usecases/message/decryptMessage";
 import { addTotalMessage } from "../../services/redux/states/message/message.action";
+import {
+  addConversation,
+  selectConversation,
+  updateLastMessage,
+} from "../../services/redux/states/conversation/conversation.action";
 
 export default class MessageController
   extends BaseController
@@ -153,6 +159,8 @@ export default class MessageController
 
   enqueueMessage = async (message: MessageEntity) => {
     console.log("ENQUEUE", message);
+    //update conversation
+    // this._dispatch(updateLastMessage(comessage))
     message = await this.encryptMessage(message);
     console.log("ENCRYPTED MESSAGE", message);
     if (+message.status === MessageStatus.ERROR) {
@@ -208,8 +216,11 @@ export default class MessageController
         );
       else
         newMessageEntity = Helper.newMessageToMessageEntity(newMessage, to[0]);
+
       this._dispatch(addMessage(newMessageEntity));
-      console.log(newMessageEntity);
+
+      //update conversation last message
+      this._dispatch(updateLastMessage(newMessageEntity));
       return newMessageEntity;
     } catch (err) {
       throw err;
@@ -238,6 +249,16 @@ export default class MessageController
     if (+updatedMessage.status === MessageStatus.ERROR) {
       updatedMessage.id = updatedMessage.clientId;
     }
+    // if (
+    //   updatedMessage.conversation_id &&
+    //   this._getState().conversation.selected !==
+    //     updatedMessage.conversation_id &&
+    //   updatedMessage.sender === this._getState().auth.user
+    // ) {
+    //   ConversationController.getInstance().select(
+    //     updatedMessage.conversation_id
+    //   );
+    // }
 
     if (sentUpdate) {
       //trigger queue to continue send message
@@ -247,6 +268,7 @@ export default class MessageController
         .execute(updatedMessage)
         .then((data) => {
           // console.log(updatedMessage);
+
           this._dispatch(updateSentMessage(updatedMessage));
 
           //new conversation case
@@ -256,16 +278,6 @@ export default class MessageController
                 updatedMessage.conversation_id &&
               updatedMessage.sender === this._getState().auth.user
           );
-          if (
-            updatedMessage.conversation_id &&
-            this._getState().conversation.selected !==
-              updatedMessage.conversation_id &&
-            updatedMessage.sender === this._getState().auth.user
-          ) {
-            ConversationController.getInstance().select(
-              updatedMessage.conversation_id
-            );
-          }
         })
         .catch((err) => {
           //if user's network still good but axios network error -> server down -> logout
@@ -342,6 +354,7 @@ export default class MessageController
     // }
     //delete message on UI
     // console.log("DELETE")
+    // this._dispatch(addTotalMessage)
     this._dispatch(deleteMessage(message.id || message.clientId!));
     resendMessage.status = MessageStatus.SENDING;
     resendMessage.create_at = Date.now();

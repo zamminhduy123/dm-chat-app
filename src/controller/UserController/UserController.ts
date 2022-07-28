@@ -161,16 +161,18 @@ export default class UserController
   logout = async () => {
     this._dispatch(logoutRequest());
     try {
-      this._dispatch({ type: "RESET" });
       await this._logoutUseCase.execute();
+      this._dispatch({ type: "RESET" });
+      this._dispatch(logoutSuccess());
+
       SocketController.getInstance().disconnect();
       SocketController.destroy();
       ConversationController.destroy();
       MessageController.destroy();
       StorageController.destroy();
-      UserController._instance = null;
+      LocalStorage.getInstance().destroy();
       LocalStorage.destroy();
-      this._dispatch(logoutSuccess());
+      UserController._instance = null;
     } catch (err: any) {
       this._dispatch(logoutFail(err.message));
     }

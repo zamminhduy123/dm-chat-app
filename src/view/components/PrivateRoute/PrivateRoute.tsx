@@ -15,6 +15,8 @@ const PrivateRoute = ({ children }: AuthGuardProps) => {
     if (!!previousRoute) setPreviousRoute(pathname);
   }, [pathname, previousRoute]);
 
+  console.log(user);
+
   if (user) return <>{children}</>;
   else {
     return (

@@ -218,7 +218,7 @@ const Main = (props: MainProps) => {
         </nav>
         <div className="chat-view">
           {activeConversation ? (
-            <ChatSection conversation={activeConversation} />
+            <ChatSection conversation={activeConversation} username={user} />
           ) : (
             <WelcomePage />
           )}

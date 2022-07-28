@@ -48,13 +48,8 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
     if (isStranger) {
       extraInfo = t("Stranger");
     } else {
-      if (chatInSameTime(lastMessageSendingTime, Date.now(), 15 * 60 * 1000)) {
-        // 15 minute
-        extraInfo = t("Online");
-      } else {
-        const time = getRemainingTime(lastMessageSendingTime);
-        extraInfo = `${t("Last seen")} ${time.value} ${time.type} ${t("ago")}`;
-      }
+      const time = getRemainingTime(lastMessageSendingTime);
+      extraInfo = `${t("Last seen")} ${time.value} ${time.type} ${t("ago")}`;
     }
   }
 

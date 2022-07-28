@@ -36,7 +36,7 @@ class Socket {
         clearInterval(this.pingInterval);
         return;
       } else {
-        console.log(reason);
+        console.log("SOCKET FAIL", reason);
         this.tryReconnect();
       }
     });
@@ -131,20 +131,19 @@ class Socket {
   };
 
   emit = async <T>(eventName: string, data: T, callback?: Function) => {
-    return new Promise<any>((resolve,reject) => {
+    return new Promise<any>((resolve, reject) => {
       this.socket
         .timeout(TIMEOUT)
         .emit(eventName, data, (err: any, response: any) => {
           if (err) {
-            reject("Emit timeout")
+            reject("Emit timeout");
             // the other side did not acknowledge the event in the given delay
           } else {
             if (callback) callback(response);
             resolve(true);
           }
         });
-    })
-
+    });
   };
 
   registerListener<T>(eventName: string, callback: (data: T) => void) {

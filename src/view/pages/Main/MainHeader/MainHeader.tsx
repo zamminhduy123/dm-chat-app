@@ -32,6 +32,7 @@ import debounce from "../../../../utils/debounce";
 import useAuthApp from "../../../adapter/useAuthApp";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import SocketController from "../../../../controller/SocketController/SocketController";
+import OneLoadingItem from "../../../components/LoadingSkeleton/OneLoadingItem";
 
 interface MainHeaderProps {
   searchBarActive: Boolean;
@@ -53,6 +54,7 @@ const MainHeader = ({
 
   const [searchContent, setSearchContent] = React.useState("");
   const [loading, setLoading] = React.useState(false);
+  const [userLoading, setUserLoading] = React.useState(false);
 
   const { t } = useTranslation();
 
@@ -106,6 +108,8 @@ const MainHeader = ({
   };
 
   const userSearch = async (value: string) => {
+    console.log("ASDASD");
+    setUserLoading(true);
     const userList = await UserController.getInstance().find(value);
     // let currentSearch = searchContent;
     // if (currentSearch[0] === "@") {
@@ -114,7 +118,7 @@ const MainHeader = ({
     // console.log(searchContent, currentSearch, userList[0]);
     if (isMounted.current) {
       setUserList(userList.filter((el) => el.getUsername() !== user));
-      setLoading(false);
+      setUserLoading(false);
     }
   };
   const messageSearch = async (value: string, offset: number) => {
@@ -277,38 +281,47 @@ const MainHeader = ({
       {searchBarActive ? (
         !loading ? (
           (userList && userList.length) ||
-          (messageList && messageList.length) ? (
+          (messageList && messageList.length) ||
+          userLoading ? (
             <div className="d-flex flex-column" style={{ flex: 1 }}>
               <div
                 className=""
                 style={{
-                  height: "fit-content",
-                  flex: `${userList?.length === 0 ? 0 : 1}`,
+                  height: `${
+                    userList?.length !== 0 || userLoading
+                      ? "130px"
+                      : "fit-content"
+                  }`,
+                  flex: "0 0 auto",
                 }}
               >
                 <div className="list-title">
                   {t("User")} ({userList?.length || 0})
                 </div>
-                <ConversationList
-                  username={user}
-                  list={tempUserConversationList()}
-                  onItemClick={(conversation) => {
-                    const converationExisted =
-                      ConversationController.getInstance().findConversationByUsername(
-                        conversation.users[0].username
-                      );
-                    console.log("FIND", converationExisted);
-                    if (converationExisted) {
-                      ConversationController.getInstance().select(
-                        converationExisted.id
-                      );
-                    } else {
-                      SocketController.getInstance().typingRegister("-1");
-                      ConversationController.getInstance().select("");
-                      onSearchItemClick(conversation);
-                    }
-                  }}
-                />
+                {!userLoading ? (
+                  <ConversationList
+                    username={user}
+                    list={tempUserConversationList()}
+                    onItemClick={(conversation) => {
+                      const converationExisted =
+                        ConversationController.getInstance().findConversationByUsername(
+                          conversation.users[0].username
+                        );
+                      console.log("FIND", converationExisted);
+                      if (converationExisted) {
+                        ConversationController.getInstance().select(
+                          converationExisted.id
+                        );
+                      } else {
+                        SocketController.getInstance().typingRegister("-1");
+                        ConversationController.getInstance().select("");
+                        onSearchItemClick(conversation);
+                      }
+                    }}
+                  />
+                ) : (
+                  <OneLoadingItem />
+                )}
               </div>
               <div className="list-container">
                 <div className="list-title">

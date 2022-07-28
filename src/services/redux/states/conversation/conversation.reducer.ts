@@ -1,3 +1,10 @@
+import { PayloadAction } from "@reduxjs/toolkit";
+import {
+  ConversationEntity,
+  FileEntity,
+  MessageEntity,
+  MessageEnum,
+} from "../../../../entities";
 import {
   mapMessageType,
   mapTypeMessage,
@@ -23,6 +30,13 @@ const setConversation = (state = initialState, action: Action) => {
 };
 
 const addConversation = (state = initialState, action: Action) => {
+  // console.log(action.payload, state.selected);
+  // if (
+  //   action.payload.lastMessage &&
+  //   action.payload.lastMessage.sender === state.selected
+  // ) {
+  //   return updateNewConversation(state, action);
+  // }
   const newConversationList = [action.payload, ...state.conversations];
 
   return updateObject(state, {
@@ -89,9 +103,57 @@ const updateConversation = (state = initialState, action: Action) => {
 };
 
 const updateLastMessage = (state = initialState, action: Action) => {
-  // const needUpdateConversation = state.conversations.find(
-  //   (conver) => conver.id == action.payload.id
-  // );
+  const needUpdateConversation = state.conversations.findIndex(
+    (conver) => conver.id === state.selected
+  );
+
+  const newMessage = action.payload as MessageEntity;
+
+  if (needUpdateConversation >= 0) {
+    let newConversationList = state.conversations;
+    const updatedConversation = {
+      ...state.conversations[needUpdateConversation],
+    };
+    updatedConversation.lastMessage = {
+      ...newMessage,
+      content:
+        +newMessage.type === MessageEnum.text
+          ? newMessage.content
+          : { ...(newMessage.content as FileEntity) },
+    };
+
+    newConversationList = [
+      ...state.conversations.filter((item) => item.id !== state.selected),
+    ];
+    newConversationList.unshift(updatedConversation);
+
+    return updateObject(state, { conversations: newConversationList });
+  }
+
+  //find the conversation
+
+  return state;
+};
+
+const updateNewConversation = (state = initialState, action: Action) => {
+  const newConversationIndex = state.conversations.findIndex(
+    (conver) => state.selected === conver.id
+  );
+
+  if (newConversationIndex >= 0) {
+    let newConversationList = state.conversations;
+    const updatedConversation = {
+      ...action.payload,
+    };
+    newConversationList = [
+      ...state.conversations.filter((item) => item.id !== state.selected),
+    ];
+    newConversationList.unshift(updatedConversation);
+    return updateObject(state, {
+      conversations: newConversationList,
+      selected: updatedConversation.id,
+    });
+  }
 
   // if (needUpdateConversation) {
   //   let newConversationList = state.conversations;
@@ -106,6 +168,8 @@ const updateLastMessage = (state = initialState, action: Action) => {
   //   console.log(newConversationList);
   //   return updateObject(state, { conversations: newConversationList });
   // }
+
+  //find the conversation
 
   return state;
 };

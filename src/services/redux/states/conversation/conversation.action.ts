@@ -40,9 +40,9 @@ export const updateConversation = (updatedConver: ConversationEntity) => {
   };
 };
 
-export const updateLastMessage = (updatedConver: ConversationEntity) => {
+export const updateLastMessage = (message: MessageEntity) => {
   return {
     type: conversationConstants.UPDATE_LAST_MESSAGE,
-    payload: updatedConver,
+    payload: message,
   };
 };

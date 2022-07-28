@@ -26,7 +26,7 @@ const WelcomePage = (props: WelcomePageProps) => {
         </div>
         <div className="welcome-body">
           <div className="welcome-image">
-            <img src={welcomeURL} />
+            <img src={welcomeURL} alt="welcome-image" />
           </div>
           <div className="welcome-body-title">
             <span className="title">

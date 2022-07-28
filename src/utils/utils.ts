@@ -102,6 +102,8 @@ export function mapMessageStatus(status: number) {
       return "Seen";
     case 4:
       return "Error";
+    case 5:
+      return "Decrypt fail";
     default:
       return "Error";
     //throw new Error("unknown message status");

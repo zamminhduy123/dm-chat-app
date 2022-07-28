@@ -84,11 +84,15 @@ class ConversationController
   }
 
   updateConversation(conversation: ConversationEntity) {
-    this._updateConversationUseCase.execute(conversation).then((data) => {
+    if (conversation.lastMessage?.sender !== this._getState().auth.user)
       this._dispatch(
         updateConversation(Helper.convertLastMessage(conversation))
       );
-    });
+    this._updateConversationUseCase.execute(conversation).then((data) => {});
+  }
+
+  updateLastMessage(messageEntity: MessageEntity) {
+    this._dispatch(updateLastMessage(messageEntity));
   }
 
   getConversations() {
@@ -129,10 +133,12 @@ class ConversationController
     return null;
   }
   addNewConversation = (conversation: ConversationEntity): void => {
+    this._dispatch(addConversation(conversation));
+
     this._addNewConversationUseCase
       .execute(conversation)
       .then((data) => {
-        this._dispatch(addConversation(conversation));
+        // this._dispatch(addConversation(conversation));
       })
       .catch((err) => {
         throw err;

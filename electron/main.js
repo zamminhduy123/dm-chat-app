@@ -92,13 +92,15 @@ function createHomeWindow() {
     const defaultPath = app.getPath(
       payload.directory ? payload.directory : "documents"
     );
+
     const defaultFilename = payload.name
-      ? payload.name.split(".")[0]
-      : payload.fileUrl.split("?")[0].split("/").pop();
+      ? payload.name
+      : payload.fileUrl.split("/").pop();
+
     let customUrl = dialog.showSaveDialogSync({
-      defaultPath: `${defaultPath}/${defaultFilename}`,
+      defaultPath: `${defaultPath}/${defaultFilename.split(".")[0]}`,
     });
-    let ext = payload.name.split(".")[1];
+    let ext = defaultFilename.split(".")[1];
     if (customUrl) {
       let filePath = customUrl.split("/"),
         directory = filePath.join("/") + "." + ext;

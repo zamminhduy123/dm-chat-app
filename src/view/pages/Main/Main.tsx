@@ -28,11 +28,13 @@ import {
 import NewGroup from "./NewGroup/NewGroup";
 import UserInfo from "../../components/Info/UserInfo";
 import eventEmitter from "../../../utils/event-emitter";
-import { userConstants } from "../../action";
+import { messageConstants, userConstants } from "../../action";
 import { useConversation } from "../../adapter/useConversation";
 import FadeAlert from "../../components/FadeAlert/FadeAlert";
 import NewKeyAlert from "../../components/NewKeyAlert/NewKeyAlert";
 import { LocalStorage } from "../../../storage";
+import HorizontalLoading from "../../components/UI/HorizontalLoading/HorizontalLoading";
+import SyncAlert from "../../components/SyncAlert/SyncAlert";
 
 export interface MainProps {}
 
@@ -77,12 +79,14 @@ const Main = (props: MainProps) => {
     };
   }, []);
   React.useEffect(() => {
-    if (isMounted.current && activeConversationId)
+    if (isMounted.current && activeConversationId) {
       setActiveConversation(getConversationById(activeConversationId));
+      if (!activeConversation || activeConversation.id)
+        getMessageFromConversation();
+    }
   }, [activeConversationId]);
   React.useEffect(() => {
     if (activeConversation?.id && isMounted.current) {
-      getMessageFromConversation();
     } else {
       MessageController.getInstance().clearMessage();
     }
@@ -92,6 +96,8 @@ const Main = (props: MainProps) => {
   const [userDisplayInfo, setUserDisplayInfo] =
     React.useState<UserEntity | null>(null);
   const [fadeAlert, setFadeAlert] = React.useState("");
+
+  const [syncing, setSyncing] = React.useState(true);
 
   React.useEffect(() => {
     const displayUserListener = eventEmitter.addListener(
@@ -129,8 +135,16 @@ const Main = (props: MainProps) => {
       }
     );
 
+    const syncListener = eventEmitter.addListener(
+      messageConstants.SYNC_MESSAGE,
+      () => {
+        setSyncing(false);
+      }
+    );
+
     return () => {
       displayUserListener.remove();
+      syncListener.remove();
     };
   }, []);
   React.useEffect(() => {
@@ -166,7 +180,7 @@ const Main = (props: MainProps) => {
       <Modal isOpen={modalOpen} hasBackdrop handleClose={() => {}}>
         <ErrorReload message={t("Socket connection error") + "!"} />
       </Modal>
-
+      {syncing && <SyncAlert />}
       <div className="flex-container">
         <nav className="nav-tab">
           <SideBar

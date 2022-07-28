@@ -96,8 +96,9 @@ const updateSentMessage = (state = initialState, action: Action) => {
     return updateObject(state, {
       messages: newList,
     });
+  } else {
+    return addMessage(state, action);
   }
-  return state;
 };
 
 const updateMessage = (state = initialState, action: Action) => {

@@ -43,6 +43,7 @@ import {
   selectConversation,
   updateLastMessage,
 } from "../../services/redux/states/conversation/conversation.action";
+import eventEmitter from "../../utils/event-emitter";
 
 export default class MessageController
   extends BaseController
@@ -100,10 +101,12 @@ export default class MessageController
           this.getMesssageFromConversation();
           this.syncAttemp++;
         }
+        eventEmitter.emit(messageConstants.SYNC_MESSAGE);
       })
       .catch((err) => {
         //if user's network still good but axios network error -> server down -> logout
         console.log(err);
+        eventEmitter.emit(messageConstants.SYNC_MESSAGE);
       });
   }
   async getMesssageFromConversation() {
@@ -249,27 +252,24 @@ export default class MessageController
     if (+updatedMessage.status === MessageStatus.ERROR) {
       updatedMessage.id = updatedMessage.clientId;
     }
-    // if (
-    //   updatedMessage.conversation_id &&
-    //   this._getState().conversation.selected !==
-    //     updatedMessage.conversation_id &&
-    //   updatedMessage.sender === this._getState().auth.user
-    // ) {
-    //   ConversationController.getInstance().select(
-    //     updatedMessage.conversation_id
-    //   );
-    // }
 
     if (sentUpdate) {
       //trigger queue to continue send message
       this._sending = false;
       this.sendMessage();
+      if (
+        updatedMessage.sender === this._getState().auth.user &&
+        this._getState().conversation.selected === ""
+      ) {
+        ConversationController.getInstance().select(
+          updatedMessage.conversation_id!
+        );
+      }
+      this._dispatch(updateSentMessage(updatedMessage));
       this._addMessageUseCase
         .execute(updatedMessage)
         .then((data) => {
           // console.log(updatedMessage);
-
-          this._dispatch(updateSentMessage(updatedMessage));
 
           //new conversation case
           console.log(
@@ -284,11 +284,10 @@ export default class MessageController
           console.log(err);
         });
     } else {
+      this._dispatch(updateMessage(updatedMessage));
       this._updateMessageUseCase
         .execute(updatedMessage)
-        .then((data) => {
-          this._dispatch(updateMessage(updatedMessage));
-        })
+        .then((data) => {})
         .catch((err) => {
           //if user's network still good but axios network error -> server down -> logout
           console.log(err);

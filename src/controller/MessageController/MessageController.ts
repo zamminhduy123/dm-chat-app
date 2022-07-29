@@ -248,15 +248,12 @@ export default class MessageController
   };
   updateMessage = async (updatedMessage: MessageEntity, sentUpdate = false) => {
     console.log("UPDATE MESSAGE", updatedMessage, sentUpdate);
-    updatedMessage = await this.decryptMessage(updatedMessage);
-    if (+updatedMessage.status === MessageStatus.ERROR) {
-      updatedMessage.id = updatedMessage.clientId;
-    }
 
     if (sentUpdate) {
       //trigger queue to continue send message
       this._sending = false;
       this.sendMessage();
+
       if (
         updatedMessage.sender === this._getState().auth.user &&
         this._getState().conversation.selected === ""
@@ -265,24 +262,18 @@ export default class MessageController
           updatedMessage.conversation_id!
         );
       }
-      this._dispatch(updateSentMessage(updatedMessage));
-      this._addMessageUseCase
-        .execute(updatedMessage)
-        .then((data) => {
-          // console.log(updatedMessage);
 
-          //new conversation case
-          console.log(
-            updatedMessage.conversation_id &&
-              this._getState().conversation.selected !==
-                updatedMessage.conversation_id &&
-              updatedMessage.sender === this._getState().auth.user
-          );
-        })
-        .catch((err) => {
-          //if user's network still good but axios network error -> server down -> logout
-          console.log(err);
-        });
+      this._dispatch(updateSentMessage(updatedMessage));
+
+      const { messages } = this._getState().message;
+      const sentMessage: MessageEntity = {
+        ...messages.find(
+          (msg: MessageEntity) => msg.clientId === updatedMessage.clientId
+        ),
+      };
+      this._addMessageUseCase.execute(sentMessage).catch((err) => {
+        console.log(err);
+      });
     } else {
       this._dispatch(updateMessage(updatedMessage));
       this._updateMessageUseCase

@@ -1,8 +1,10 @@
 # dm-chat-app
 
-Chat app web UI
+Direct Message
 
-Simple web/pc chat application built with react and electron frameworks following clean architecture design
+Simple web/pc chat application built with react and electron frameworks following clean architecture design.
+
+Also support E2EE for 1-1 private conversation
 
 # Architect
 

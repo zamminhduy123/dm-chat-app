@@ -36,4 +36,7 @@ There will be 2 phases which is searching and indexing following the image below
 
 ## Multilingal
 
-![](git_images/multilingal.png)
+Supported language:
+
+- English
+- Vietnamese

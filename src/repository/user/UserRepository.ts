@@ -1,6 +1,6 @@
 import { User, Credential, UserEntity } from "../../entities";
 import { IUserRepository } from "./IUserRepository";
-import Fetcher from "../../api";
+import Fetcher from "../../services/api";
 import { RegisterData } from "../../entities/type/RegisterData";
 import KeyDataSource from "../../dataSource/key";
 import { LocalStorage } from "../../storage";

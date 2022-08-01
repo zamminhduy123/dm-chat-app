@@ -4,10 +4,11 @@ import {
   conversationToStorageEntity,
   conversationStorageToEntity,
 } from "../../storage/storageHelper";
-import Fetcher from "../../api";
+import Fetcher from "../../services/api";
 import KeyHelper, { arrayBufferToString } from "../../utils/keyHelper";
 import KeyDataSource from "../key";
 import MessageExtraMeta from "../../utils/MessageExtraMeta/MessageExtraMeta";
+import E2EEGateWay from "../E2EEGateWay/E2EEGateWay";
 
 export interface IConversationDataSource {
   get(): Promise<ConversationEntity[]>;
@@ -19,8 +20,10 @@ export interface IConversationDataSource {
 
 export default class ConversationDataSource implements IConversationDataSource {
   private _convStorage: ConversationStorage;
+  private _gateway: E2EEGateWay;
   constructor() {
     this._convStorage = new ConversationStorage();
+    this._gateway = new E2EEGateWay();
   }
   sync(username: string): Promise<ConversationEntity[]> {
     return new Promise<ConversationEntity[]>(async (resolve, reject) => {
@@ -33,42 +36,21 @@ export default class ConversationDataSource implements IConversationDataSource {
 
         if (serverData) {
           for (const conver of serverData) {
-            const data = conversationToStorageEntity(conver);
-            const currentData = await this._convStorage.get(data.id);
-            if (
-              !currentData ||
-              currentData.lastMessageId !== data.lastMessageId
-            ) {
-              //try decrypt
-              if (conver.users.length === 2 && conver.lastMessage) {
-                if (+conver.lastMessage.type === MessageEnum.text) {
-                  try {
-                    let messageExtra = new MessageExtraMeta().deserialize(
-                      conver.lastMessage.content as string
-                    );
-                    const sharedKey =
-                    await KeyDataSource.getInstance().getSharedKey(
-                      conver.lastMessage.to === username
-                        ? conver.lastMessage.sender
-                        : conver.lastMessage.to,
-                        conver.lastMessage.to === username
-                        ? messageExtra.getDeviceKey()
-                        : undefined
-                    );
-                    data.lastMessageContent =
-                      await KeyHelper.getInstance().decrypt(
-                        sharedKey,
-                        messageExtra.getMessage()
-                      );
-                  } catch (err) {
-                    data.lastMessageContent = "Could not decrypt message";
-                    console.log("SYNC CONVERSATION ERR", err);
-                  }
-                }
-              }
-              await this._convStorage.update([data]);
-              mappedData.push(conversationStorageToEntity(data));
+            // const data = conversationToStorageEntity(conver);
+            if (conver.lastMessage) {
+              if (conver.lastMessage.type === MessageEnum.text)
+                conver.lastMessage = await this._gateway.decryptMessage(
+                  conver.lastMessage
+                );
+              else
+                conver.lastMessage = JSON.parse(
+                  conver.lastMessage.content as string
+                );
+              console.log("SYNC CONVER", conver.lastMessage);
             }
+            const data = conversationToStorageEntity(conver);
+            this._convStorage.update([data]);
+            mappedData.push(conver);
           }
         }
 

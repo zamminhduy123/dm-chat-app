@@ -3,7 +3,7 @@ import {
   MessageEntity,
   RegisterData,
   UserEntity,
-} from "../entities";
+} from "../../entities";
 import axios, { AxiosError } from "axios";
 
 const CHUNK_SIZE = 5 * 1024 * 1024; //1 MB

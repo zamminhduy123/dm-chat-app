@@ -1,5 +1,5 @@
 import { MessageEntity, MessageEnum, MessageStatus } from "../../entities";
-import Fetcher from "../../api";
+import Fetcher from "../../services/api";
 import {
   ConversationStorage,
   messageEntityToPendingStorage,
@@ -19,6 +19,8 @@ import KeyDataSource from "../key";
 import MessageExtraMeta from "../../utils/MessageExtraMeta/MessageExtraMeta";
 import KeyHelper, { arrayBufferToString } from "../../utils/keyHelper";
 import { sKeywordMessageEntity } from "../../storage/storageEntity/sKeywordMessageEntity";
+import E2EEGateWay from "../E2EEGateWay/E2EEGateWay";
+import eventEmitter from "../../utils/event-emitter";
 
 export interface IMessageDataSourceInterface {
   getByConversationId(
@@ -40,6 +42,7 @@ export default class MessageDataSource implements IMessageDataSourceInterface {
   private _searchStorage: SearchStorage;
   private _conversationStorage: ConversationStorage;
   private _username: string;
+  private _gateway: E2EEGateWay;
 
   private _messageIds;
 
@@ -49,6 +52,20 @@ export default class MessageDataSource implements IMessageDataSourceInterface {
     this._searchStorage = new SearchStorage();
     this._username = username;
     this._messageIds = new Set<string>();
+    this._gateway = new E2EEGateWay();
+    Socket.getInstance().registerListener(
+      messageConstants.RECEIVE_MESSAGE,
+      async (message: MessageEntity) => {
+        //decrypt receive message
+        if (message.type !== MessageEnum.text)
+          message.content = JSON.parse(message.content as string);
+        message = await this._gateway.decryptMessage(message);
+        //emit to update UI
+        eventEmitter.emit(messageConstants.RECEIVE_MESSAGE, message);
+        //add to DB
+        await this.add(message);
+      }
+    );
   }
   resendPendingMessage(): Promise<any> {
     return new Promise<any>(async (resolve, reject) => {
@@ -68,6 +85,7 @@ export default class MessageDataSource implements IMessageDataSourceInterface {
       }
     });
   }
+
   add(newData: MessageEntity) {
     console.log("ADD MESSAGE DS", newData);
     //get last message from storage
@@ -160,57 +178,10 @@ export default class MessageDataSource implements IMessageDataSourceInterface {
           const dbData = [];
 
           for (const message of data) {
-            let messageExtra = new MessageExtraMeta();
-            //get message meta data
             if (!(`${message.to}` === `g${message.conversation_id}`)) {
-              let messageContent = "";
-              try {
-                if (+message.type === MessageEnum.text) {
-                  messageContent = message.content;
-                } else {
-                  message.content = JSON.parse(message.content);
-                  messageContent = message.content.content;
-                }
-
-                let decryptedMessage;
-                try {
-                  messageExtra.deserialize(messageContent || "");
-                  console.log("MESSAGE DS", this._username);
-                  const sharedKey =
-                    await KeyDataSource.getInstance().getSharedKey(
-                      message.to === this._username
-                        ? message.sender
-                        : message.to,
-                      message.to === this._username
-                        ? messageExtra.getDeviceKey()
-                        : undefined
-                    );
-                  console.log("SHAREKEY", sharedKey);
-                  decryptedMessage = await KeyHelper.getInstance().decrypt(
-                    sharedKey,
-                    messageExtra.getMessage()
-                  );
-                  console.log("DECRYPT", decryptedMessage, message.id);
-                } catch (err) {
-                  console.log("DECRYPT ERR", err);
-                  message.status = MessageStatus.DECRYPT_FAIL;
-                }
-                if (decryptedMessage)
-                  if (typeof message.content === "string") {
-                    message.content = decryptedMessage;
-                  } else {
-                    message.content.content = decryptedMessage;
-                  }
-              } catch (err) {
-                console.log("Sync message error", err);
-              }
-            } else {
-              if (+message.type !== MessageEnum.text) {
-                message.content = JSON.parse(message.content);
-              }
+              await this._gateway.decryptMessage(message);
+              dbData.push(messageEntityToStorage(message));
             }
-            console.log("FUCK MESSAGE", message);
-            dbData.push(messageEntityToStorage(message));
           }
           try {
             console.log("DBDATA:", dbData);

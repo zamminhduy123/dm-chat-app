@@ -85,6 +85,11 @@ export default class MessageController
     this._decryptMessageUseCase = new DecryptMessage(this._messageRepo);
 
     this._messageQueue = [];
+
+    eventEmitter.addListener(
+      messageConstants.RECEIVE_MESSAGE,
+      this.receiveMessage
+    );
   }
 
   syncMessage() {
@@ -355,12 +360,12 @@ export default class MessageController
 
   receiveMessage = async (message: MessageEntity) => {
     console.log("RECEIVE MESSAGE", message);
-    message = await this.decryptMessage(message);
+    // message = await this.decryptMessage(message);
     // console.log(message, this._getState().conversation.selected);
     if (message.conversation_id === this._getState().conversation.selected) {
       this._dispatch(addMessage(message));
     }
-    this._addMessageUseCase.execute(message);
+    // this._addMessageUseCase.execute(message);
   };
 
   //search message
@@ -382,6 +387,7 @@ export default class MessageController
 
   static destroy() {
     this._instance = null;
+    eventEmitter.removeAllListeners();
   }
 
   static getInstance = (): MessageController => {

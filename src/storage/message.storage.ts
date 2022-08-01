@@ -1,4 +1,4 @@
-import Fetcher from "../api";
+import Fetcher from "../services/api";
 import { cloneMessage } from "../controller/MessageController/helper";
 import { FileEntity, MessageEnum, MessageStatus } from "../entities";
 import KeyHelper from "../utils/keyHelper";

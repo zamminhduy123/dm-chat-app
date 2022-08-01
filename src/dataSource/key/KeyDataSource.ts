@@ -1,4 +1,4 @@
-import Fetcher from "../../api";
+import Fetcher from "../../services/api";
 import { Key } from "../../entities/type/Key";
 import { LocalStorage } from "../../storage";
 import EncryptionKeyStorage from "../../storage/encryptionKey.storage";
@@ -38,6 +38,9 @@ export default class KeyDataSource implements IKeyDataSource {
       this.awaitInit = new Promise((res, rej) => {
         this.resolveInit = res;
       });
+  }
+  getUsername(): string {
+    return this._username;
   }
 
   private static _instance: KeyDataSource | null = null;
@@ -163,7 +166,10 @@ export default class KeyDataSource implements IKeyDataSource {
       try {
         let userPKey;
         console.log("GET KEY", identifier, "Device", deviceKey);
-        userPKey = await this._keyStorage.getPublicKey(identifier,identifier === this._username ? undefined : deviceKey);
+        userPKey = await this._keyStorage.getPublicKey(
+          identifier,
+          identifier === this._username ? undefined : deviceKey
+        );
         // console.log("userPKey", userPKey);
         const myPrivateKey = await this.getMyPrivateKey();
         console.log("myPrivateKey", myPrivateKey);
@@ -178,7 +184,10 @@ export default class KeyDataSource implements IKeyDataSource {
         }
 
         //perform get key from server and calculate shared key
-        userPKey = await Fetcher.getUserPublicKey(identifier, identifier === this._username ? undefined : deviceKey);
+        userPKey = await Fetcher.getUserPublicKey(
+          identifier,
+          identifier === this._username ? undefined : deviceKey
+        );
         console.log("FETCH KEYS", userPKey);
         const key = userPKey.key;
         if (!key) {

@@ -80,13 +80,7 @@ const updateSentMessage = (state = initialState, action: Action) => {
     }
 
     const updatedMessage = {
-      content:
-        typeof state.messages[indexU].content === "string"
-          ? state.messages[indexU].content
-          : {
-              ...(state.messages[indexU].content as FileEntity),
-              ...action.payload.content,
-            },
+      ...state.messages[indexU],
       id: action.payload.id,
       create_at: action.payload.create_at,
       status: action.payload.status,

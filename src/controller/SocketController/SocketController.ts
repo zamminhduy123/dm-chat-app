@@ -62,7 +62,7 @@ export default class SocketController extends BaseController {
 
   private registerListener = () => {
     this.conversationUpdate();
-    this.receiveMessage();
+    // this.receiveMessage();
     this.messageSent();
     this.typingRegister();
     this.errorListener();
@@ -184,22 +184,22 @@ export default class SocketController extends BaseController {
     );
   };
 
-  receiveMessage = () => {
-    Socket.getInstance().removeRegisteredListener(
-      messageConstants.RECEIVE_MESSAGE
-    );
-    Socket.getInstance().registerListener<MessageEntity>(
-      messageConstants.RECEIVE_MESSAGE,
-      (data) => {
-        // console.log("RECEIVED", data, data.content);
-        parseContent(data);
-        // console.log("RECEIVED", data, data.content);
-        MessageController.getInstance().receiveMessage(data);
+  // receiveMessage = () => {
+  //   Socket.getInstance().removeRegisteredListener(
+  //     messageConstants.RECEIVE_MESSAGE
+  //   );
+  //   Socket.getInstance().registerListener<MessageEntity>(
+  //     messageConstants.RECEIVE_MESSAGE,
+  //     (data) => {
+  //       // console.log("RECEIVED", data, data.content);
+  //       parseContent(data);
+  //       // console.log("RECEIVED", data, data.content);
+  //       MessageController.getInstance().receiveMessage(data);
 
-        // this.messageReceived(data);
-      }
-    );
-  };
+  //       // this.messageReceived(data);
+  //     }
+  //   );
+  // };
 
   receiveNewKey = () => {
     Socket.getInstance().removeRegisteredListener(userConstants.NEW_KEY);

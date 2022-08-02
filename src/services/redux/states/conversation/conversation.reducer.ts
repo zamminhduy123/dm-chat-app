@@ -94,8 +94,8 @@ const updateConversation = (state = initialState, action: Action) => {
     ...state,
     ...{
       conversations: [
-        action.payload,
         ...state.conversations.slice(0, indexU),
+        action.payload,
         ...state.conversations.slice(indexU + 1),
       ],
     },

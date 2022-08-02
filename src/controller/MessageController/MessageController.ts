@@ -169,14 +169,10 @@ export default class MessageController
     console.log("ENQUEUE", message);
     //update conversation
     // this._dispatch(updateLastMessage(comessage))
-    message = await this.encryptMessage(message);
-    console.log("ENCRYPTED MESSAGE", message);
-    if (+message.status === MessageStatus.ERROR) {
-      this._dispatch(updateSentMessage(Helper.cloneMessage(message)));
-    } else {
-      this._messageQueue.push(message);
-      if (this._messageQueue.length === 1) this.sendMessage();
-    }
+    // message = await this.encryptMessage(message);
+    // console.log("ENCRYPTED MESSAGE", message);
+    this._messageQueue.push(message);
+    if (this._messageQueue.length === 1) this.sendMessage();
   };
 
   private _sending = false;
@@ -291,65 +287,52 @@ export default class MessageController
     }
   };
 
-  encryptMessage = async (message: MessageEntity) => {
-    console.log("=================ENCRYPTING===================");
-    console.log("MESSAGE TO ENCRYTP", message);
-    try {
-      if (!message.to) {
-        throw new Error("No message receiver (to)");
-      }
-      let isGroup = `${message.to}` === `g${message.conversation_id}`;
-      console.log(
-        "isGROUP",
-        isGroup,
-        `${message.to}`,
-        `g${message.conversation_id}`
-      );
-      //encryptmessage
-      if (!isGroup) {
-        return await this._encryptMessageUseCase.execute(
-          Helper.cloneMessage(message)
-        );
-      }
-    } catch (err) {
-      console.log(err);
-      message.status = MessageStatus.ERROR;
-    }
-    console.log("=================ENCRYPTING===================");
-    return message;
-  };
+  // encryptMessage = async (message: MessageEntity) => {
+  //   console.log("=================ENCRYPTING===================");
+  //   console.log("MESSAGE TO ENCRYTP", message);
+  //   try {
+  //     if (!message.to) {
+  //       throw new Error("No message receiver (to)");
+  //     }
+  //     let isGroup = `${message.to}` === `g${message.conversation_id}`;
+  //     console.log(
+  //       "isGROUP",
+  //       isGroup,
+  //       `${message.to}`,
+  //       `g${message.conversation_id}`
+  //     );
+  //     //encryptmessage
+  //     if (!isGroup) {
+  //       return await this._encryptMessageUseCase.execute(
+  //         Helper.cloneMessage(message)
+  //       );
+  //     }
+  //   } catch (err) {
+  //     console.log(err);
+  //     message.status = MessageStatus.ERROR;
+  //   }
+  //   console.log("=================ENCRYPTING===================");
+  //   return message;
+  // };
 
-  decryptMessage = async (message: MessageEntity) => {
-    console.log("=============== START DECRYPT ========================");
-    let isGroup = `${message.to}` === `g${message.conversation_id}`;
-    console.log("MESSAGE TO DECRYPT", message.content, isGroup);
-    if (!isGroup) {
-      message = await this._decryptMessageUseCase.execute(
-        message,
-        this._getState().auth.user
-      );
-    }
-    console.log("AFTER DECRYPT", message.content);
-    console.log("================ END DECRYPT ========================");
+  // decryptMessage = async (message: MessageEntity) => {
+  //   console.log("=============== START DECRYPT ========================");
+  //   let isGroup = `${message.to}` === `g${message.conversation_id}`;
+  //   console.log("MESSAGE TO DECRYPT", message.content, isGroup);
+  //   if (!isGroup) {
+  //     message = await this._decryptMessageUseCase.execute(
+  //       message,
+  //       this._getState().auth.user
+  //     );
+  //   }
+  //   console.log("AFTER DECRYPT", message.content);
+  //   console.log("================ END DECRYPT ========================");
 
-    return message;
-  };
+  //   return message;
+  // };
 
   resendMessage = (message: MessageEntity) => {
     const resendMessage = { ...message };
-    console.log(resendMessage);
-
-    //if message is a file or image
-    // if (resendMessage.type !== MessageEnum.text){
-    //   const file = resendMessage.content as FileEntity
-    //   if (!isValidHttpUrl(file.content)){
-    //     //try send to get url
-    //     await this.getFileUrl
-    //   }
-    // }
-    //delete message on UI
-    // console.log("DELETE")
-    // this._dispatch(addTotalMessage)
     this._dispatch(deleteMessage(message.id || message.clientId!));
     resendMessage.status = MessageStatus.SENDING;
     resendMessage.create_at = Date.now();
@@ -360,12 +343,9 @@ export default class MessageController
 
   receiveMessage = async (message: MessageEntity) => {
     console.log("RECEIVE MESSAGE", message);
-    // message = await this.decryptMessage(message);
-    // console.log(message, this._getState().conversation.selected);
     if (message.conversation_id === this._getState().conversation.selected) {
       this._dispatch(addMessage(message));
     }
-    // this._addMessageUseCase.execute(message);
   };
 
   //search message

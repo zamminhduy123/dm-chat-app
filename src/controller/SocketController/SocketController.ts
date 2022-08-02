@@ -61,7 +61,7 @@ export default class SocketController extends BaseController {
   }
 
   private registerListener = () => {
-    this.conversationUpdate();
+    // this.conversationUpdate();
     // this.receiveMessage();
     this.messageSent();
     this.typingRegister();
@@ -145,44 +145,35 @@ export default class SocketController extends BaseController {
     }
   };
 
-  conversationUpdate = () => {
-    Socket.getInstance().removeRegisteredListener(
-      conversationConstants.CONVERSATION_CHANGE
-    );
-    Socket.getInstance().registerListener<ConversationEntity>(
-      conversationConstants.CONVERSATION_CHANGE,
-      async (data) => {
-        const existed = ConversationController.getInstance().findConversation(
-          data.id
-        );
-        parseContent(data.lastMessage);
-        if (
-          data.lastMessage &&
-          data.users.length === 2 &&
-          +data.lastMessage.type === MessageEnum.text
-        )
-          data.lastMessage =
-            (await MessageController.getInstance().decryptMessage(
-              data.lastMessage
-            )) || null;
-        //emit new notification for window
-        if (
-          window.electronAPI &&
-          this._getState().auth.user !== data.lastMessage?.sender
-        )
-          window.electronAPI.notification.newNotification(
-            data.users.filter((u) => u.username === data.lastMessage?.sender)[0]
-              .name || "New message",
-            data.lastMessage?.content
-          );
-        if (!existed) {
-          ConversationController.getInstance().addNewConversation(data);
-        } else {
-          ConversationController.getInstance().updateConversation(data);
-        }
-      }
-    );
-  };
+  // conversationUpdate = () => {
+  //   Socket.getInstance().removeRegisteredListener(
+  //     conversationConstants.CONVERSATION_CHANGE
+  //   );
+  //   Socket.getInstance().registerListener<ConversationEntity>(
+  //     conversationConstants.CONVERSATION_CHANGE,
+  //     async (data) => {
+  //       const existed = ConversationController.getInstance().findConversation(
+  //         data.id
+  //       );
+  //       parseContent(data.lastMessage);
+  //       if (
+  //         data.lastMessage &&
+  //         data.users.length === 2 &&
+  //         +data.lastMessage.type === MessageEnum.text
+  //       )
+  //         data.lastMessage =
+  //           (await MessageController.getInstance().decryptMessage(
+  //             data.lastMessage
+  //           )) || null;
+
+  //       if (!existed) {
+  //         ConversationController.getInstance().addNewConversation(data);
+  //       } else {
+  //         ConversationController.getInstance().updateConversation(data);
+  //       }
+  //     }
+  //   );
+  // };
 
   // receiveMessage = () => {
   //   Socket.getInstance().removeRegisteredListener(

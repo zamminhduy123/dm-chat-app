@@ -56,7 +56,8 @@ export default class ConversationStorage implements IConversationStorage {
           storeNames.conversation,
           indexName.lastMessageTime,
           [new Date(`1970`).getTime()],
-          [new Date().getTime()]
+          [new Date().getTime()],
+          "prev"
         );
         resolve(data);
       } catch (err) {

@@ -21,6 +21,7 @@ import KeyHelper, { arrayBufferToString } from "../../utils/keyHelper";
 import { sKeywordMessageEntity } from "../../storage/storageEntity/sKeywordMessageEntity";
 import E2EEGateWay from "../E2EEGateWay/E2EEGateWay";
 import eventEmitter from "../../utils/event-emitter";
+import GateWay from "../E2EEGateWay/E2EEGateWay";
 
 export interface IMessageDataSourceInterface {
   getByConversationId(
@@ -42,7 +43,6 @@ export default class MessageDataSource implements IMessageDataSourceInterface {
   private _searchStorage: SearchStorage;
   private _conversationStorage: ConversationStorage;
   private _username: string;
-  private _gateway: E2EEGateWay;
 
   private _messageIds;
 
@@ -52,21 +52,34 @@ export default class MessageDataSource implements IMessageDataSourceInterface {
     this._searchStorage = new SearchStorage();
     this._username = username;
     this._messageIds = new Set<string>();
-    this._gateway = new E2EEGateWay();
+
+    Socket.getInstance().registerConnectSuccess(() =>
+      this.init(this._msgStorage)
+    );
+    this.init(this._msgStorage);
+  }
+
+  init(storage: MessageStorage) {
+    Socket.getInstance().removeRegisteredListener(
+      messageConstants.RECEIVE_MESSAGE
+    );
     Socket.getInstance().registerListener(
       messageConstants.RECEIVE_MESSAGE,
       async (message: MessageEntity) => {
         //decrypt receive message
-        if (message.type !== MessageEnum.text)
-          message.content = JSON.parse(message.content as string);
-        message = await this._gateway.decryptMessage(message);
+        if (!(`${message.to}` === `g${message.conversation_id}`)) {
+          message = await GateWay.receiveCheck(message);
+        } else {
+          message = GateWay.parseContent(message);
+        }
         //emit to update UI
         eventEmitter.emit(messageConstants.RECEIVE_MESSAGE, message);
         //add to DB
-        await this.add(message);
+        await storage.upsert([message]);
       }
     );
   }
+
   resendPendingMessage(): Promise<any> {
     return new Promise<any>(async (resolve, reject) => {
       //get all pending message from DB
@@ -86,19 +99,32 @@ export default class MessageDataSource implements IMessageDataSourceInterface {
     });
   }
 
+  sendSuccess() {}
+
   add(newData: MessageEntity) {
     console.log("ADD MESSAGE DS", newData);
     //get last message from storage
+
     return new Promise<any>(async (resolve, reject) => {
       try {
         console.log("message add ", newData);
         if (!newData.id) {
           try {
             //fresh message
-            await Socket.getInstance().emit(
-              messageConstants.SEND_MESSAGE,
-              newData
-            );
+            console.log("NEW MESSAGE", newData.to);
+            if (newData.to !== `g${newData.conversation_id}`) {
+              const encryptedMessage = await GateWay.encryptMessage(newData);
+              await Socket.getInstance().emit(
+                messageConstants.SEND_MESSAGE,
+                encryptedMessage
+              );
+            } else {
+              await Socket.getInstance().emit(
+                messageConstants.SEND_MESSAGE,
+                newData
+              );
+            }
+
             await this._msgStorage.upsertPending([
               messageEntityToPendingStorage(newData),
             ]);
@@ -177,11 +203,13 @@ export default class MessageDataSource implements IMessageDataSourceInterface {
 
           const dbData = [];
 
-          for (const message of data) {
+          for (let message of data) {
             if (!(`${message.to}` === `g${message.conversation_id}`)) {
-              await this._gateway.decryptMessage(message);
-              dbData.push(messageEntityToStorage(message));
+              message = await GateWay.receiveCheck(message);
+            } else {
+              message = GateWay.parseContent(message);
             }
+            dbData.push(messageEntityToStorage(message));
           }
           try {
             console.log("DBDATA:", dbData);

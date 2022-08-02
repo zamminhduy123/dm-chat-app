@@ -1,9 +1,10 @@
-import { MessageEntity, MessageStatus } from "../../entities";
+import { MessageEntity, MessageEnum, MessageStatus } from "../../entities";
+import { LocalStorage } from "../../storage";
 import KeyHelper from "../../utils/keyHelper";
 import MessageExtraMeta from "../../utils/MessageExtraMeta/MessageExtraMeta";
 import KeyDataSource from "../key";
 
-export default class E2EEGateWay {
+class E2EEGateWay {
   private _cacheSharedKey: any = {};
   constructor() {}
 
@@ -29,8 +30,23 @@ export default class E2EEGateWay {
     }
   }
 
-  async decryptMessage(message: MessageEntity) {
+  parseContent = (message: MessageEntity) => {
+    if (message) {
+      if (+message.type !== MessageEnum.text) {
+        if (typeof message.content === "string")
+          message.content = JSON.parse(message.content);
+      }
+      message.create_at = new Date(message.create_at).getTime();
+    }
+    return message;
+  };
+
+  async receiveCheck(message: MessageEntity) {
     return new Promise<MessageEntity>(async (resolve, reject) => {
+      //STEP 1: parse content
+      message = this.parseContent(message);
+
+      //STEP 2: decrypt message
       let messageExtra = new MessageExtraMeta();
       //get message meta data
       let messageContent: string;
@@ -71,5 +87,56 @@ export default class E2EEGateWay {
     });
   }
 
-  encryptMessage(message: MessageEntity) {}
+  encryptMessage(message: MessageEntity) {
+    return new Promise<MessageEntity>(async (resolve, reject) => {
+      if (message.to) {
+        let data = new MessageExtraMeta();
+        //get message meta data
+        const deviceKey = (
+          await LocalStorage.getInstance().getLocalStorage()
+        ).getItem(LocalStorage.getInstance().getDeviceKey());
+        if (!deviceKey) {
+          reject("Lost device key");
+        } else {
+          data.setDeviceKey(deviceKey);
+        }
+
+        try {
+          console.log("MESSAGE TO", message.to);
+          const sharedKey = await KeyDataSource.getInstance().getSharedKey(
+            message.to
+          );
+          console.log("SHARE KEY", sharedKey);
+          if (typeof message.content === "string") {
+            message.content = data
+              .setMessage(
+                await KeyHelper.getInstance().encrypt(
+                  sharedKey,
+                  message.content
+                )
+              )
+              .serialize();
+          } else {
+            message.content.content = data
+              .setMessage(
+                await KeyHelper.getInstance().encrypt(
+                  sharedKey,
+                  message.content.content
+                )
+              )
+              .serialize();
+          }
+          console.log("TESTSTSTS", data.getDeviceKey());
+          resolve(message);
+        } catch (err) {
+          reject(err);
+        }
+      } else {
+        resolve(message);
+      }
+    });
+  }
 }
+
+const GateWay = new E2EEGateWay();
+export default GateWay;

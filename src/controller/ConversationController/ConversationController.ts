@@ -24,6 +24,8 @@ import {
   selectMessage,
   setTotalMessage,
 } from "../../services/redux/states/message/message.action";
+import eventEmitter from "../../utils/event-emitter";
+import { conversationConstants } from "../../view/action";
 
 class ConversationController
   extends BaseController
@@ -55,6 +57,11 @@ class ConversationController
       this._conversationRepo
     );
     this.getConversations();
+
+    eventEmitter.addListener(
+      conversationConstants.CONVERSATION_CHANGE,
+      updateConversation
+    );
   }
   static destroy() {
     this._instance = null;
@@ -72,7 +79,6 @@ class ConversationController
       .then((data: Conversation[]) => {
         // this.getConversations();
         // resolve(1);
-
         //perform redux update
         for (const conversation of Helper.conversationModelToEntity(data)) {
           this._dispatch(updateConversation(conversation));
@@ -84,11 +90,29 @@ class ConversationController
   }
 
   updateConversation(conversation: ConversationEntity) {
-    if (conversation.lastMessage?.sender !== this._getState().auth.user)
-      this._dispatch(
-        updateConversation(Helper.convertLastMessage(conversation))
-      );
-    this._updateConversationUseCase.execute(conversation).then((data) => {});
+    if (this.findConversation(conversation.id)) {
+      if (conversation.lastMessage?.sender !== this._getState().auth.user) {
+        this._dispatch(
+          updateConversation(Helper.convertLastMessage(conversation))
+        );
+
+        //emit new notification for window
+        if (
+          window.electronAPI &&
+          this._getState().auth.user !== conversation.lastMessage?.sender
+        )
+          window.electronAPI.notification.newNotification(
+            conversation.users.filter(
+              (u) => u.username === conversation.lastMessage?.sender
+            )[0].name || "New message",
+            conversation.lastMessage?.content
+          );
+      }
+    } else {
+      this.addNewConversation(conversation);
+    }
+
+    // this._updateConversationUseCase.execute(conversation).then((data) => {});
   }
 
   updateNewMessage(messageEntity: MessageEntity) {
@@ -137,14 +161,14 @@ class ConversationController
   addNewConversation = (conversation: ConversationEntity): void => {
     this._dispatch(addConversation(conversation));
 
-    this._addNewConversationUseCase
-      .execute(conversation)
-      .then((data) => {
-        // this._dispatch(addConversation(conversation));
-      })
-      .catch((err) => {
-        throw err;
-      });
+    // this._addNewConversationUseCase
+    //   .execute(conversation)
+    //   .then((data) => {
+    //     // this._dispatch(addConversation(conversation));
+    //   })
+    //   .catch((err) => {
+    //     throw err;
+    //   });
   };
   addNewGroupConversation = async (conversation: ConversationEntity) => {
     try {
